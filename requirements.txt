@@ -7,3 +7,4 @@ pytorch>=1.7.0
 tqdm>=4.60.0
 torchaudio>=0.7.0
 git+https://github.com/ChristophReich1996/Involution
+rtpt>=0.0.4
