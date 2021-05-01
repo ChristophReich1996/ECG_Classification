@@ -2,6 +2,7 @@ from typing import Tuple, Type
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class ECGCNN(nn.Module):
@@ -220,3 +221,106 @@ class ConditionalBatchNormalization(nn.Module):
         # Apply parameters
         output = scale.view(1, -1, 1, 1) * output + bias.view(1, -1, 1, 1)
         return output
+
+
+class AxialAttention2d(nn.Module):
+    """
+    This class implements the axial attention operation for 2d volumes.
+    """
+
+    def __init__(self, in_channels: int, out_channels: int, dim: int, span: int, groups: int = 8) -> None:
+        """
+        Constructor method
+        :param in_channels: (int) Input channels to be employed
+        :param out_channels: (int) Output channels to be utilized
+        :param dim: (int) Dimension attention is applied to (0 = height, 1 = width, 2 = depth)
+        :param span: (int) Span of attention to be used
+        :param groups: (int) Multi head attention groups to be used
+        """
+        # Call super constructor
+        super(AxialAttention2d, self).__init__()
+        # Check parameters
+        assert (in_channels % groups == 0) and (out_channels % groups == 0), \
+            "In and output channels must be a factor of the utilized groups."
+        # Save parameters
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.dim = dim
+        self.span = span
+        self.groups = groups
+        self.group_channels = out_channels // groups
+        # Init initial query, key and value mapping
+        self.query_key_value_mapping = nn.Sequential(
+            nn.Conv1d(in_channels=in_channels, out_channels=2 * out_channels, kernel_size=1,
+                      stride=1, padding=0, bias=False),
+            nn.BatchNorm1d(num_features=2 * out_channels, track_running_stats=True, affine=True)
+        )
+        # Init output normalization
+        self.output_normalization = nn.BatchNorm1d(num_features=2 * out_channels, track_running_stats=True, affine=True)
+        # Init similarity normalization
+        self.similarity_normalization = nn.BatchNorm2d(num_features=3 * self.groups, track_running_stats=True,
+                                                       affine=True)
+        # Init embeddings
+        self.relative_embeddings = nn.Parameter(torch.randn(2 * self.group_channels, 2 * self.span - 1),
+                                                requires_grad=True)
+        relative_indexes = torch.arange(self.span, dtype=torch.long).unsqueeze(dim=1) \
+                           - torch.arange(self.span, dtype=torch.long).unsqueeze(dim=0) \
+                           + self.span - 1
+        self.register_buffer("relative_indexes", relative_indexes.view(-1))
+
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        """
+        Forward pass
+        :param input: (torch.Tensor) Input tensor of the shape [batch size, in channels, h, w, d]
+        :return: (torch.Tensor) Output tensor of the shape [batch size, out channels, h, w, d]
+        """
+        # Reshape input dependent on the dimension to be utilized
+        if self.dim == 0:  # Attention over volume height
+            input = input.permute(0, 3, 1, 2)  # [batch size, width, in channels, height]
+        else:  # Attention over volume width
+            input = input.permute(0, 2, 1, 3)  # [batch size, height, in channels, width]
+        # Save shapes
+        batch_size, dim_1, channels, dim_attention = input.shape
+        # Reshape tensor to the shape [batch size * dim 1, channels, dim attention]
+        input = input.reshape(batch_size * dim_1, channels, dim_attention).contiguous()
+        # Perform query, key and value mapping
+        query_key_value = self.query_key_value_mapping(input)
+        # Split tensor to get the query, key and value tensors
+        query, key, value = query_key_value \
+            .reshape(batch_size * dim_1, self.groups, self.group_channels * 2, dim_attention) \
+            .split([self.group_channels // 2, self.group_channels // 2, self.group_channels], dim=2)
+        # Get all embeddings
+        embeddings = self.relative_embeddings.index_select(dim=1, index=self.relative_indexes) \
+            .view(2 * self.group_channels, self.span, self.span)
+        # Split embeddings
+        query_embedding, key_embedding, value_embedding = \
+            embeddings.split([self.group_channels // 2, self.group_channels // 2, self.group_channels], dim=0)
+        # Apply embeddings to query, key and value
+        query_embedded = torch.einsum("bgci, cij -> bgij", query, query_embedding)
+        key_embedded = torch.einsum("bgci, cij -> bgij", key, key_embedding)
+        # Matmul between query and key
+        query_key = torch.einsum("bgci, bgcj -> bgij", query_embedded, key_embedded)
+        # Construct similarity map
+        similarity = torch.cat([query_key, query_embedded, key_embedded], dim=1)
+        # Perform normalization
+        similarity = self.similarity_normalization(similarity) \
+            .view(batch_size * dim_1, 3, self.groups, dim_attention, dim_attention).sum(dim=1)
+        # Apply softmax
+        similarity = F.softmax(similarity, dim=3)
+        # Calc attention map
+        attention_map = torch.einsum("bgij, bgcj->bgci", similarity, value)
+        # Calc attention embedded
+        attention_map_embedded = torch.einsum("bgij, cij->bgci", similarity, value_embedding)
+        # Construct output
+        output = torch.cat([attention_map, attention_map_embedded], dim=-1) \
+            .view(batch_size * dim_1, 2 * self.out_channels, dim_attention)
+        # Final output batch normalization
+        output = self.output_normalization(output).view(batch_size, dim_1, self.out_channels, 2,
+                                                        dim_attention).sum(dim=-2)
+        # Reshape output back to original shape
+        if self.dim == 0:  # [batch size, width, depth, in channels, height]
+            output = output.permute(0, 2, 3, 1)
+        else:  # [batch size, height, depth, in channels, width]
+            output = output.permute(0, 2, 1, 3)
+        return output
+
