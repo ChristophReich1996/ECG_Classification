@@ -29,7 +29,7 @@ class SoftmaxCrossEntropyLoss(nn.Module):
         :return: (torch.Tensor) Loss value
         """
         # Weight to device
-        self.weight = self.weight.to(prediction.shape)
+        self.weight = self.weight.to(prediction.device)
         # Calc weighted cross entropy loss
         loss = - (self.weight * label * torch.log_softmax(prediction, dim=-1)).mean()
         return loss
