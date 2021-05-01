@@ -15,13 +15,14 @@ class PhysioNetDataset(Dataset):
 
     def __init__(self, ecg_leads: List[np.ndarray], ecg_labels: List[str],
                  augmentation_pipeline: nn.Module = nn.Identity(), spectrogram_length: int = 80,
-                 ecg_sequence_length: int = 18000) -> None:
+                 spectrogram_shape: Tuple[int, int] = (128, 128), ecg_sequence_length: int = 18000) -> None:
         """
         Constructor method
         :param ecg_leads: (List[np.ndarray]) ECG data as list of numpy arrays
         :param ecg_labels: (List[str]) ECG labels as list of strings (N, O, A, ~)
         :param augmentation_pipeline: (nn.Module) Augmentation pipeline
         :param spectrogram_length: (int) Fixed spectrogram length (achieved by zero padding)
+        :param spectrogram_shape: (Tuple[int, int]) Final size of the spectrogram
         :param ecg_sequence_length: (int) Fixed length of sequence
         """
         # Call super constructor
@@ -32,6 +33,7 @@ class PhysioNetDataset(Dataset):
         assert isinstance(augmentation_pipeline, nn.Module), "Augmentation pipeline must be a torch.nn.Module."
         assert isinstance(spectrogram_length, int) and spectrogram_length > 0, \
             "Spectrogram length must be a positive integer."
+        assert isinstance(spectrogram_shape, tuple), "Spectrogram shape must be a tuple of ints"
         assert isinstance(ecg_sequence_length, int) and ecg_sequence_length > 0, \
             "ECG sequence length must be a positive integer"
         # Save parameters
@@ -51,6 +53,7 @@ class PhysioNetDataset(Dataset):
         self.augmentation_pipeline = augmentation_pipeline
         self.spectrogram_length = spectrogram_length
         self.ecg_sequence_length = ecg_sequence_length
+        self.spectrogram_shape = spectrogram_shape
 
     def __len__(self) -> int:
         """
@@ -71,11 +74,14 @@ class PhysioNetDataset(Dataset):
         # Apply augmentations
         ecg_lead = self.augmentation_pipeline(ecg_lead)
         # Compute spectrogram of ecg_lead
-        _, _, spectrogram = scipy.signal.spectrogram(x=ecg_lead.numpy(), return_onesided=False)
-        spectrogram = torch.from_numpy(spectrogram).permute(1, 0)
+        f, t, spectrogram = scipy.signal.spectrogram(x=ecg_lead.numpy(), fs=600)
+        spectrogram = torch.from_numpy(spectrogram).log()
         # Pad spectrogram to the desired shape
         spectrogram = F.pad(spectrogram, pad=(0, self.spectrogram_length - spectrogram.shape[-1]),
                             value=0., mode="constant")
+        # Reshape spectrogram
+        spectrogram = F.interpolate(spectrogram[None, None],
+                                    size=self.spectrogram_shape, mode="bicubic", align_corners=False)[0, 0]
         # Pad ecg lead
         ecg_lead = F.pad(ecg_lead, pad=(0, self.ecg_sequence_length - ecg_lead.shape[0]), value=0., mode="constant")
         # Label to one hot encoding
