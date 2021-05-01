@@ -332,8 +332,7 @@ class AxialAttention2dBlock(nn.Module):
     """
 
     def __init__(self, in_channels: int, out_channels: int, span: Union[int, Tuple[int, int]],
-                 latent_vector_features: int, groups: int = 4,
-                 normalization: Type[nn.Module] = nn.BatchNorm2d, activation: Type[nn.Module] = nn.PReLU,
+                 latent_vector_features: int, groups: int = 4, activation: Type[nn.Module] = nn.PReLU,
                  downscale: bool = True, dropout: float = 0.0) -> None:
         """
         Constructor method
