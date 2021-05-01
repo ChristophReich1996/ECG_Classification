@@ -22,14 +22,24 @@ class ECGCNN(nn.Module):
         spectrogram_encoder_channels: Tuple[Tuple[int, int], ...] = config["spectrogram_encoder_channels"]
         latent_vector_features: int = config["latent_vector_features"]
         classes: int = config["classes"]
+        activation: Type[nn.Module] = config["activation"]
+        convolution1d: Type[nn.Module] = config["convolution1d"]
+        convolution2d: Type[nn.Module] = config["convolution2d"]
+        normalization1d: Type[nn.Module] = config["normalization1d"]
         # Init ecg encoder
         self.ecg_encoder = nn.Sequential(
-            *[Conv1dResidualBlock(in_channels=ecg_encoder_channel[0], out_channels=ecg_encoder_channel[1]) for
+            *[Conv1dResidualBlock(in_channels=ecg_encoder_channel[0],
+                                  out_channels=ecg_encoder_channel[1],
+                                  activation=activation,
+                                  normalization=normalization1d,
+                                  convolution=convolution1d) for
               ecg_encoder_channel in ecg_encoder_channels])
         # Init spectrogram encoder
         self.spectrogram_encoder = nn.ModuleList([Conv2dResidualBlock(in_channels=spectrogram_encoder_channel[0],
                                                                       out_channels=spectrogram_encoder_channel[1],
-                                                                      latent_vector_features=latent_vector_features) for
+                                                                      latent_vector_features=latent_vector_features,
+                                                                      convolution=convolution2d,
+                                                                      activation=activation) for
                                                   spectrogram_encoder_channel in spectrogram_encoder_channels])
         # Init final linear layer
         self.linear_layer = nn.Linear(
@@ -76,12 +86,16 @@ class ECGAttNet(nn.Module):
         spectrogram_encoder_spans: Tuple[int, ...] = config["spectrogram_encoder_spans"]
         latent_vector_features: int = config["latent_vector_features"]
         classes: int = config["classes"]
+        activation: Type[nn.Module] = config["activation"]
+        normalization1d: Type[nn.Module] = config["normalization1d"]
         # Init ecg encoder
         self.ecg_encoder = nn.Sequential(
             *[AxialAttention1dBlock(
                 in_channels=ecg_encoder_channel[0],
                 out_channels=ecg_encoder_channel[1],
-                span=ecg_encoder_span) for ecg_encoder_channel, ecg_encoder_span in
+                span=ecg_encoder_span,
+                activation=activation,
+                normalization=normalization1d) for ecg_encoder_channel, ecg_encoder_span in
                 zip(ecg_encoder_channels, ecg_encoder_spans)])
         # Init spectrogram encoder
         self.spectrogram_encoder = nn.ModuleList(
@@ -89,7 +103,8 @@ class ECGAttNet(nn.Module):
                 in_channels=spectrogram_encoder_channel[0],
                 out_channels=spectrogram_encoder_channel[1],
                 span=spectrogram_encoder_span,
-                latent_vector_features=latent_vector_features) for
+                latent_vector_features=latent_vector_features,
+                activation=activation) for
                 spectrogram_encoder_channel, spectrogram_encoder_span in
                 zip(spectrogram_encoder_channels, spectrogram_encoder_spans)])
         # Init final linear layer
@@ -124,7 +139,7 @@ class Conv1dResidualBlock(nn.Module):
     """
 
     def __init__(self, in_channels: int, out_channels: int, kernel_size: int = 3, stride=1, padding: int = 1,
-                 bias: bool = False, convolution: Type[nn.Conv1d] = nn.Conv1d,
+                 bias: bool = False, convolution: Type[nn.Module] = nn.Conv1d,
                  normalization: Type[nn.Module] = nn.BatchNorm1d, activation: Type[nn.Module] = nn.PReLU,
                  pooling: Tuple[nn.Module] = nn.AvgPool1d) -> None:
         """
@@ -183,7 +198,7 @@ class Conv2dResidualBlock(nn.Module):
 
     def __init__(self, in_channels: int, out_channels: int, latent_vector_features: int = 256,
                  kernel_size: Tuple[int, int] = (3, 3), stride: Tuple[int, int] = (1, 1),
-                 padding: Tuple[int, int] = (1, 1), bias: bool = False, convolution: Type[nn.Conv2d] = nn.Conv2d,
+                 padding: Tuple[int, int] = (1, 1), bias: bool = False, convolution: Type[nn.Module] = nn.Conv2d,
                  activation: Type[nn.Module] = nn.PReLU, pooling: Tuple[nn.Module] = nn.AvgPool2d) -> None:
         """
         Constructor method
@@ -498,7 +513,7 @@ class AxialAttention1dBlock(nn.Module):
     """
 
     def __init__(self, in_channels: int, out_channels: int, span: int, groups: int = 4,
-                 activation: Type[nn.Module] = nn.PReLU, normalization: Tuple[nn.Module] = nn.BatchNorm1d,
+                 activation: Type[nn.Module] = nn.PReLU, normalization: Type[nn.Module] = nn.BatchNorm1d,
                  downscale: bool = True, dropout: float = 0.0) -> None:
         """
         Constructor method
