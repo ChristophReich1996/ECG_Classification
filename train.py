@@ -1,25 +1,21 @@
-# -*- coding: utf-8 -*-
-"""
-Beispiel Code und  Spielwiese
-"""
+import torch
 
-import csv
-import scipy.io as sio
-import matplotlib.pyplot as plt
-import numpy as np
-from ecgdetectors import Detectors
-import os
 from wettbewerb import load_references
 
-from ecg_classification import PhysioNetDataset
+from ecg_classification import PhysioNetDataset, ECGCNN
 
 if __name__ == '__main__':
 
     ecg_leads, ecg_labels, fs, ecg_names = load_references("data/training/")
     dataset = PhysioNetDataset(ecg_leads=ecg_leads, ecg_labels=ecg_labels)
+    network = ECGCNN()
 
-    for ecg_lead, spectrogram, label in dataset:
-        print(ecg_lead.shape, spectrogram.shape, label.shape)
+    print(sum([p.numel() for p in network.parameters()]))
+
+    with torch.no_grad():
+        for ecg_lead, spectrogram, label in dataset:
+            output = network(ecg_lead=ecg_lead[None], spectrogram=spectrogram[None])
+            print(output.shape)
+            exit(22)
 
     exit(22)
-
