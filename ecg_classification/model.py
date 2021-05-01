@@ -133,6 +133,71 @@ class ECGAttNet(nn.Module):
             return output.softmax(dim=-1)
 
 
+class ECGInvNet(nn.Module):
+    """
+    This class implements a involution network for ECG classification.
+    """
+
+    def __init__(self, config: Dict[str, Any]) -> None:
+        """
+        Constructor method
+        :param config: (Dict[str, Any]) Dict with network hyperparameters
+        """
+        # Call super constructor
+        super(ECGInvNet, self).__init__()
+        # Get parameters
+        ecg_encoder_channels: Tuple[Tuple[int, int], ...] = config["ecg_encoder_channels"]
+        ecg_encoder_spans: Tuple[int, ...] = config["ecg_encoder_spans"]
+        spectrogram_encoder_channels: Tuple[Tuple[int, int], ...] = config["spectrogram_encoder_channels"]
+        latent_vector_features: int = config["latent_vector_features"]
+        classes: int = config["classes"]
+        activation: Type[nn.Module] = config["activation"]
+        convolution2d: Type[nn.Module] = config["convolution2d"]
+        normalization1d: Type[nn.Module] = config["normalization1d"]
+        # Init ecg encoder
+        self.ecg_encoder = nn.Sequential(
+            *[AxialAttention1dBlock(
+                in_channels=ecg_encoder_channel[0],
+                out_channels=ecg_encoder_channel[1],
+                span=ecg_encoder_span,
+                activation=activation,
+                normalization=normalization1d) for ecg_encoder_channel, ecg_encoder_span in
+                zip(ecg_encoder_channels, ecg_encoder_spans)])
+        # Init spectrogram encoder
+        self.spectrogram_encoder = nn.ModuleList(
+            [Conv2dResidualBlock(
+                in_channels=spectrogram_encoder_channel[0],
+                out_channels=spectrogram_encoder_channel[1],
+                latent_vector_features=latent_vector_features,
+                activation=activation,
+                convolution=convolution2d) for
+                spectrogram_encoder_channel in spectrogram_encoder_channels])
+        # Init final linear layer
+        self.linear_layer = nn.Linear(
+            in_features=(128 // 2 ** (len(spectrogram_encoder_channels))) ** 2 * spectrogram_encoder_channels[-1][-1],
+            out_features=classes, bias=True)
+
+    def forward(self, ecg_lead: torch.Tensor, spectrogram: torch.Tensor) -> torch.Tensor:
+        """
+        Forward pass
+        :param ecg_lead: (torch.Tensor) ECG lead tensor
+        :param spectrogram: (torch.Tensor) Spectrogram tensor
+        :return: (torch.Tensor) Output prediction
+        """
+        # Encode ECG lead
+        latent_vector = self.ecg_encoder(ecg_lead).flatten(start_dim=1)
+        # Forward pass spectrogram encoder
+        for block in self.spectrogram_encoder:
+            spectrogram = block(spectrogram, latent_vector)
+        # Final linear layer
+        output = self.linear_layer(spectrogram.flatten(start_dim=1))
+        # Apply softmax if not training mode
+        if self.training:
+            return output
+        else:
+            return output.softmax(dim=-1)
+
+
 class Conv1dResidualBlock(nn.Module):
     """
     This class implements a simple residal block with 1d convolutions.
@@ -229,8 +294,9 @@ class Conv2dResidualBlock(nn.Module):
         self.main_mapping_norm_2 = ConditionalBatchNormalization(num_features=out_channels,
                                                                  latent_vector_features=latent_vector_features)
         # Init residual mapping
-        self.residual_mapping = convolution(in_channels=in_channels, out_channels=out_channels, kernel_size=1, stride=1,
-                                            padding=0, bias=False) if in_channels != out_channels else nn.Identity()
+        self.residual_mapping = convolution(in_channels=in_channels, out_channels=out_channels, kernel_size=(1, 1),
+                                            stride=(1, 1), padding=(0, 0),
+                                            bias=False) if in_channels != out_channels else nn.Identity()
         # Init final activation
         self.final_activation = activation()
         # Init downsampling layer
