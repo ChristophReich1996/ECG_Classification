@@ -3,6 +3,7 @@ matplotlib>=3.3.0
 numpy>=1.18.5
 py-ecg-detectors>=1.0.2
 pandas>=1.1.0
-pytorch>=1.7.1
+pytorch>=1.7.0
 tqdm>=4.60.0
 torchaudio>=0.7.0
+git+https://github.com/ChristophReich1996/Involution
