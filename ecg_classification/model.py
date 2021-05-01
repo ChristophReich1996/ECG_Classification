@@ -356,7 +356,7 @@ class ConditionalBatchNormalization(nn.Module):
         # Predict parameters
         scale, bias = self.linear_mapping(latent_vector).chunk(chunks=2, dim=-1)
         # Apply parameters
-        output = scale.view(1, -1, 1, 1) * output + bias.view(1, -1, 1, 1)
+        output = scale.reshape(1, -1, 1, 1) * output + bias.reshape(1, -1, 1, 1)
         return output
 
 
