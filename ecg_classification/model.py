@@ -8,14 +8,20 @@ class ECGCNN(nn.Module):
     """
     This class implements a CNN for ECG classification.
     """
-    pass
+
+    def __init__(self) -> None:
+        # Call super constructor
+        super(ECGCNN, self).__init__()
 
 
 class ECGAttNet(nn.Module):
     """
     This class implements a attention network for ECG classification.
     """
-    pass
+
+    def __init__(self) -> None:
+        # Call super constructor
+        super(ECGAttNet, self).__init__()
 
 
 class Conv1dResidualBlock(nn.Module):
@@ -27,6 +33,19 @@ class Conv1dResidualBlock(nn.Module):
                  bias: bool = False, convolution: Type[nn.Conv1d] = nn.Conv1d,
                  normalization: Type[nn.Module] = nn.BatchNorm1d, activation: Type[nn.Module] = nn.PReLU,
                  pooling: Tuple[nn.Module] = nn.AvgPool1d) -> None:
+        """
+        Constructor method
+        :param in_channels: (int) Number of input channels
+        :param out_channels: (int) Number of output channels
+        :param kernel_size: (int) Kernel size to be used in convolution
+        :param stride: (int) Stride factor to be used in convolution
+        :param padding: (int) Padding to be used in convolution
+        :param bias: (int) If true bias is utilized in each convolution
+        :param convolution: (Type[nn.Conv1d]) Type of convolution to be utilized
+        :param normalization: (Type[nn.Module]) Type of normalization to be utilized
+        :param activation: (Type[nn.Module]) Type of activation to be utilized
+        :param pooling: (Type[nn.Module]) Type of pooling layer to be utilized
+        """
         # Call super constructor
         super(Conv1dResidualBlock, self).__init__()
         # Init main mapping
@@ -73,6 +92,19 @@ class Conv2dResidualBlock(nn.Module):
                  bias: bool = False, convolution: Type[nn.Conv2d] = nn.Conv2d,
                  normalization: Type[nn.Module] = nn.BatchNorm2d, activation: Type[nn.Module] = nn.PReLU,
                  pooling: Tuple[nn.Module] = nn.AvgPool2d) -> None:
+        """
+        Constructor method
+        :param in_channels: (int) Number of input channels
+        :param out_channels: (int) Number of output channels
+        :param kernel_size: (Tuple[int, int]) Kernel size to be used in convolution
+        :param stride: (Tuple[int, int]) Stride factor to be used in convolution
+        :param padding: (Tuple[int, int]) Padding to be used in convolution
+        :param bias: (int) If true bias is utilized in each convolution
+        :param convolution: (Type[nn.Conv2d]) Type of convolution to be utilized
+        :param normalization: (Type[nn.Module]) Type of normalization to be utilized
+        :param activation: (Type[nn.Module]) Type of activation to be utilized
+        :param pooling: (Type[nn.Module]) Type of pooling layer to be utilized
+        """
         # Call super constructor
         super(Conv2dResidualBlock, self).__init__()
         # Init main mapping
