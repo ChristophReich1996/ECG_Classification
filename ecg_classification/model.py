@@ -57,9 +57,55 @@ class ECGAttNet(nn.Module):
     This class implements a attention network for ECG classification.
     """
 
-    def __init__(self) -> None:
+    def __init__(self,
+                 ecg_encoder_channels: Tuple[Tuple[int, int], ...] = (
+                         (80, 128), (128, 256), (256, 256), (256, 128), (128, 32)),
+                 ecg_encoder_spans: Tuple[int, ...] = (256, 128, 64, 32, 16),
+                 spectrogram_encoder_channels: Tuple[Tuple[int, int], ...] = (
+                         (1, 16), (16, 32), (32, 64), (64, 128), (128, 256)),
+                 spectrogram_encoder_spans: Tuple[int, ...] = (128, 64, 32, 16, 8),
+                 classes: int = 4) -> None:
         # Call super constructor
         super(ECGAttNet, self).__init__()
+        # Init ecg encoder
+        self.ecg_encoder = nn.Sequential(
+            *[AxialAttention1dBlock(
+                in_channels=ecg_encoder_channel[0],
+                out_channels=ecg_encoder_channel[1],
+                span=ecg_encoder_span) for ecg_encoder_channel, ecg_encoder_span in
+                zip(ecg_encoder_channels, ecg_encoder_spans)])
+        # Init spectrogram encoder
+        self.spectrogram_encoder = nn.ModuleList(
+            [AxialAttention2dBlock(
+                in_channels=spectrogram_encoder_channel[0],
+                out_channels=spectrogram_encoder_channel[1],
+                span=spectrogram_encoder_span) for
+                spectrogram_encoder_channel, spectrogram_encoder_span in
+                zip(spectrogram_encoder_channels, spectrogram_encoder_spans)])
+        # Init final linear layer
+        self.linear_layer = nn.Linear(
+            in_features=(128 // 2 ** (len(spectrogram_encoder_channels))) ** 2 * spectrogram_encoder_channels[-1][-1],
+            out_features=classes, bias=True)
+
+    def forward(self, ecg_lead: torch.Tensor, spectrogram: torch.Tensor) -> torch.Tensor:
+        """
+        Forward pass
+        :param ecg_lead: (torch.Tensor) ECG lead tensor
+        :param spectrogram: (torch.Tensor) Spectrogram tensor
+        :return: (torch.Tensor) Output prediction
+        """
+        # Encode ECG lead
+        latent_vector = self.ecg_encoder(ecg_lead).flatten(start_dim=1)
+        # Forward pass spectrogram encoder
+        for block in self.spectrogram_encoder:
+            spectrogram = block(spectrogram, latent_vector)
+        # Final linear layer
+        output = self.linear_layer(spectrogram.flatten(start_dim=1))
+        # Apply softmax if not training mode
+        if self.training:
+            return output
+        else:
+            return output.softmax(dim=-1)
 
 
 class Conv1dResidualBlock(nn.Module):
@@ -367,7 +413,7 @@ class AxialAttention2dBlock(nn.Module):
     """
 
     def __init__(self, in_channels: int, out_channels: int, span: Union[int, Tuple[int, int]],
-                 latent_vector_features: int, groups: int = 4, activation: Type[nn.Module] = nn.PReLU,
+                 latent_vector_features: int = 256, groups: int = 4, activation: Type[nn.Module] = nn.PReLU,
                  downscale: bool = True, dropout: float = 0.0) -> None:
         """
         Constructor method
