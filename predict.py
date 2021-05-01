@@ -53,4 +53,3 @@ def predict_labels(model_name, ecg_leads, fs, ecg_names):
 
     # ------------------------------------------------------------------------------
     return predictions  # Liste von Tupels im Format (ecg_name,label) - Muss unverändert bleiben!
-
