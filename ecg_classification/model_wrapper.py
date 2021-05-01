@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 import torch
 import torch.nn as nn
@@ -16,7 +16,7 @@ class ModelWrapper(object):
     """
 
     def __init__(self,
-                 network: nn.Module,
+                 network: Union[nn.Module, nn.DataParallel],
                  optimizer: Optimizer,
                  loss_function: nn.Module,
                  training_dataset: DataLoader,
@@ -26,7 +26,7 @@ class ModelWrapper(object):
                  device: str = "cuda") -> None:
         """
         Constructor method
-        :param network: (nn.Module) Network to be trained
+        :param network: (Union[nn.Module, nn.DataParallel]) Network to be trained
         :param optimizer: (Optimizer) Optimizer module
         :param loss_function: (nn.Module) Loss function
         :param training_dataset: (DataLoader) Training dataset
@@ -87,6 +87,8 @@ class ModelWrapper(object):
                 loss = self.loss_function(predictions, labels)
                 # Calc backward pass
                 loss.backward()
+                # Perform optimization step
+                self.optimizer.step()
                 # Show loss in progress bar
                 self.progress_bar.set_description(
                     "Epoch {}/{} L={:.4f} IoU={:.4f}".format(self.epoch + 1, epochs, loss.item(),
