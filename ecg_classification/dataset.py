@@ -15,7 +15,8 @@ class PhysioNetDataset(Dataset):
 
     def __init__(self, ecg_leads: List[np.ndarray], ecg_labels: List[str],
                  augmentation_pipeline: nn.Module = nn.Identity(), spectrogram_length: int = 80,
-                 spectrogram_shape: Tuple[int, int] = (128, 128), ecg_sequence_length: int = 18000) -> None:
+                 spectrogram_shape: Tuple[int, int] = (128, 128), ecg_sequence_length: int = 18000,
+                 ecg_window_size: int = 256, ecg_step: int = 256 - 32) -> None:
         """
         Constructor method
         :param ecg_leads: (List[np.ndarray]) ECG data as list of numpy arrays
@@ -24,6 +25,8 @@ class PhysioNetDataset(Dataset):
         :param spectrogram_length: (int) Fixed spectrogram length (achieved by zero padding)
         :param spectrogram_shape: (Tuple[int, int]) Final size of the spectrogram
         :param ecg_sequence_length: (int) Fixed length of sequence
+        :param ecg_window_size: (int) Window size to be applied during unfolding
+        :param ecg_step: (int) Step size of unfolding
         """
         # Call super constructor
         super(PhysioNetDataset, self).__init__()
@@ -33,9 +36,12 @@ class PhysioNetDataset(Dataset):
         assert isinstance(augmentation_pipeline, nn.Module), "Augmentation pipeline must be a torch.nn.Module."
         assert isinstance(spectrogram_length, int) and spectrogram_length > 0, \
             "Spectrogram length must be a positive integer."
-        assert isinstance(spectrogram_shape, tuple), "Spectrogram shape must be a tuple of ints"
+        assert isinstance(spectrogram_shape, tuple), "Spectrogram shape must be a tuple of ints."
         assert isinstance(ecg_sequence_length, int) and ecg_sequence_length > 0, \
-            "ECG sequence length must be a positive integer"
+            "ECG sequence length must be a positive integer."
+        assert isinstance(ecg_window_size, int) and ecg_window_size > 0, "ECG window size must be a positive integer."
+        assert isinstance(ecg_step, int) and ecg_step > 0 and ecg_step < ecg_window_size, \
+            "ECG step must be a positive integer but must be smaller than the window size."
         # Save parameters
         self.ecg_leads = [torch.from_numpy(data_sample) for data_sample in ecg_leads]
         self.ecg_labels = []
@@ -54,6 +60,8 @@ class PhysioNetDataset(Dataset):
         self.spectrogram_length = spectrogram_length
         self.ecg_sequence_length = ecg_sequence_length
         self.spectrogram_shape = spectrogram_shape
+        self.ecg_window_size = ecg_window_size
+        self.ecg_step = ecg_step
 
     def __len__(self) -> int:
         """
@@ -84,6 +92,8 @@ class PhysioNetDataset(Dataset):
                                     size=self.spectrogram_shape, mode="bicubic", align_corners=False)[0, 0]
         # Pad ecg lead
         ecg_lead = F.pad(ecg_lead, pad=(0, self.ecg_sequence_length - ecg_lead.shape[0]), value=0., mode="constant")
+        # Unfold ecg lead
+        ecg_lead = ecg_lead.unfold(dimension=-1, size=self.ecg_window_size, step=self.ecg_step)
         # Label to one hot encoding
         ecg_label = F.one_hot(ecg_label, num_classes=4)
-        return ecg_lead.unsqueeze(dim=0).float(), spectrogram.unsqueeze(dim=0).float(), ecg_label
+        return ecg_lead.float(), spectrogram.unsqueeze(dim=0).float(), ecg_label
