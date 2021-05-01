@@ -78,4 +78,6 @@ class PhysioNetDataset(Dataset):
                             value=0., mode="constant")
         # Pad ecg lead
         ecg_lead = F.pad(ecg_lead, pad=(0, self.ecg_sequence_length - ecg_lead.shape[0]), value=0., mode="constant")
-        return ecg_lead.float(), spectrogram.unsqueeze(dim=0).float(), ecg_label.long()
+        # Label to one hot encoding
+        ecg_label = F.one_hot(ecg_label, num_classes=4)
+        return ecg_lead.unsqueeze(dim=0).float(), spectrogram.unsqueeze(dim=0).float(), ecg_label
