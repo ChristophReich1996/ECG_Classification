@@ -62,8 +62,6 @@ class SoftmaxFocalLoss(nn.Module):
         :param label: (torch.Tensor) Label as long index
         :return: (torch.Tensor) Loss value
         """
-        # Weight to device
-        self.weight = self.weight.to(prediction.shape)
         # Apply softmax activation
         prediction_softmax = torch.softmax(prediction, dim=-1) + 1e-08
         # Compute focal loss
