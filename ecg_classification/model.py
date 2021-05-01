@@ -331,13 +331,15 @@ class AxialAttention2dBlock(nn.Module):
     https://arxiv.org/pdf/2003.07853.pdf
     """
 
-    def __init__(self, in_channels: int, out_channels: int, span: Union[int, Tuple[int, int]], groups: int = 4,
+    def __init__(self, in_channels: int, out_channels: int, span: Union[int, Tuple[int, int]],
+                 latent_vector_features: int, groups: int = 4,
                  normalization: Type[nn.Module] = nn.BatchNorm2d, activation: Type[nn.Module] = nn.PReLU,
                  downscale: bool = True, dropout: float = 0.0) -> None:
         """
         Constructor method
         :param in_channels: (int) Input channels to be employed
         :param out_channels: (int) Output channels to be utilized
+        :param latent_vector_features: (int) Number of latent feautres
         :param span: (Union[int, Tuple[int, int, int]]) Spans to be used in attention layers
         :param groups: (int) Multi head attention groups to be used
         :param normalization: (Type[nn.Module]) Type of normalization to be used
@@ -350,12 +352,12 @@ class AxialAttention2dBlock(nn.Module):
         # Span to tuple
         span = span if isinstance(span, tuple) else (span, span)
         # Init input mapping
-        self.input_mapping = nn.Sequential(
-            nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
-                      kernel_size=(1, 1), padding=(0, 0), stride=(1, 1), bias=False),
-            normalization(num_features=out_channels, affine=True, track_running_stats=True),
-            activation()
-        )
+        self.input_mapping_conv = nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
+                                            kernel_size=(1, 1), padding=(0, 0), stride=(1, 1), bias=False)
+        self.input_mapping_norm = ConditionalBatchNormalization(num_features=out_channels,
+                                                                latent_vector_features=latent_vector_features,
+                                                                track_running_stats=True)
+        self.input_mapping_act = activation()
         # Init axial attention mapping
         self.axial_attention_mapping = nn.Sequential(
             AxialAttention2d(in_channels=out_channels, out_channels=out_channels, dim=0, span=span[0], groups=groups),
@@ -364,11 +366,11 @@ class AxialAttention2dBlock(nn.Module):
         # Init dropout layer
         self.dropout = nn.Dropout(p=dropout, inplace=True)
         # Init output mapping
-        self.output_mapping = nn.Sequential(
-            nn.Conv2d(in_channels=out_channels, out_channels=out_channels,
-                      kernel_size=(1, 1), padding=(0, 0), stride=(1, 1), bias=False),
-            normalization(num_features=out_channels, affine=True, track_running_stats=True)
-        )
+        self.output_mapping_conv = nn.Conv2d(in_channels=out_channels, out_channels=out_channels,
+                                             kernel_size=(1, 1), padding=(0, 0), stride=(1, 1), bias=False)
+        self.output_mapping_norm = ConditionalBatchNormalization(num_features=out_channels,
+                                                                 latent_vector_features=latent_vector_features,
+                                                                 track_running_stats=True)
         # Init residual mapping
         self.residual_mapping = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=(1, 1),
                                           padding=(0, 0), stride=(1, 1),
@@ -378,20 +380,20 @@ class AxialAttention2dBlock(nn.Module):
         # Init pooling layer for downscaling the spatial dimensions
         self.pooling_layer = nn.AvgPool2d(kernel_size=(2, 2), stride=(2, 2)) if downscale else nn.Identity()
 
-    def forward(self, input: torch.Tensor) -> torch.Tensor:
+    def forward(self, input: torch.Tensor, latent_vector: torch.Tensor) -> torch.Tensor:
         """
         Forward pass
         :param input: (torch.Tensor) Input volume tensor of the shape [batch size, in channels, h, w, d]
         :return: (torch.Tensor) Output volume tensor of the shape [batch size, out channels, h / 2, w / 2, d / 2]
         """
         # Perform input mapping
-        output = self.input_mapping(input)
+        output = self.input_mapping_act(self.input_mapping_norm(self.input_mapping_conv(input), latent_vector))
         # Perform attention
         output = self.axial_attention_mapping(output)
         # Perform dropout
         output = self.dropout(output)
         # Perform output mapping
-        output = self.output_mapping(self.pooling_layer(output))
+        output = self.output_mapping_norm(self.output_mapping_conv(self.pooling_layer(output)), latent_vector)
         # Perform residual mapping
         output = output + self.pooling_layer(self.residual_mapping(input))
         # Perform final activation
