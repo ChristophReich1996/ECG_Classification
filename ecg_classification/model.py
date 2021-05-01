@@ -325,6 +325,41 @@ class AxialAttention2d(nn.Module):
         return output
 
 
+class AxialAttention1d(AxialAttention2d):
+    """
+    This class implements the axial attention operation for 1d vectors.
+    """
+
+    def __init__(self, in_channels: int, out_channels: int, dim: int, span: int, groups: int = 8) -> None:
+        """
+        Constructor method
+        :param in_channels: (int) Input channels to be employed
+        :param out_channels: (int) Output channels to be utilized
+        :param dim: (int) Dimension attention is applied to (0 = height, 1 = width, 2 = depth)
+        :param span: (int) Span of attention to be used
+        :param groups: (int) Multi head attention groups to be used
+        """
+        # Check parameters
+        assert dim in [0], "Illegal argument for dimension"
+        # Call super constructor
+        super(AxialAttention1d, self).__init__(in_channels=in_channels, out_channels=out_channels, dim=dim, span=span,
+                                                groups=groups)
+
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        """
+        Forward pass
+        :param input: (torch.Tensor) Input tensor of the shape [batch size, in channels, h, w]
+        :return: (torch.Tensor) Output tensor of the shape [batch size, out channels, h, w]
+        """
+        # Reshape tensor to use 2d axial-attention
+        input = input.unsqueeze(dim=-1)
+        # Perform axial-attention
+        output = super().forward(input=input)
+        # Reshape output to get desired 2d tensor
+        output = output.squeeze(dim=-1)
+        return output
+
+
 class AxialAttention2dBlock(nn.Module):
     """
     This class implements the axial attention block proposed in:
