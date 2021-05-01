@@ -1,4 +1,4 @@
-from typing import Tuple, Type, Union
+from typing import Any, Dict, Tuple, Type, Union
 
 import torch
 import torch.nn as nn
@@ -10,21 +10,26 @@ class ECGCNN(nn.Module):
     This class implements a CNN for ECG classification.
     """
 
-    def __init__(self,
-                 ecg_encoder_channels: Tuple[Tuple[int, int]] = (
-                         (80, 128), (128, 256), (256, 256), (256, 128), (128, 32)),
-                 spectrogram_encoder_channels: Tuple[Tuple[int, int]] = (
-                         (1, 16), (16, 32), (32, 64), (64, 128), (128, 256)),
-                 classes: int = 4) -> None:
+    def __init__(self, config: Dict[str, Any]) -> None:
+        """
+        Constructor method
+        :param config: (Dict[str, Any]) Dict with network hyperparameters
+        """
         # Call super constructor
         super(ECGCNN, self).__init__()
+        # Get parameters
+        ecg_encoder_channels: Tuple[Tuple[int, int], ...] = config["ecg_encoder_channels"]
+        spectrogram_encoder_channels: Tuple[Tuple[int, int], ...] = config["spectrogram_encoder_channels"]
+        latent_vector_features: int = config["latent_vector_features"]
+        classes: int = config["classes"]
         # Init ecg encoder
         self.ecg_encoder = nn.Sequential(
             *[Conv1dResidualBlock(in_channels=ecg_encoder_channel[0], out_channels=ecg_encoder_channel[1]) for
               ecg_encoder_channel in ecg_encoder_channels])
         # Init spectrogram encoder
         self.spectrogram_encoder = nn.ModuleList([Conv2dResidualBlock(in_channels=spectrogram_encoder_channel[0],
-                                                                      out_channels=spectrogram_encoder_channel[1]) for
+                                                                      out_channels=spectrogram_encoder_channel[1],
+                                                                      latent_vector_features=latent_vector_features) for
                                                   spectrogram_encoder_channel in spectrogram_encoder_channels])
         # Init final linear layer
         self.linear_layer = nn.Linear(
@@ -57,16 +62,20 @@ class ECGAttNet(nn.Module):
     This class implements a attention network for ECG classification.
     """
 
-    def __init__(self,
-                 ecg_encoder_channels: Tuple[Tuple[int, int], ...] = (
-                         (80, 128), (128, 256), (256, 256), (256, 128), (128, 32)),
-                 ecg_encoder_spans: Tuple[int, ...] = (256, 128, 64, 32, 16),
-                 spectrogram_encoder_channels: Tuple[Tuple[int, int], ...] = (
-                         (1, 16), (16, 32), (32, 64), (64, 128), (128, 256)),
-                 spectrogram_encoder_spans: Tuple[int, ...] = (128, 64, 32, 16, 8),
-                 classes: int = 4) -> None:
+    def __init__(self, config: Dict[str, Any]) -> None:
+        """
+        Constructor method
+        :param config: (Dict[str, Any]) Dict with network hyperparameters
+        """
         # Call super constructor
         super(ECGAttNet, self).__init__()
+        # Get parameters
+        ecg_encoder_channels: Tuple[Tuple[int, int], ...] = config["ecg_encoder_channels"]
+        ecg_encoder_spans: Tuple[int, ...] = config["ecg_encoder_spans"]
+        spectrogram_encoder_channels: Tuple[Tuple[int, int], ...] = config["spectrogram_encoder_channels"]
+        spectrogram_encoder_spans: Tuple[int, ...] = config["spectrogram_encoder_spans"]
+        latent_vector_features: int = config["latent_vector_features"]
+        classes: int = config["classes"]
         # Init ecg encoder
         self.ecg_encoder = nn.Sequential(
             *[AxialAttention1dBlock(
@@ -79,7 +88,8 @@ class ECGAttNet(nn.Module):
             [AxialAttention2dBlock(
                 in_channels=spectrogram_encoder_channel[0],
                 out_channels=spectrogram_encoder_channel[1],
-                span=spectrogram_encoder_span) for
+                span=spectrogram_encoder_span,
+                latent_vector_features=latent_vector_features) for
                 spectrogram_encoder_channel, spectrogram_encoder_span in
                 zip(spectrogram_encoder_channels, spectrogram_encoder_spans)])
         # Init final linear layer

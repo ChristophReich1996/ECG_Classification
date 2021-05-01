@@ -2,13 +2,13 @@ import torch
 
 from wettbewerb import load_references
 
-from ecg_classification import PhysioNetDataset, ECGCNN, ECGAttNet
+from ecg_classification import PhysioNetDataset, ECGCNN, ECGAttNet, ECGCNN_CONFIG, ECGAttNet_CONFIG
 
 if __name__ == '__main__':
 
     ecg_leads, ecg_labels, fs, ecg_names = load_references("data/training/")
     dataset = PhysioNetDataset(ecg_leads=ecg_leads, ecg_labels=ecg_labels)
-    network = ECGAttNet()
+    network = ECGAttNet(config=ECGAttNet_CONFIG)
 
     print(sum([p.numel() for p in network.parameters()]))
 
