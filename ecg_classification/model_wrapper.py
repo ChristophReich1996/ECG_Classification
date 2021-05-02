@@ -99,6 +99,23 @@ class ModelWrapper(object):
             # Update learning rate schedule
             if self.learning_rate_schedule is not None:
                 self.learning_rate_schedule.step()
+            # Perform validation
+            if (self.epoch + 1) // validate_after_n_epochs:
+                current_validation_metric = self.validate()
+                # Check if best model
+                if current_validation_metric > best_validation_metric:
+                    best_validation_metric = current_validation_metric
+                    self.data_logger.save_model(model_sate_dict=self.network.state_dict(), name="best_model")
+            # Save model
+            if (self.epoch + 1) // save_model_after_n_epochs:
+                self.data_logger.save_model(model_sate_dict=self.network.state_dict(), name=str(self.epoch + 1))
+            # Save logs
+            self.data_logger.save()
+        # Final validation
+        current_validation_metric = self.validate()
+        # Check if best model
+        if current_validation_metric > best_validation_metric:
+            self.data_logger.save_model(model_sate_dict=self.network.state_dict(), name="best_model")
 
     @torch.no_grad()
     def validate(self, validation_metrics: Tuple[nn.Module, ...] = (F1(), Accuracy())) -> float:
@@ -137,4 +154,6 @@ class ModelWrapper(object):
         # Average metrics
         metric_results = self.data_logger.save_temp_metric(
             metric_name=["validation_loss"] + [str(validation_metric) for validation_metric in validation_metrics])
+        # Model back into training mode
+        self.network.train()
         return metric_results[-1]
