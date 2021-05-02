@@ -93,7 +93,8 @@ class PhysioNetDataset(Dataset):
             ecg_lead = (ecg_lead - ecg_lead.mean()) / (ecg_lead.std() + 1e-08)
         # Compute spectrogram of ecg_lead
         f, t, spectrogram = scipy.signal.spectrogram(x=ecg_lead.numpy(), fs=self.fs)
-        spectrogram = torch.from_numpy(spectrogram).log()
+        spectrogram = torch.from_numpy(spectrogram)
+        spectrogram = torch.log(spectrogram + 1e-05)
         # Pad spectrogram to the desired shape
         spectrogram = F.pad(spectrogram, pad=(0, self.spectrogram_length - spectrogram.shape[-1]),
                             value=0., mode="constant")
