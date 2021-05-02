@@ -61,8 +61,13 @@ if __name__ == '__main__':
 
     # Init data parallel if utlized
     network = torch.nn.DataParallel(network)
+
     # Init optimizer
     optimizer = torch_optimizer.RAdam(params=network.parameters(), lr=args.lr)
+
+    # Init learning rate schedule
+    learning_rate_schedule = torch.optim.lr_scheduler.MultiStepLR(
+        optimizer=optimizer, milestones=[1 * args.epochs // 4, 2 * args.epochs // 4, 3 * args.epochs // 4], gamma=0.1)
 
     # Init datasets
     ecg_leads, ecg_labels, fs, ecg_names = load_references(args.dataset_path)
@@ -82,7 +87,7 @@ if __name__ == '__main__':
                                  training_dataset=training_dataset,
                                  validation_dataset=validation_dataset,
                                  data_logger=Logger(),
-                                 learning_rate_schedule=None,
+                                 learning_rate_schedule=learning_rate_schedule,
                                  device=device)
 
     # Perform training
