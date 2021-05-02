@@ -1,3 +1,4 @@
+from csv import excel
 from typing import Tuple, Dict, Any
 
 import torch
@@ -212,7 +213,9 @@ if __name__ == '__main__':
     from ecg_classification import AUGMENTATION_PIPELINE_CONFIG
 
     ecg_leads, ecg_labels, fs, ecg_names = load_references("../data/training/")
-    ecg_lead = ecg_leads[21]
+
+    ecg_lead = ecg_leads[22]
+    print(ecg_lead.shape)
 
     plt.plot(ecg_lead[:4000])
     plt.show()
