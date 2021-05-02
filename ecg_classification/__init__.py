@@ -13,3 +13,5 @@ from ecg_classification.model_wrapper import ModelWrapper
 from ecg_classification.logger import Logger
 # Import splits
 from ecg_classification.config import TRAINING_SPLIT, VALIDATION_SPLIT
+# Import matrics
+from ecg_classification.metric import Accuracy, F1
