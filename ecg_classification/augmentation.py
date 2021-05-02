@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Dict, Any
 
 import torch
 import torch.nn as nn
@@ -14,17 +14,26 @@ class AugmentationPipeline(nn.Module):
     Inspired by: https://arxiv.org/pdf/2009.04398.pdf
     """
 
-    def __init__(self, ecg_sequence_length: int = 18000, p_aug: float = 0.1) -> None:
+    def __init__(self, config: Dict[str, Any]) -> None:
         """
         Constructor method
-        :param ecg_sequence_length: (int) Fixed max length of sequence
-        :param p_aug: (float) Probability of an augmentation is applied
+        :param config: (Dict[str, Any]) Config dict
         """
         # Call super constructor
         super(AugmentationPipeline, self).__init__()
         # Save parameters
-        self.ecg_sequence_length = ecg_sequence_length
-        self.p_aug = p_aug
+        self.ecg_sequence_length: int = config["ecg_sequence_length"]
+        self.p_aug: float = config["p_aug"]
+        self.fs: int = config["fs"]
+        self.scale_range: Tuple[float, float] = config["scale_range"]
+        self.drop_rate = config["drop_rate"]
+        self.interval_length: float = config["interval_length"]
+        self.max_shift: int = config["max_shift"]
+        self.resample_factors: Tuple[float, float] = config["resample_factors"]
+        self.max_offset: float = config["max_offset"]
+        self.resampling_points: int = config["resampling_points"]
+        self.max_sine_magnitude: float = config["max_sine_magnitude"]
+        self.sine_frequency_range: Tuple[float, float] = config["sine_frequency_range"]
 
     def scale(self, ecg_lead: torch.Tensor, scale_range: Tuple[float, float] = (0.9, 1.1)) -> torch.Tensor:
         """
@@ -82,12 +91,12 @@ class AugmentationPipeline(nn.Module):
         return ecg_lead
 
     def resample(self, ecg_lead: torch.Tensor, ecg_sequence_length: int = 18000,
-                 resample_factors: Tuple[int, int] = (0.8, 1.2)) -> torch.Tensor:
+                 resample_factors: Tuple[float, float] = (0.8, 1.2)) -> torch.Tensor:
         """
         Resample augmentation: Resamples the ecg lead
         :param ecg_lead: (torch.Tensor) ECG leads
         :param ecg_sequence_length: (int) Fixed max length of sequence
-        :param resample_factor: (Tuple[int, int]) Min and max value for resampling
+        :param resample_factor: (Tuple[float, float]) Min and max value for resampling
         :return: (torch.Tensor) ECG lead augmented
         """
         # Generate resampling factor
@@ -153,25 +162,28 @@ class AugmentationPipeline(nn.Module):
         """
         # Apply cut out augmentation
         if random.random() <= self.p_aug:
-            ecg_lead = self.cutout(ecg_lead)
+            ecg_lead = self.cutout(ecg_lead, interval_length=self.interval_length)
         # Apply drop augmentation
         if random.random() <= self.p_aug:
-            ecg_lead = self.drop(ecg_lead)
+            ecg_lead = self.drop(ecg_lead, drop_rate=self.drop_rate)
         # Apply random resample augmentation
         if random.random() <= self.p_aug:
-            ecg_lead = self.random_resample(ecg_lead, ecg_sequence_length=self.ecg_sequence_length)
+            ecg_lead = self.random_resample(ecg_lead, ecg_sequence_length=self.ecg_sequence_length,
+                                            max_offset=self.max_offset, resampling_points=self.resampling_points)
         # Apply resample augmentation
         if random.random() <= self.p_aug:
-            ecg_lead = self.resample(ecg_lead, ecg_sequence_length=self.ecg_sequence_length)
+            ecg_lead = self.resample(ecg_lead, ecg_sequence_length=self.ecg_sequence_length,
+                                     resample_factors=self.resample_factors)
         # Apply scale augmentation
         if random.random() <= self.p_aug:
-            ecg_lead = self.scale(ecg_lead)
+            ecg_lead = self.scale(ecg_lead, scale_range=self.scale_range)
         # Apply shift augmentation
         if random.random() <= self.p_aug:
-            ecg_lead = self.shift(ecg_lead, ecg_sequence_length=self.ecg_sequence_length)
+            ecg_lead = self.shift(ecg_lead, ecg_sequence_length=self.ecg_sequence_length, max_shift=self.max_shift)
         # Apply sine augmentation
         if random.random() <= self.p_aug:
-            ecg_lead = self.sine(ecg_lead)
+            ecg_lead = self.sine(ecg_lead, max_sine_magnitude=self.max_sine_magnitude,
+                                 sine_frequency_range=self.sine_frequency_range, fs=self.fs)
         return ecg_lead
 
 

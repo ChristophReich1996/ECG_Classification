@@ -109,6 +109,22 @@ ECGInvNet_CONFIG_L = {
     "normalization1d": nn.BatchNorm1d,
 }
 
+# Configuration of augmentation pipeline
+AUGMENTATION_PIPELINE_CONFIG = {
+    "p_aug": 0.1,
+    "scale_range": (0.9, 1.1),
+    "drop_rate": 0.025,
+    "interval_length": 0.1,
+    "max_shift": 2000,
+    "resample_factors": (0.8, 1.2),
+    "max_offset": 0.05,
+    "resampling_points": 10,
+    "max_sine_magnitude": 0.2,
+    "sine_frequency_range": (.2, 1.),
+    "ecg_sequence_length": 18000,
+    "fs": 300,
+}
+
 TRAINING_SPLIT = [
     2838, 5631, 4502, 5644, 1900, 5171, 4800, 3668, 1152, 2625, 5277, 233, 390, 4110, 4304, 3988, 4670, 79, 317, 87,
     835, 4045, 2704, 1912, 803, 2851, 5281, 5369, 761, 1228, 1946, 805, 2590, 3125, 1625, 2936, 1109, 4044, 147, 726,
