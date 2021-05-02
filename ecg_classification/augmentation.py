@@ -44,7 +44,7 @@ class AugmentationPipeline(nn.Module):
         :return: (torch.Tensor) ECG lead augmented
         """
         # Get random scalar
-        random_scalar = torch.from_numpy(np.random.uniform(low=scale_range[0], high=scale_range[1], size=1))
+        random_scalar = torch.from_numpy(np.random.uniform(low=scale_range[0], high=scale_range[1], size=1)).float()
         # Apply scaling
         ecg_lead = random_scalar * ecg_lead
         return ecg_lead
@@ -101,7 +101,8 @@ class AugmentationPipeline(nn.Module):
         :return: (torch.Tensor) ECG lead augmented
         """
         # Generate resampling factor
-        resample_factor = torch.from_numpy(np.random.uniform(low=resample_factors[0], high=resample_factors[1], size=1))
+        resample_factor = torch.from_numpy(
+            np.random.uniform(low=resample_factors[0], high=resample_factors[1], size=1)).float()
         # Resample ecg lead
         ecg_lead = F.interpolate(ecg_lead[None, None], size=int(resample_factor * ecg_lead.shape[-1]), mode="linear",
                                  align_corners=False)[0, 0]
@@ -143,10 +144,10 @@ class AugmentationPipeline(nn.Module):
         :return: (torch.Tensor) ECG lead augmented
         """
         # Get sine magnitude
-        sine_magnitude = torch.from_numpy(np.random.uniform(low=0, high=max_sine_magnitude, size=1))
+        sine_magnitude = torch.from_numpy(np.random.uniform(low=0, high=max_sine_magnitude, size=1)).float()
         # Get sine frequency
         sine_frequency = torch.from_numpy(
-            np.random.uniform(low=sine_frequency_range[0], high=sine_frequency_range[1], size=1))
+            np.random.uniform(low=sine_frequency_range[0], high=sine_frequency_range[1], size=1)).float()
         # Make t vector
         t = torch.arange(ecg_lead.shape[-1]) / float(fs)
         # Make sine vector
