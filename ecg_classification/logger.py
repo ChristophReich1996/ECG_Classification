@@ -85,6 +85,14 @@ class Logger(object):
         self.save()
         return averaged_temp_dict
 
+    def save_model(self, model_sate_dict: Dict, name: str) -> None:
+        """
+        Saves a given state dict
+        :param model_sate_dict: (Dict) State dict to be saved
+        :param name: (str) Name of the file
+        """
+        torch.save(obj=model_sate_dict, f=os.path.join(self.path_models, name + ".pt"))
+
     def save(self) -> None:
         """
         Method saves all current logs (metrics and hyperparameters). Plots are saved directly.
