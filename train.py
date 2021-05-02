@@ -1,6 +1,5 @@
 from argparse import ArgumentParser
 import os
-import setproctitle
 
 # Manage command line arguments
 parser = ArgumentParser()
@@ -25,12 +24,6 @@ parser.add_argument("--network_config", default="ECGCNN_M", type=str,
                     help="Type of network configuration to be utilized.")
 # Get arguments
 args = parser.parse_args()
-
-# Avoid data loader bug
-import resource
-
-rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)
-resource.setrlimit(resource.RLIMIT_NOFILE, (2 ** 12, rlimit[1]))
 
 # Set device type
 device = "cpu" if args.cpu else "cuda"
@@ -71,18 +64,23 @@ if __name__ == '__main__':
     # Init optimizer
     optimizer = torch_optimizer.RAdam(params=network.parameters(), lr=args.lr)
 
-    # Init dataset
+    # Init datasets
     ecg_leads, ecg_labels, fs, ecg_names = load_references(args.dataset_path)
-    training_dataset = DataLoader(PhysioNetDataset(ecg_leads=ecg_leads, ecg_labels=ecg_labels),
-                                  batch_size=args.batch_size, num_workers=args.batch_size, pin_memory=True,
-                                  drop_last=False, shuffle=True)
+    training_dataset = DataLoader(
+        PhysioNetDataset(ecg_leads=ecg_leads[TRAINING_SPLIT], ecg_labels=ecg_labels[TRAINING_SPLIT]),
+        batch_size=args.batch_size, num_workers=args.batch_size, pin_memory=True,
+        drop_last=False, shuffle=True)
+    validation_dataset = DataLoader(
+        PhysioNetDataset(ecg_leads=ecg_leads[VALIDATION_SPLIT], ecg_labels=ecg_labels[VALIDATION_SPLIT]),
+        batch_size=args.batch_size, num_workers=args.batch_size, pin_memory=True,
+        drop_last=False, shuffle=False)
 
     # Init model wrapper
     model_wrapper = ModelWrapper(network=network,
                                  optimizer=optimizer,
                                  loss_function=SoftmaxCrossEntropyLoss(weight=(0.2, 0.2, 1., 2.)),
                                  training_dataset=training_dataset,
-                                 validation_dataset=None,
+                                 validation_dataset=validation_dataset,
                                  data_logger=Logger(),
                                  learning_rate_schedule=None,
                                  device=device)
