@@ -42,22 +42,31 @@ if __name__ == '__main__':
     # Init network
     if args.network_config == "ECGCNN_S":
         network = ECGCNN(config=ECGCNN_CONFIG_S)
+        data_logger = Logger(experiment_path_extension="ECGCNN_S")
     elif args.network_config == "ECGCNN_M":
         network = ECGCNN(config=ECGCNN_CONFIG_M)
+        data_logger = Logger(experiment_path_extension="ECGCNN_M")
     elif args.network_config == "ECGCNN_L":
         network = ECGCNN(config=ECGCNN_CONFIG_L)
+        data_logger = Logger(experiment_path_extension="ECGCNN_L")
     elif args.network_config == "ECGAttNet_S":
         network = ECGAttNet(config=ECGAttNet_CONFIG_S)
+        data_logger = Logger(experiment_path_extension="ECGAttNet_S")
     elif args.network_config == "ECGAttNet_M":
         network = ECGAttNet(config=ECGAttNet_CONFIG_M)
+        data_logger = Logger(experiment_path_extension="ECGAttNet_M")
     elif args.network_config == "ECGAttNet_L":
         network = ECGAttNet(config=ECGAttNet_CONFIG_L)
+        data_logger = Logger(experiment_path_extension="ECGAttNet_L")
     elif args.network_config == "ECGInvNet_S":
         network = ECGInvNet(config=ECGInvNet_CONFIG_S)
+        data_logger = Logger(experiment_path_extension="ECGInvNet_S")
     elif args.network_config == "ECGInvNet_M":
         network = ECGInvNet(config=ECGInvNet_CONFIG_M)
+        data_logger = Logger(experiment_path_extension="ECGInvNet_M")
     else:
         network = ECGInvNet(config=ECGInvNet_CONFIG_L)
+        data_logger = Logger(experiment_path_extension="ECGInvNet_L")
 
     # Init data parallel if utlized
     network = torch.nn.DataParallel(network)
@@ -86,7 +95,7 @@ if __name__ == '__main__':
                                  loss_function=SoftmaxCrossEntropyLoss(weight=(0.2, 0.2, 1., 2.)),
                                  training_dataset=training_dataset,
                                  validation_dataset=validation_dataset,
-                                 data_logger=Logger(),
+                                 data_logger=data_logger,
                                  learning_rate_schedule=learning_rate_schedule,
                                  device=device)
 
