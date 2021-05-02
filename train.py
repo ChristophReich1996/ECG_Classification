@@ -86,7 +86,7 @@ if __name__ == '__main__':
     network = torch.nn.DataParallel(network)
 
     # Init optimizer
-    optimizer = torch_optimizer.Lookahead(torch_optimizer.RAdam(params=network.parameters(), lr=args.lr))
+    optimizer = torch.optim.Adam(params=network.parameters(), lr=args.lr)
 
     # Init learning rate schedule
     learning_rate_schedule = torch.optim.lr_scheduler.MultiStepLR(
