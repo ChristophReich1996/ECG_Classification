@@ -8,6 +8,8 @@ parser.add_argument("--cuda_devices", default="0, 1, 2, 3", type=str,
                     help="String of cuda device indexes to be used. Indexes must be separated by a comma.")
 parser.add_argument("--cpu", default=False, action="store_true",
                     help="Binary flag. If set all operations are performed on the CPU.")
+parser.add_argument("--no_data_aug", default=False, action="store_true",
+                    help="Binary flag. If set no data augmentation is utilized.")
 parser.add_argument("--data_parallel", default=False, action="store_true",
                     help="Binary flag. If set data parallel is utilized.")
 parser.add_argument("--epochs", default=100, type=int,
@@ -95,7 +97,7 @@ if __name__ == '__main__':
     training_dataset = DataLoader(
         PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in TRAINING_SPLIT],
                          ecg_labels=[ecg_labels[index] for index in TRAINING_SPLIT], fs=fs,
-                         augmentation_pipeline=AugmentationPipeline()),
+                         augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline()),
         batch_size=args.batch_size, num_workers=args.batch_size, pin_memory=True,
         drop_last=False, shuffle=True)
     validation_dataset = DataLoader(
