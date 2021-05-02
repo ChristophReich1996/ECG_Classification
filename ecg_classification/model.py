@@ -41,10 +41,12 @@ class ECGCNN(nn.Module):
                                                                       convolution=convolution2d,
                                                                       activation=activation) for
                                                   spectrogram_encoder_channel in spectrogram_encoder_channels])
-        # Init final linear layer
-        self.linear_layer = nn.Linear(
+        # Init final linear layers
+        self.linear_layer_1 = nn.Sequential(nn.Linear(
             in_features=(128 // 2 ** (len(spectrogram_encoder_channels))) ** 2 * spectrogram_encoder_channels[-1][-1],
-            out_features=classes, bias=True)
+            out_features=classes, bias=True),
+            activation())
+        self.linear_layer_2 = nn.Linear(in_features=latent_vector_features + classes, out_features=classes, bias=True)
 
     def forward(self, ecg_lead: torch.Tensor, spectrogram: torch.Tensor) -> torch.Tensor:
         """
@@ -59,7 +61,8 @@ class ECGCNN(nn.Module):
         for block in self.spectrogram_encoder:
             spectrogram = block(spectrogram, latent_vector)
         # Final linear layer
-        output = self.linear_layer(spectrogram.flatten(start_dim=1))
+        output = self.linear_layer_1(spectrogram.flatten(start_dim=1))
+        output = self.linear_layer_2(torch.cat([output, latent_vector], dim=-1))
         # Apply softmax if not training mode
         if self.training:
             return output
@@ -107,10 +110,12 @@ class ECGAttNet(nn.Module):
                 activation=activation) for
                 spectrogram_encoder_channel, spectrogram_encoder_span in
                 zip(spectrogram_encoder_channels, spectrogram_encoder_spans)])
-        # Init final linear layer
-        self.linear_layer = nn.Linear(
+        # Init final linear layers
+        self.linear_layer_1 = nn.Sequential(nn.Linear(
             in_features=(128 // 2 ** (len(spectrogram_encoder_channels))) ** 2 * spectrogram_encoder_channels[-1][-1],
-            out_features=classes, bias=True)
+            out_features=classes, bias=True),
+            activation())
+        self.linear_layer_2 = nn.Linear(in_features=latent_vector_features + classes, out_features=classes, bias=True)
 
     def forward(self, ecg_lead: torch.Tensor, spectrogram: torch.Tensor) -> torch.Tensor:
         """
@@ -125,7 +130,8 @@ class ECGAttNet(nn.Module):
         for block in self.spectrogram_encoder:
             spectrogram = block(spectrogram, latent_vector)
         # Final linear layer
-        output = self.linear_layer(spectrogram.flatten(start_dim=1))
+        output = self.linear_layer_1(spectrogram.flatten(start_dim=1))
+        output = self.linear_layer_2(torch.cat([output, latent_vector], dim=-1))
         # Apply softmax if not training mode
         if self.training:
             return output
@@ -172,10 +178,12 @@ class ECGInvNet(nn.Module):
                 activation=activation,
                 convolution=convolution2d) for
                 spectrogram_encoder_channel in spectrogram_encoder_channels])
-        # Init final linear layer
-        self.linear_layer = nn.Linear(
+        # Init final linear layers
+        self.linear_layer_1 = nn.Sequential(nn.Linear(
             in_features=(128 // 2 ** (len(spectrogram_encoder_channels))) ** 2 * spectrogram_encoder_channels[-1][-1],
-            out_features=classes, bias=True)
+            out_features=classes, bias=True),
+            activation())
+        self.linear_layer_2 = nn.Linear(in_features=latent_vector_features + classes, out_features=classes, bias=True)
 
     def forward(self, ecg_lead: torch.Tensor, spectrogram: torch.Tensor) -> torch.Tensor:
         """
@@ -190,7 +198,8 @@ class ECGInvNet(nn.Module):
         for block in self.spectrogram_encoder:
             spectrogram = block(spectrogram, latent_vector)
         # Final linear layer
-        output = self.linear_layer(spectrogram.flatten(start_dim=1))
+        output = self.linear_layer_1(spectrogram.flatten(start_dim=1))
+        output = self.linear_layer_2(torch.cat([output, latent_vector], dim=-1))
         # Apply softmax if not training mode
         if self.training:
             return output
