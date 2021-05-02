@@ -54,12 +54,12 @@ class F1(nn.Module):
         # Apply max to label
         label = (label == label.max(dim=-1, keepdim=True)[0]).float()
         # Calc tp, fp, fn
-        tp = (label * prediction).sum()
-        fp = ((1. - label) * prediction).sum()
-        fn = (label * (1. - prediction)).sum()
+        tp = (label * prediction).sum(dim=-1)
+        fp = ((1. - label) * prediction).sum(dim=-1)
+        fn = (label * (1. - prediction)).sum(dim=-1)
         # Calc prediction and recall
         precision = tp / (tp + fp + 1e-08)
         recall = tp / (tp + fn + 1e-08)
         # Calc F1 score
-        f1 = 2 * (precision * recall)  (precision + recall + 1e-08)
-        return f1
+        f1 = 2. * (precision * recall) / (precision + recall + 1e-08)
+        return f1.mean()
