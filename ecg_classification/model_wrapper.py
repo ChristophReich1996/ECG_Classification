@@ -156,4 +156,4 @@ class ModelWrapper(object):
             metric_name=["validation_loss"] + [str(validation_metric) for validation_metric in validation_metrics])
         # Model back into training mode
         self.network.train()
-        return metric_results[-1]
+        return metric_results[str(validation_metrics[-1])]
