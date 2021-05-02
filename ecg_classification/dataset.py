@@ -85,11 +85,11 @@ class PhysioNetDataset(Dataset):
         # Get ecg lead, label, and name
         ecg_lead = self.ecg_leads[item]
         ecg_label = self.ecg_labels[item]
+        # Apply augmentations
+        ecg_lead = self.augmentation_pipeline(ecg_lead)
         # Normalize signal if utilized
         if self.normalize:
             ecg_lead = (ecg_lead - ecg_lead.mean()) / (ecg_lead.std() + 1e-08)
-        # Apply augmentations
-        ecg_lead = self.augmentation_pipeline(ecg_lead)
         # Compute spectrogram of ecg_lead
         f, t, spectrogram = scipy.signal.spectrogram(x=ecg_lead.numpy(), fs=self.fs)
         spectrogram = torch.from_numpy(spectrogram).log()
