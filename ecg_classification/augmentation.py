@@ -78,7 +78,7 @@ class AugmentationPipeline(nn.Module):
         ecg_lead[index_start:index_start + interval_size] = 0.
         return ecg_lead
 
-    def shift(self, ecg_lead: torch.Tensor, ecg_sequence_length: int = 18000, max_shift: int = 2000) -> torch.Tensor:
+    def shift(self, ecg_lead: torch.Tensor, ecg_sequence_length: int = 18000, max_shift: int = 4000) -> torch.Tensor:
         """
         Shift augmentation: Shifts the signal at random
         :param ecg_lead: (torch.Tensor) ECG leads
