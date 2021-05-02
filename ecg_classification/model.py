@@ -101,15 +101,26 @@ class ECGAttNet(nn.Module):
                 normalization=normalization1d) for ecg_encoder_channel, ecg_encoder_span in
                 zip(ecg_encoder_channels, ecg_encoder_spans)])
         # Init spectrogram encoder
-        self.spectrogram_encoder = nn.ModuleList(
-            [AxialAttention2dBlock(
-                in_channels=spectrogram_encoder_channel[0],
-                out_channels=spectrogram_encoder_channel[1],
-                span=spectrogram_encoder_span,
-                latent_vector_features=latent_vector_features,
-                activation=activation) for
-                spectrogram_encoder_channel, spectrogram_encoder_span in
-                zip(spectrogram_encoder_channels, spectrogram_encoder_spans)])
+        self.spectrogram_encoder = nn.ModuleList()
+        for index, (spectrogram_encoder_channel, spectrogram_encoder_span) in \
+                enumerate(zip(spectrogram_encoder_channels, spectrogram_encoder_spans)):
+            if index == 1:
+                self.spectrogram_encoder.append(
+                    Conv2dResidualBlock(
+                        in_channels=spectrogram_encoder_channel[0],
+                        out_channels=spectrogram_encoder_channel[1],
+                        latent_vector_features=latent_vector_features,
+                        activation=activation)
+                )
+            else:
+                self.spectrogram_encoder.append(
+                    AxialAttention2dBlock(
+                        in_channels=spectrogram_encoder_channel[0],
+                        out_channels=spectrogram_encoder_channel[1],
+                        span=spectrogram_encoder_span,
+                        latent_vector_features=latent_vector_features,
+                        activation=activation)
+                )
         # Init final linear layers
         self.linear_layer_1 = nn.Sequential(nn.Linear(
             in_features=(128 // 2 ** (len(spectrogram_encoder_channels))) ** 2 * spectrogram_encoder_channels[-1][-1],
