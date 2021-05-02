@@ -11,3 +11,5 @@ from ecg_classification.config import ECGCNN_CONFIG_S, ECGAttNet_CONFIG_S, ECGCN
 from ecg_classification.model_wrapper import ModelWrapper
 # Import data logger
 from ecg_classification.logger import Logger
+# Import splits
+from ecg_classification.config import TRAINING_SPLIT, VALIDATION_SPLIT
