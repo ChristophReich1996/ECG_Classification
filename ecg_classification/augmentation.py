@@ -219,49 +219,56 @@ if __name__ == '__main__':
 
     ap = AugmentationPipeline(config=AUGMENTATION_PIPELINE_CONFIG)
 
-    output_cutout = ap.low_pass_filter(torch.from_numpy(ecg_lead).clone().float())
-    plt.plot(output_cutout[:4000])
+    output_low_pass = ap.low_pass_filter(torch.from_numpy(ecg_lead).clone().float())
+    print(output_low_pass.shape)
+    plt.plot(output_low_pass[:4000])
     plt.title("Low pass")
     plt.show()
 
-    exit(22)
-
     output_cutout = ap.cutout(torch.from_numpy(ecg_lead).clone().float())
+    print(output_cutout.shape)
     plt.plot(output_cutout[:4000])
     plt.title("Cutout")
     plt.show()
 
     output_drop = ap.drop(torch.from_numpy(ecg_lead).clone().float())
+    print(output_drop.shape)
     plt.plot(output_drop[:4000])
     plt.title("Drop")
     plt.show()
 
     output_scale = ap.scale(torch.from_numpy(ecg_lead).clone().float())
+    print(output_scale.shape)
     plt.plot(output_scale[:4000])
     plt.title("Scale")
     plt.show()
 
     output_shift = ap.shift(torch.from_numpy(ecg_lead).clone().float())
+    print(output_shift.shape)
     plt.plot(output_shift[:4000])
     plt.title("Shift")
     plt.show()
 
     output_sine = ap.sine(torch.from_numpy(ecg_lead).clone().float())
+    print(output_sine.shape)
     plt.plot(output_sine[:4000])
     plt.title("Sine")
     plt.show()
 
     output_resample = ap.resample(torch.from_numpy(ecg_leads[21]).float())
+    print(output_resample.shape)
     plt.plot(output_resample[:4000])
     plt.title("Resample")
     plt.show()
 
     output_random_resample = ap.random_resample(torch.from_numpy(ecg_leads[21]).float())
+    print(output_random_resample.shape)
     plt.plot(output_random_resample[:4000])
     plt.title("Random resample")
     plt.show()
 
     output_pipeline = ap(torch.from_numpy(ecg_leads[21]).float())
+    print(output_pipeline.shape)
     plt.plot(output_pipeline[:4000])
     plt.title("Full pipeline")
     plt.show()
