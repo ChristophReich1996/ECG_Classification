@@ -26,20 +26,23 @@ class ECGCNN(nn.Module):
         convolution1d: Type[nn.Module] = config["convolution1d"]
         convolution2d: Type[nn.Module] = config["convolution2d"]
         normalization1d: Type[nn.Module] = config["normalization1d"]
+        dropout: float = config["dropout"]
         # Init ecg encoder
         self.ecg_encoder = nn.Sequential(
             *[Conv1dResidualBlock(in_channels=ecg_encoder_channel[0],
                                   out_channels=ecg_encoder_channel[1],
                                   activation=activation,
                                   normalization=normalization1d,
-                                  convolution=convolution1d) for
+                                  convolution=convolution1d,
+                                  dropout=dropout) for
               ecg_encoder_channel in ecg_encoder_channels])
         # Init spectrogram encoder
         self.spectrogram_encoder = nn.ModuleList([Conv2dResidualBlock(in_channels=spectrogram_encoder_channel[0],
                                                                       out_channels=spectrogram_encoder_channel[1],
                                                                       latent_vector_features=latent_vector_features,
                                                                       convolution=convolution2d,
-                                                                      activation=activation) for
+                                                                      activation=activation,
+                                                                      dropout=dropout) for
                                                   spectrogram_encoder_channel in spectrogram_encoder_channels])
         # Init final linear layers
         self.linear_layer_1 = nn.Sequential(nn.Linear(
@@ -91,6 +94,7 @@ class ECGAttNet(nn.Module):
         classes: int = config["classes"]
         activation: Type[nn.Module] = config["activation"]
         normalization1d: Type[nn.Module] = config["normalization1d"]
+        dropout: float = config["dropout"]
         # Init ecg encoder
         self.ecg_encoder = nn.Sequential(
             *[AxialAttention1dBlock(
@@ -98,7 +102,8 @@ class ECGAttNet(nn.Module):
                 out_channels=ecg_encoder_channel[1],
                 span=ecg_encoder_span,
                 activation=activation,
-                normalization=normalization1d) for ecg_encoder_channel, ecg_encoder_span in
+                normalization=normalization1d,
+                dropout=dropout) for ecg_encoder_channel, ecg_encoder_span in
                 zip(ecg_encoder_channels, ecg_encoder_spans)])
         # Init spectrogram encoder
         self.spectrogram_encoder = nn.ModuleList()
@@ -110,7 +115,8 @@ class ECGAttNet(nn.Module):
                         in_channels=spectrogram_encoder_channel[0],
                         out_channels=spectrogram_encoder_channel[1],
                         latent_vector_features=latent_vector_features,
-                        activation=activation)
+                        activation=activation,
+                        dropout=dropout)
                 )
             else:
                 self.spectrogram_encoder.append(
@@ -119,7 +125,8 @@ class ECGAttNet(nn.Module):
                         out_channels=spectrogram_encoder_channel[1],
                         span=spectrogram_encoder_span,
                         latent_vector_features=latent_vector_features,
-                        activation=activation)
+                        activation=activation,
+                        dropout=dropout)
                 )
         # Init final linear layers
         self.linear_layer_1 = nn.Sequential(nn.Linear(
@@ -171,6 +178,7 @@ class ECGInvNet(nn.Module):
         activation: Type[nn.Module] = config["activation"]
         convolution2d: Type[nn.Module] = config["convolution2d"]
         normalization1d: Type[nn.Module] = config["normalization1d"]
+        dropout: float = config["dropout"]
         # Init ecg encoder
         self.ecg_encoder = nn.Sequential(
             *[AxialAttention1dBlock(
@@ -178,7 +186,8 @@ class ECGInvNet(nn.Module):
                 out_channels=ecg_encoder_channel[1],
                 span=ecg_encoder_span,
                 activation=activation,
-                normalization=normalization1d) for ecg_encoder_channel, ecg_encoder_span in
+                normalization=normalization1d,
+                dropout=dropout) for ecg_encoder_channel, ecg_encoder_span in
                 zip(ecg_encoder_channels, ecg_encoder_spans)])
         # Init spectrogram encoder
         self.spectrogram_encoder = nn.ModuleList(
@@ -187,7 +196,8 @@ class ECGInvNet(nn.Module):
                 out_channels=spectrogram_encoder_channel[1],
                 latent_vector_features=latent_vector_features,
                 activation=activation,
-                convolution=convolution2d) for
+                convolution=convolution2d,
+                dropout=dropout) for
                 spectrogram_encoder_channel in spectrogram_encoder_channels])
         # Init final linear layers
         self.linear_layer_1 = nn.Sequential(nn.Linear(
@@ -226,7 +236,7 @@ class Conv1dResidualBlock(nn.Module):
     def __init__(self, in_channels: int, out_channels: int, kernel_size: int = 3, stride=1, padding: int = 1,
                  bias: bool = False, convolution: Type[nn.Module] = nn.Conv1d,
                  normalization: Type[nn.Module] = nn.BatchNorm1d, activation: Type[nn.Module] = nn.PReLU,
-                 pooling: Tuple[nn.Module] = nn.AvgPool1d) -> None:
+                 pooling: Tuple[nn.Module] = nn.AvgPool1d, dropout: float = 0.0) -> None:
         """
         Constructor method
         :param in_channels: (int) Number of input channels
@@ -239,6 +249,7 @@ class Conv1dResidualBlock(nn.Module):
         :param normalization: (Type[nn.Module]) Type of normalization to be utilized
         :param activation: (Type[nn.Module]) Type of activation to be utilized
         :param pooling: (Type[nn.Module]) Type of pooling layer to be utilized
+        :param dropout: (float) Dropout rate to be applied
         """
         # Call super constructor
         super(Conv1dResidualBlock, self).__init__()
@@ -248,6 +259,7 @@ class Conv1dResidualBlock(nn.Module):
                         padding=padding, bias=bias),
             normalization(num_features=out_channels, track_running_stats=True, affine=True),
             activation(),
+            nn.Dropout(p=dropout),
             convolution(in_channels=out_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride,
                         padding=padding, bias=bias),
             normalization(num_features=out_channels, track_running_stats=True, affine=True),
@@ -257,6 +269,8 @@ class Conv1dResidualBlock(nn.Module):
                                             padding=0, bias=False) if in_channels != out_channels else nn.Identity()
         # Init final activation
         self.final_activation = activation()
+        # Init final dropout
+        self.dropout = nn.Dropout(p=dropout)
         # Init downsampling layer
         self.pooling = pooling(kernel_size=2, stride=2)
 
@@ -272,6 +286,8 @@ class Conv1dResidualBlock(nn.Module):
         output = output + self.residual_mapping(input)
         # Perform final activation
         output = self.final_activation(output)
+        # Perform final dropout
+        output = self.dropout(output)
         # Perform final downsampling
         return self.pooling(output)
 
@@ -284,7 +300,8 @@ class Conv2dResidualBlock(nn.Module):
     def __init__(self, in_channels: int, out_channels: int, latent_vector_features: int = 256,
                  kernel_size: Tuple[int, int] = (3, 3), stride: Tuple[int, int] = (1, 1),
                  padding: Tuple[int, int] = (1, 1), bias: bool = False, convolution: Type[nn.Module] = nn.Conv2d,
-                 activation: Type[nn.Module] = nn.PReLU, pooling: Tuple[nn.Module] = nn.AvgPool2d) -> None:
+                 activation: Type[nn.Module] = nn.PReLU, pooling: Tuple[nn.Module] = nn.AvgPool2d,
+                 dropout: float = 0.0) -> None:
         """
         Constructor method
         :param in_channels: (int) Number of input channels
@@ -297,6 +314,7 @@ class Conv2dResidualBlock(nn.Module):
         :param convolution: (Type[nn.Conv2d]) Type of convolution to be utilized
         :param activation: (Type[nn.Module]) Type of activation to be utilized
         :param pooling: (Type[nn.Module]) Type of pooling layer to be utilized
+        :param dropout: (float) Dropout rate to be applied
         """
         # Call super constructor
         super(Conv2dResidualBlock, self).__init__()
@@ -308,6 +326,7 @@ class Conv2dResidualBlock(nn.Module):
         self.main_mapping_norm_1 = ConditionalBatchNormalization(num_features=out_channels,
                                                                  latent_vector_features=latent_vector_features)
         self.main_mapping_act_1 = activation()
+        self.main_mapping_dropout_1 = nn.Dropout(p=dropout)
         self.main_mapping_conv_2 = convolution(in_channels=out_channels, out_channels=out_channels,
                                                kernel_size=kernel_size, stride=stride,
                                                padding=padding, bias=bias)
@@ -319,6 +338,7 @@ class Conv2dResidualBlock(nn.Module):
                                             bias=False) if in_channels != out_channels else nn.Identity()
         # Init final activation
         self.final_activation = activation()
+        self.dropout = nn.Dropout(p=dropout)
         # Init downsampling layer
         self.pooling = pooling(kernel_size=(2, 2), stride=(2, 2))
 
@@ -333,12 +353,15 @@ class Conv2dResidualBlock(nn.Module):
         output = self.main_mapping_conv_1(input)
         output = self.main_mapping_norm_1(output, latent_vector)
         output = self.main_mapping_act_1(output)
+        output = self.main_mapping_dropout_1(output)
         output = self.main_mapping_conv_2(output)
         output = self.main_mapping_norm_2(output, latent_vector)
         # Perform skip connection
         output = output + self.residual_mapping(input)
         # Perform final activation
         output = self.final_activation(output)
+        # Perform final dropour
+        output = self.dropout(output)
         # Perform final downsampling
         return self.pooling(output)
 
