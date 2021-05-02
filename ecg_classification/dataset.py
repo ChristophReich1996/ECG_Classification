@@ -16,7 +16,7 @@ class PhysioNetDataset(Dataset):
     def __init__(self, ecg_leads: List[np.ndarray], ecg_labels: List[str],
                  augmentation_pipeline: nn.Module = nn.Identity(), spectrogram_length: int = 80,
                  spectrogram_shape: Tuple[int, int] = (128, 128), ecg_sequence_length: int = 18000,
-                 ecg_window_size: int = 256, ecg_step: int = 256 - 32) -> None:
+                 ecg_window_size: int = 256, ecg_step: int = 256 - 32, normalize: bool = True) -> None:
         """
         Constructor method
         :param ecg_leads: (List[np.ndarray]) ECG data as list of numpy arrays
@@ -27,6 +27,7 @@ class PhysioNetDataset(Dataset):
         :param ecg_sequence_length: (int) Fixed length of sequence
         :param ecg_window_size: (int) Window size to be applied during unfolding
         :param ecg_step: (int) Step size of unfolding
+        :param normalize: (bool) If true signal is normalized to a mean and std of zero and one respectively
         """
         # Call super constructor
         super(PhysioNetDataset, self).__init__()
@@ -42,8 +43,9 @@ class PhysioNetDataset(Dataset):
         assert isinstance(ecg_window_size, int) and ecg_window_size > 0, "ECG window size must be a positive integer."
         assert isinstance(ecg_step, int) and ecg_step > 0 and ecg_step < ecg_window_size, \
             "ECG step must be a positive integer but must be smaller than the window size."
+        assert isinstance(normalize, bool), "Normalize must be a bool-"
         # Save parameters
-        self.ecg_leads = [torch.from_numpy(data_sample) for data_sample in ecg_leads]
+        self.ecg_leads = [torch.from_numpy(data_sample).float() for data_sample in ecg_leads]
         self.ecg_labels = []
         for ecg_label in ecg_labels:
             if ecg_label == "N":
@@ -62,6 +64,7 @@ class PhysioNetDataset(Dataset):
         self.spectrogram_shape = spectrogram_shape
         self.ecg_window_size = ecg_window_size
         self.ecg_step = ecg_step
+        self.normalize = normalize
 
     def __len__(self) -> int:
         """
@@ -79,6 +82,9 @@ class PhysioNetDataset(Dataset):
         # Get ecg lead, label, and name
         ecg_lead = self.ecg_leads[item]
         ecg_label = self.ecg_labels[item]
+        # Normalize signal if utilized
+        if self.normalize:
+            ecg_lead = (ecg_lead - ecg_lead.mean()) / (ecg_lead.std() + 1e-08)
         # Apply augmentations
         ecg_lead = self.augmentation_pipeline(ecg_lead)
         # Compute spectrogram of ecg_lead
