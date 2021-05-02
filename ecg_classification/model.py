@@ -376,7 +376,7 @@ class AxialAttention2d(nn.Module):
     This class implements the axial attention operation for 2d volumes.
     """
 
-    def __init__(self, in_channels: int, out_channels: int, dim: int, span: int, groups: int = 8) -> None:
+    def __init__(self, in_channels: int, out_channels: int, dim: int, span: int, groups: int = 16) -> None:
         """
         Constructor method
         :param in_channels: (int) Input channels to be employed
@@ -478,7 +478,7 @@ class AxialAttention1d(AxialAttention2d):
     This class implements the axial attention operation for 1d vectors.
     """
 
-    def __init__(self, in_channels: int, out_channels: int, dim: int, span: int, groups: int = 8) -> None:
+    def __init__(self, in_channels: int, out_channels: int, dim: int, span: int, groups: int = 16) -> None:
         """
         Constructor method
         :param in_channels: (int) Input channels to be employed
@@ -515,7 +515,7 @@ class AxialAttention2dBlock(nn.Module):
     """
 
     def __init__(self, in_channels: int, out_channels: int, span: Union[int, Tuple[int, int]],
-                 latent_vector_features: int = 256, groups: int = 4, activation: Type[nn.Module] = nn.PReLU,
+                 latent_vector_features: int = 256, groups: int = 16, activation: Type[nn.Module] = nn.PReLU,
                  downscale: bool = True, dropout: float = 0.0) -> None:
         """
         Constructor method
@@ -589,7 +589,7 @@ class AxialAttention1dBlock(nn.Module):
     https://arxiv.org/pdf/2003.07853.pdf
     """
 
-    def __init__(self, in_channels: int, out_channels: int, span: int, groups: int = 4,
+    def __init__(self, in_channels: int, out_channels: int, span: int, groups: int = 16,
                  activation: Type[nn.Module] = nn.PReLU, normalization: Type[nn.Module] = nn.BatchNorm1d,
                  downscale: bool = True, dropout: float = 0.0) -> None:
         """
