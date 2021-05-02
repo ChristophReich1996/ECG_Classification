@@ -34,7 +34,6 @@ device = "cpu" if args.cpu else "cuda"
 os.environ["CUDA_VISIBLE_DEVICES"] = args.cuda_devices
 
 import torch
-import torch_optimizer
 from torch.utils.data import DataLoader
 
 from wettbewerb import load_references
@@ -97,7 +96,8 @@ if __name__ == '__main__':
     training_dataset = DataLoader(
         PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in TRAINING_SPLIT],
                          ecg_labels=[ecg_labels[index] for index in TRAINING_SPLIT], fs=fs,
-                         augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline()),
+                         augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline(
+                             AUGMENTATION_PIPELINE_CONFIG)),
         batch_size=args.batch_size, num_workers=args.batch_size, pin_memory=True,
         drop_last=False, shuffle=True)
     validation_dataset = DataLoader(
