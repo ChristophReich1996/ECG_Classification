@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Union, Tuple
 
 import torch
 import torch.nn as nn
@@ -8,6 +8,7 @@ from tqdm import tqdm
 from rtpt.rtpt import RTPT
 
 from .logger import Logger
+from .metric import Accuracy, F1
 
 
 class ModelWrapper(object):
@@ -99,5 +100,41 @@ class ModelWrapper(object):
             if self.learning_rate_schedule is not None:
                 self.learning_rate_schedule.step()
 
-    def validate(self) -> None:
-        pass
+    @torch.no_grad()
+    def validate(self, validation_metrics: Tuple[nn.Module, ...] = (F1(), Accuracy())) -> float:
+        """
+        Validation method
+        :param validation_metrics: (Tuple[nn.Module, ...]) Tuple of validation metrics (last one is returned)
+        :return: (float) Validation metric (last metric in tuple)
+        """
+        # Network into eval mode
+        self.network.eval()
+        # Network to device
+        self.network.to(self.device)
+        # Show validation in progress bar
+        try:
+            self.progress_bar.set_description("Validation")
+        except AttributeError as e:
+            pass
+        # Validation loop
+        for batch in self.validation_dataset:
+            # Unpack batch
+            ecg_leads, spectrogram, labels = batch
+            # Data to device
+            ecg_leads = ecg_leads.to(self.device)
+            spectrogram = spectrogram.to(self.device)
+            labels = labels.to(self.device)
+            # Make prediction
+            predictions = self.network(ecg_leads, spectrogram)
+            # Calc loss
+            loss = self.loss_function(predictions, labels)
+            # Track loss
+            self.data_logger.log_temp_metric(metric_name="validation_loss", value=loss.item())
+            # Compute all validation metrics
+            for validation_metric in validation_metrics:
+                self.data_logger.log_temp_metric(metric_name=str(validation_metric),
+                                                 value=validation_metric(predictions, labels))
+        # Average metrics
+        metric_results = self.data_logger.save_temp_metric(
+            metric_name=["validation_loss"] + [str(validation_metric) for validation_metric in validation_metrics])
+        return metric_results[-1]
