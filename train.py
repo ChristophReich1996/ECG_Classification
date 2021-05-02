@@ -43,30 +43,39 @@ if __name__ == '__main__':
     if args.network_config == "ECGCNN_S":
         network = ECGCNN(config=ECGCNN_CONFIG_S)
         data_logger = Logger(experiment_path_extension="ECGCNN_S")
+        print("ECGCNN_S utilized")
     elif args.network_config == "ECGCNN_M":
         network = ECGCNN(config=ECGCNN_CONFIG_M)
         data_logger = Logger(experiment_path_extension="ECGCNN_M")
+        print("ECGCNN_M utilized")
     elif args.network_config == "ECGCNN_L":
         network = ECGCNN(config=ECGCNN_CONFIG_L)
         data_logger = Logger(experiment_path_extension="ECGCNN_L")
+        print("ECGCNN_L utilized")
     elif args.network_config == "ECGAttNet_S":
         network = ECGAttNet(config=ECGAttNet_CONFIG_S)
         data_logger = Logger(experiment_path_extension="ECGAttNet_S")
+        print("ECGAttNet_S utilized")
     elif args.network_config == "ECGAttNet_M":
         network = ECGAttNet(config=ECGAttNet_CONFIG_M)
         data_logger = Logger(experiment_path_extension="ECGAttNet_M")
+        print("ECGAttNet_M utilized")
     elif args.network_config == "ECGAttNet_L":
         network = ECGAttNet(config=ECGAttNet_CONFIG_L)
         data_logger = Logger(experiment_path_extension="ECGAttNet_L")
+        print("ECGAttNet_L utilized")
     elif args.network_config == "ECGInvNet_S":
         network = ECGInvNet(config=ECGInvNet_CONFIG_S)
         data_logger = Logger(experiment_path_extension="ECGInvNet_S")
+        print("ECGInvNet_S utilized")
     elif args.network_config == "ECGInvNet_M":
         network = ECGInvNet(config=ECGInvNet_CONFIG_M)
         data_logger = Logger(experiment_path_extension="ECGInvNet_M")
+        print("ECGInvNet_M utilized")
     else:
         network = ECGInvNet(config=ECGInvNet_CONFIG_L)
         data_logger = Logger(experiment_path_extension="ECGInvNet_L")
+        print("ECGInvNet_L utilized")
 
     # Print network parameters
     print("# parameters:", sum([p.numel() for p in network.parameters()]))
