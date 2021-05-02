@@ -108,7 +108,7 @@ if __name__ == '__main__':
     # Init model wrapper
     model_wrapper = ModelWrapper(network=network,
                                  optimizer=optimizer,
-                                 loss_function=SoftmaxFocalLoss(),
+                                 loss_function=SoftmaxCrossEntropyLoss(),
                                  training_dataset=training_dataset,
                                  validation_dataset=validation_dataset,
                                  data_logger=data_logger,
