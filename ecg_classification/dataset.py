@@ -84,7 +84,7 @@ class PhysioNetDataset(Dataset):
         :return: (Tuple[torch.Tensor, torch.Tensor, torch.Tensor]) ECG lead, spectrogram, label
         """
         # Get ecg lead, label, and name
-        ecg_lead = self.ecg_leads[item]
+        ecg_lead = self.ecg_leads[item][:self.ecg_sequence_length]
         ecg_label = self.ecg_labels[item]
         # Apply augmentations
         ecg_lead = self.augmentation_pipeline(ecg_lead)
