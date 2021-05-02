@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 
 import torch
 import torch.nn as nn
@@ -14,14 +14,14 @@ class PhysioNetDataset(Dataset):
     """
 
     def __init__(self, ecg_leads: List[np.ndarray], ecg_labels: List[str],
-                 augmentation_pipeline: nn.Module = nn.Identity(), spectrogram_length: int = 80,
+                 augmentation_pipeline: Optional[nn.Module] = None, spectrogram_length: int = 80,
                  spectrogram_shape: Tuple[int, int] = (128, 128), ecg_sequence_length: int = 18000,
                  ecg_window_size: int = 256, ecg_step: int = 256 - 32, normalize: bool = True, fs: int = 300) -> None:
         """
         Constructor method
         :param ecg_leads: (List[np.ndarray]) ECG data as list of numpy arrays
         :param ecg_labels: (List[str]) ECG labels as list of strings (N, O, A, ~)
-        :param augmentation_pipeline: (nn.Module) Augmentation pipeline
+        :param augmentation_pipeline: (Optional[nn.Module]) Augmentation pipeline
         :param spectrogram_length: (int) Fixed spectrogram length (achieved by zero padding)
         :param spectrogram_shape: (Tuple[int, int]) Final size of the spectrogram
         :param ecg_sequence_length: (int) Fixed length of sequence
@@ -35,7 +35,8 @@ class PhysioNetDataset(Dataset):
         # Check parameters
         assert isinstance(ecg_leads, List), "ECG leads musst be a list of np.ndarray."
         assert isinstance(ecg_labels, List), "ECG labels musst be a list of strings."
-        assert isinstance(augmentation_pipeline, nn.Module), "Augmentation pipeline must be a torch.nn.Module."
+        if augmentation_pipeline is not None:
+            assert isinstance(augmentation_pipeline, nn.Module), "Augmentation pipeline must be a torch.nn.Module."
         assert isinstance(spectrogram_length, int) and spectrogram_length > 0, \
             "Spectrogram length must be a positive integer."
         assert isinstance(spectrogram_shape, tuple), "Spectrogram shape must be a tuple of ints."
@@ -60,7 +61,7 @@ class PhysioNetDataset(Dataset):
                 self.ecg_labels.append(torch.tensor(3, dtype=torch.long))
             else:
                 raise RuntimeError("Invalid label value detected!")
-        self.augmentation_pipeline = augmentation_pipeline
+        self.augmentation_pipeline = augmentation_pipeline if augmentation_pipeline is not None else nn.Identity()
         self.spectrogram_length = spectrogram_length
         self.ecg_sequence_length = ecg_sequence_length
         self.spectrogram_shape = spectrogram_shape
