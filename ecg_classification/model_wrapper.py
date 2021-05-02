@@ -92,7 +92,7 @@ class ModelWrapper(object):
                 self.optimizer.step()
                 # Show loss in progress bar
                 self.progress_bar.set_description(
-                    "Epoch {}/{} L={:.4f} IoU={:.4f}".format(self.epoch + 1, epochs, loss.item(),
+                    "Epoch {}/{} L={:.4f} ACC={:.4f}".format(self.epoch + 1, epochs, loss.item(),
                                                              best_validation_metric))
                 # Log loss
                 self.data_logger.log_metric(metric_name="Loss", value=loss.cpu().item())
