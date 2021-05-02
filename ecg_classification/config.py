@@ -4,7 +4,7 @@ from involution import Involution2d
 # Configuration for ECGCNN S
 ECGCNN_CONFIG_S = {
     "ecg_encoder_channels": ((80, 128), (128, 128), (128, 128), (128, 64), (64, 32)),
-    "spectrogram_encoder_channels": ((1, 16), (16, 16), (16, 32), (32, 64), (64, 256)),
+    "spectrogram_encoder_channels": ((1, 16), (16, 32), (32, 64), (64, 128), (128, 256)),
     "latent_vector_features": 256,
     "classes": 4,
     "activation": nn.PReLU,
@@ -16,7 +16,7 @@ ECGCNN_CONFIG_S = {
 # Configuration for ECGCNN M
 ECGCNN_CONFIG_M = {
     "ecg_encoder_channels": ((80, 128), (128, 256), (256, 256), (256, 128), (128, 32)),
-    "spectrogram_encoder_channels": ((1, 16), (16, 32), (32, 64), (64, 128), (128, 256)),
+    "spectrogram_encoder_channels": ((1, 32), (32, 64), (64, 128), (128, 256), (256, 256)),
     "latent_vector_features": 256,
     "classes": 4,
     "activation": nn.PReLU,
@@ -27,8 +27,8 @@ ECGCNN_CONFIG_M = {
 
 # Configuration for ECGCNN L
 ECGCNN_CONFIG_L = {
-    "ecg_encoder_channels": ((80, 128), (128, 512), (512, 512), (512, 128), (128, 32)),
-    "spectrogram_encoder_channels": ((1, 32), (32, 64), (64, 128), (128, 256), (256, 256)),
+    "ecg_encoder_channels": ((80, 256), (256, 512), (512, 512), (512, 128), (128, 32)),
+    "spectrogram_encoder_channels": ((1, 64), (64, 128), (128, 256), (256, 256), (256, 256)),
     "latent_vector_features": 256,
     "classes": 4,
     "activation": nn.PReLU,
@@ -41,7 +41,7 @@ ECGCNN_CONFIG_L = {
 ECGAttNet_CONFIG_S = {
     "ecg_encoder_channels": ((80, 128), (128, 128), (128, 128), (128, 64), (64, 32)),
     "ecg_encoder_spans": (256, 128, 64, 32, 16),
-    "spectrogram_encoder_channels": ((1, 16), (16, 16), (16, 32), (32, 64), (64, 256)),
+    "spectrogram_encoder_channels": ((1, 16), (16, 32), (32, 64), (64, 128), (128, 256)),
     "spectrogram_encoder_spans": (128, 64, 32, 16, 8),
     "latent_vector_features": 256,
     "classes": 4,
@@ -53,7 +53,7 @@ ECGAttNet_CONFIG_S = {
 ECGAttNet_CONFIG_M = {
     "ecg_encoder_channels": ((80, 128), (128, 256), (256, 256), (256, 128), (128, 32)),
     "ecg_encoder_spans": (256, 128, 64, 32, 16),
-    "spectrogram_encoder_channels": ((1, 16), (16, 32), (32, 64), (64, 128), (128, 256)),
+    "spectrogram_encoder_channels": ((1, 32), (32, 64), (64, 128), (128, 256), (256, 256)),
     "spectrogram_encoder_spans": (128, 64, 32, 16, 8),
     "latent_vector_features": 256,
     "classes": 4,
@@ -63,9 +63,9 @@ ECGAttNet_CONFIG_M = {
 
 # Configuration for ECGAttNet L
 ECGAttNet_CONFIG_L = {
-    "ecg_encoder_channels": ((80, 128), (128, 512), (512, 512), (512, 128), (128, 32)),
+    "ecg_encoder_channels": ((80, 256), (256, 512), (512, 512), (512, 128), (128, 32)),
     "ecg_encoder_spans": (256, 128, 64, 32, 16),
-    "spectrogram_encoder_channels": ((1, 32), (32, 64), (64, 128), (128, 256), (256, 256)),
+    "spectrogram_encoder_channels": ((1, 64), (64, 128), (128, 256), (256, 256), (256, 256)),
     "spectrogram_encoder_spans": (128, 64, 32, 16, 8),
     "latent_vector_features": 256,
     "classes": 4,
@@ -77,7 +77,7 @@ ECGAttNet_CONFIG_L = {
 ECGInvNet_CONFIG_S = {
     "ecg_encoder_channels": ((80, 128), (128, 128), (128, 128), (128, 64), (64, 32)),
     "ecg_encoder_spans": (256, 128, 64, 32, 16),
-    "spectrogram_encoder_channels": ((1, 16), (16, 16), (16, 32), (32, 64), (64, 256)),
+    "spectrogram_encoder_channels": ((1, 16), (16, 32), (32, 64), (64, 128), (128, 256)),
     "latent_vector_features": 256,
     "classes": 4,
     "activation": nn.PReLU,
@@ -89,7 +89,7 @@ ECGInvNet_CONFIG_S = {
 ECGInvNet_CONFIG_M = {
     "ecg_encoder_channels": ((80, 128), (128, 256), (256, 256), (256, 128), (128, 32)),
     "ecg_encoder_spans": (256, 128, 64, 32, 16),
-    "spectrogram_encoder_channels": ((1, 16), (16, 32), (32, 64), (64, 128), (128, 256)),
+    "spectrogram_encoder_channels": ((1, 32), (32, 64), (64, 128), (128, 256), (256, 256)),
     "latent_vector_features": 256,
     "classes": 4,
     "activation": nn.PReLU,
@@ -99,9 +99,9 @@ ECGInvNet_CONFIG_M = {
 
 # Configuration for ECGInvNet L
 ECGInvNet_CONFIG_L = {
-    "ecg_encoder_channels": ((80, 128), (128, 512), (512, 512), (512, 128), (128, 32)),
+    "ecg_encoder_channels": ((80, 256), (256, 512), (512, 512), (512, 128), (128, 32)),
     "ecg_encoder_spans": (256, 128, 64, 32, 16),
-    "spectrogram_encoder_channels": ((1, 32), (32, 64), (64, 128), (128, 256), (256, 256)),
+    "spectrogram_encoder_channels": ((1, 64), (64, 128), (128, 256), (256, 256), (256, 256)),
     "latent_vector_features": 256,
     "classes": 4,
     "activation": nn.PReLU,
