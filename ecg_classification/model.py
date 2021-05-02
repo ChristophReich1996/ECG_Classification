@@ -104,7 +104,7 @@ class ECGAttNet(nn.Module):
         self.spectrogram_encoder = nn.ModuleList()
         for index, (spectrogram_encoder_channel, spectrogram_encoder_span) in \
                 enumerate(zip(spectrogram_encoder_channels, spectrogram_encoder_spans)):
-            if index == 1:
+            if index in [0, 1]:
                 self.spectrogram_encoder.append(
                     Conv2dResidualBlock(
                         in_channels=spectrogram_encoder_channel[0],
