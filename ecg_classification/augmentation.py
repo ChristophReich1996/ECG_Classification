@@ -34,6 +34,7 @@ class AugmentationPipeline(nn.Module):
         self.resampling_points: int = config["resampling_points"]
         self.max_sine_magnitude: float = config["max_sine_magnitude"]
         self.sine_frequency_range: Tuple[float, float] = config["sine_frequency_range"]
+        self.kernel: Tuple[float, ...] = config["kernel"]
 
     def scale(self, ecg_lead: torch.Tensor, scale_range: Tuple[float, float] = (0.9, 1.1)) -> torch.Tensor:
         """
@@ -154,6 +155,20 @@ class AugmentationPipeline(nn.Module):
         ecg_lead = sine + ecg_lead
         return ecg_lead
 
+    def low_pass_filter(self, ecg_lead: torch.Tensor,
+                        kernel: Tuple[float, ...] = (1, 6, 15, 20, 15, 6, 1)) -> torch.Tensor:
+        """
+        Low pass filter: Applied via convolutional filter
+        :param ecg_lead: (torch.Tensor) ECG leads
+        :return: (torch.Tensor) ECG lead augmented
+        """
+        # Make kernel
+        kernel = torch.tensor(kernel, device=ecg_lead.device, dtype=torch.float32).view(1, 1, -1)
+        kernel = kernel / kernel.sum()
+        # Apply filtering
+        ecg_lead = F.conv1d(input=ecg_lead[None, None], weight=kernel, stride=1, padding=kernel.shape[-1] // 2)[0, 0]
+        return ecg_lead
+
     def forward(self, ecg_lead: torch.Tensor) -> torch.Tensor:
         """
         Forward pass applies augmentation to input tensor
@@ -184,12 +199,16 @@ class AugmentationPipeline(nn.Module):
         if random.random() <= self.p_aug:
             ecg_lead = self.sine(ecg_lead, max_sine_magnitude=self.max_sine_magnitude,
                                  sine_frequency_range=self.sine_frequency_range, fs=self.fs)
+        # Apply low pass filter
+        if random.random() <= self.p_aug:
+            ecg_lead = self.low_pass_filter(ecg_lead, kernel=self.kernel)
         return ecg_lead
 
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     from wettbewerb import load_references
+    from ecg_classification import AUGMENTATION_PIPELINE_CONFIG
 
     ecg_leads, ecg_labels, fs, ecg_names = load_references("../data/training/")
     ecg_lead = ecg_leads[21]
@@ -197,7 +216,14 @@ if __name__ == '__main__':
     plt.plot(ecg_lead[:4000])
     plt.show()
 
-    ap = AugmentationPipeline()
+    ap = AugmentationPipeline(config=AUGMENTATION_PIPELINE_CONFIG)
+
+    output_cutout = ap.low_pass_filter(torch.from_numpy(ecg_lead).clone().float())
+    plt.plot(output_cutout[:4000])
+    plt.title("Low pass")
+    plt.show()
+
+    exit(22)
 
     output_cutout = ap.cutout(torch.from_numpy(ecg_lead).clone().float())
     plt.plot(output_cutout[:4000])

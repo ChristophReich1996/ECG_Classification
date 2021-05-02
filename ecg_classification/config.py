@@ -121,6 +121,7 @@ AUGMENTATION_PIPELINE_CONFIG = {
     "resampling_points": 10,
     "max_sine_magnitude": 0.2,
     "sine_frequency_range": (.2, 1.),
+    "kernel": (1, 6, 15, 20, 15, 6, 1),
     "ecg_sequence_length": 18000,
     "fs": 300,
 }
