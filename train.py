@@ -68,11 +68,14 @@ if __name__ == '__main__':
         network = ECGInvNet(config=ECGInvNet_CONFIG_L)
         data_logger = Logger(experiment_path_extension="ECGInvNet_L")
 
+    # Print network parameters
+    print("# parameters:", sum([p.numel() for p in network.parameters()]))
+
     # Init data parallel if utlized
     network = torch.nn.DataParallel(network)
 
     # Init optimizer
-    optimizer = torch_optimizer.RAdam(params=network.parameters(), lr=args.lr)
+    optimizer = torch.optim.Adam(params=network.parameters(), lr=args.lr)
 
     # Init learning rate schedule
     learning_rate_schedule = torch.optim.lr_scheduler.MultiStepLR(
