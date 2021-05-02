@@ -8,6 +8,9 @@ class Accuracy(nn.Module):
     """
 
     def __init__(self) -> None:
+        """
+        Constructor method
+        """
         # Call super constructor
         super(Accuracy, self).__init__()
 
