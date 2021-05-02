@@ -105,7 +105,8 @@ class ModelWrapper(object):
                 # Check if best model
                 if current_validation_metric > best_validation_metric:
                     best_validation_metric = current_validation_metric
-                    self.data_logger.save_model(model_sate_dict=self.network.state_dict(), name="best_model")
+                    if save_best_model:
+                        self.data_logger.save_model(model_sate_dict=self.network.state_dict(), name="best_model")
             # Save model
             if (self.epoch + 1) // save_model_after_n_epochs:
                 self.data_logger.save_model(model_sate_dict=self.network.state_dict(), name=str(self.epoch + 1))
@@ -115,7 +116,8 @@ class ModelWrapper(object):
         current_validation_metric = self.validate()
         # Check if best model
         if current_validation_metric > best_validation_metric:
-            self.data_logger.save_model(model_sate_dict=self.network.state_dict(), name="best_model")
+            if save_best_model:
+                self.data_logger.save_model(model_sate_dict=self.network.state_dict(), name="best_model")
 
     @torch.no_grad()
     def validate(self, validation_metrics: Tuple[nn.Module, ...] = (F1(), Accuracy())) -> float:
