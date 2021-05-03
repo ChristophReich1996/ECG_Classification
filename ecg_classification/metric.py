@@ -14,6 +14,14 @@ class Accuracy(nn.Module):
         # Call super constructor
         super(Accuracy, self).__init__()
 
+
+    def __repr__(self) -> str:
+        """
+        Returns the name of the class
+        :return: (str) Name
+        """
+        return "Accuracy"
+
     def forward(self, prediction: torch.Tensor, label: torch.Tensor) -> torch.Tensor:
         """
         Forward pass
@@ -41,6 +49,13 @@ class F1(nn.Module):
         """
         # Call super constructor
         super(F1, self).__init__()
+
+    def __repr__(self) -> str:
+        """
+        Returns the name of the class
+        :return: (str) Name
+        """
+        return "F1"
 
     def forward(self, prediction: torch.Tensor, label: torch.Tensor) -> torch.Tensor:
         """
