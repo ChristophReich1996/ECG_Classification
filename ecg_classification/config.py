@@ -10,7 +10,7 @@ ECGCNN_CONFIG_S = {
     "convolution2d": nn.Conv2d,
     "normalization2d": nn.BatchNorm2d,
     "transformer_heads": 4,
-    "transformer_encoder_layers": 2,
+    "transformer_encoder_layers": 4,
     "transformer_decoder_layers": 2,
     "transformer_feedforward_dims": 256,
     "transformer_activation": "gelu"
@@ -25,7 +25,7 @@ ECGCNN_CONFIG_M = {
     "convolution2d": nn.Conv2d,
     "normalization2d": nn.BatchNorm2d,
     "transformer_heads": 4,
-    "transformer_encoder_layers": 3,
+    "transformer_encoder_layers": 5,
     "transformer_decoder_layers": 3,
     "transformer_feedforward_dims": 256,
     "transformer_activation": "gelu"
@@ -40,7 +40,7 @@ ECGCNN_CONFIG_L = {
     "convolution2d": nn.Conv2d,
     "normalization2d": nn.BatchNorm2d,
     "transformer_heads": 4,
-    "transformer_encoder_layers": 4,
+    "transformer_encoder_layers": 6,
     "transformer_decoder_layers": 4,
     "transformer_feedforward_dims": 256,
     "transformer_activation": "gelu"
@@ -55,7 +55,7 @@ ECGAttNet_CONFIG_S = {
     "activation": nn.PReLU,
     "normalization2d": nn.BatchNorm2d,
     "transformer_heads": 4,
-    "transformer_encoder_layers": 2,
+    "transformer_encoder_layers": 4,
     "transformer_decoder_layers": 2,
     "transformer_feedforward_dims": 256,
     "transformer_activation": "gelu"
@@ -70,7 +70,7 @@ ECGAttNet_CONFIG_M = {
     "activation": nn.PReLU,
     "normalization2d": nn.BatchNorm2d,
     "transformer_heads": 4,
-    "transformer_encoder_layers": 3,
+    "transformer_encoder_layers": 5,
     "transformer_decoder_layers": 3,
     "transformer_feedforward_dims": 256,
     "transformer_activation": "gelu"
@@ -85,7 +85,7 @@ ECGAttNet_CONFIG_L = {
     "activation": nn.PReLU,
     "normalization2d": nn.BatchNorm2d,
     "transformer_heads": 4,
-    "transformer_encoder_layers": 4,
+    "transformer_encoder_layers": 6,
     "transformer_decoder_layers": 4,
     "transformer_feedforward_dims": 256,
     "transformer_activation": "gelu"
@@ -100,7 +100,7 @@ ECGInvNet_CONFIG_S = {
     "convolution2d": Involution2d,
     "normalization2d": nn.BatchNorm2d,
     "transformer_heads": 4,
-    "transformer_encoder_layers": 2,
+    "transformer_encoder_layers": 4,
     "transformer_decoder_layers": 2,
     "transformer_feedforward_dims": 256,
     "transformer_activation": "gelu"
@@ -115,7 +115,7 @@ ECGInvNet_CONFIG_M = {
     "convolution2d": Involution2d,
     "normalization2d": nn.BatchNorm2d,
     "transformer_heads": 4,
-    "transformer_encoder_layers": 3,
+    "transformer_encoder_layers": 5,
     "transformer_decoder_layers": 3,
     "transformer_feedforward_dims": 256,
     "transformer_activation": "gelu"
@@ -130,7 +130,7 @@ ECGInvNet_CONFIG_L = {
     "convolution2d": Involution2d,
     "normalization2d": nn.BatchNorm2d,
     "transformer_heads": 4,
-    "transformer_encoder_layers": 4,
+    "transformer_encoder_layers": 6,
     "transformer_decoder_layers": 4,
     "transformer_feedforward_dims": 256,
     "transformer_activation": "gelu"
