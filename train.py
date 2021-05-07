@@ -94,16 +94,16 @@ if __name__ == '__main__':
     # Init datasets
     ecg_leads, ecg_labels, fs, ecg_names = load_references(args.dataset_path)
     training_dataset = DataLoader(
-        PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in TRAINING_SPLIT],
-                         ecg_labels=[ecg_labels[index] for index in TRAINING_SPLIT], fs=fs,
-                         augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline(
+        ECGDataset(ecg_leads=[ecg_leads[index] for index in TRAINING_SPLIT],
+                   ecg_labels=[ecg_labels[index] for index in TRAINING_SPLIT], fs=fs,
+                   augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline(
                              AUGMENTATION_PIPELINE_CONFIG)),
         batch_size=args.batch_size, num_workers=args.batch_size, pin_memory=True,
         drop_last=False, shuffle=True)
     validation_dataset = DataLoader(
-        PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in VALIDATION_SPLIT],
-                         ecg_labels=[ecg_labels[index] for index in VALIDATION_SPLIT], fs=fs,
-                         augmentation_pipeline=None),
+        ECGDataset(ecg_leads=[ecg_leads[index] for index in VALIDATION_SPLIT],
+                   ecg_labels=[ecg_labels[index] for index in VALIDATION_SPLIT], fs=fs,
+                   augmentation_pipeline=None),
         batch_size=args.batch_size, num_workers=args.batch_size, pin_memory=True,
         drop_last=False, shuffle=False)
 

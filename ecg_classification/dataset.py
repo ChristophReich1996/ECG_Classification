@@ -8,9 +8,9 @@ import scipy.signal
 import numpy as np
 
 
-class PhysioNetDataset(Dataset):
+class ECGDataset(Dataset):
     """
-    This class implements the PhysioNet dataset for ECG classification.
+    This class implements the ECG dataset for atrial fibrillation classification.
     """
 
     def __init__(self, ecg_leads: List[np.ndarray], ecg_labels: List[str],
@@ -31,7 +31,7 @@ class PhysioNetDataset(Dataset):
         :param fs: (int) Sampling frequency
         """
         # Call super constructor
-        super(PhysioNetDataset, self).__init__()
+        super(ECGDataset, self).__init__()
         # Check parameters
         assert isinstance(ecg_leads, List), "ECG leads musst be a list of np.ndarray."
         assert isinstance(ecg_labels, List), "ECG labels musst be a list of strings."
