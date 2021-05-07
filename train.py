@@ -97,7 +97,7 @@ if __name__ == '__main__':
         ECGDataset(ecg_leads=[ecg_leads[index] for index in TRAINING_SPLIT],
                    ecg_labels=[ecg_labels[index] for index in TRAINING_SPLIT], fs=fs,
                    augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline(
-                             AUGMENTATION_PIPELINE_CONFIG)),
+                       AUGMENTATION_PIPELINE_CONFIG)),
         batch_size=args.batch_size, num_workers=args.batch_size, pin_memory=True,
         drop_last=False, shuffle=True)
     validation_dataset = DataLoader(
@@ -110,7 +110,8 @@ if __name__ == '__main__':
     # Init model wrapper
     model_wrapper = ModelWrapper(network=network,
                                  optimizer=optimizer,
-                                 loss_function=SoftmaxCrossEntropyLoss(),
+                                 loss_function=SoftmaxCrossEntropyLoss(
+                                     weight=(0.40316665, 0.7145, 0.91316664, 0.96916664)),
                                  training_dataset=training_dataset,
                                  validation_dataset=validation_dataset,
                                  data_logger=data_logger,
