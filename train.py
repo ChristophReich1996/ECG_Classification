@@ -14,7 +14,7 @@ parser.add_argument("--data_parallel", default=False, action="store_true",
                     help="Binary flag. If set data parallel is utilized.")
 parser.add_argument("--epochs", default=100, type=int,
                     help="Number of epochs to perform while training.")
-parser.add_argument("--lr", default=1e-02, type=float,
+parser.add_argument("--lr", default=1e-03, type=float,
                     help="Learning rate to be employed.")
 parser.add_argument("--batch_size", default=16, type=int,
                     help="Number of epochs to perform while training.")
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     network = torch.nn.DataParallel(network)
 
     # Init optimizer
-    optimizer = torch_optimizer.RAdam(params=network.parameters(), lr=args.lr)
+    optimizer = torch.optim.Adam(params=network.parameters(), lr=args.lr)
 
     # Init learning rate schedule
     learning_rate_schedule = torch.optim.lr_scheduler.MultiStepLR(
@@ -99,13 +99,13 @@ if __name__ == '__main__':
                    ecg_labels=[ecg_labels[index] for index in TRAINING_SPLIT], fs=fs,
                    augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline(
                        AUGMENTATION_PIPELINE_CONFIG)),
-        batch_size=args.batch_size, num_workers=args.batch_size, pin_memory=True,
+        batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
         drop_last=False, shuffle=True)
     validation_dataset = DataLoader(
         ECGDataset(ecg_leads=[ecg_leads[index] for index in VALIDATION_SPLIT],
                    ecg_labels=[ecg_labels[index] for index in VALIDATION_SPLIT], fs=fs,
                    augmentation_pipeline=None),
-        batch_size=args.batch_size, num_workers=args.batch_size, pin_memory=True,
+        batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
         drop_last=False, shuffle=False)
 
     # Init model wrapper
