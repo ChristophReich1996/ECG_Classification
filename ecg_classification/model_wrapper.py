@@ -100,7 +100,7 @@ class ModelWrapper(object):
             if self.learning_rate_schedule is not None:
                 self.learning_rate_schedule.step()
             # Perform validation
-            if (self.epoch + 1) // validate_after_n_epochs:
+            if ((self.epoch + 1) % validate_after_n_epochs) == 0:
                 current_validation_metric = self.validate()
                 # Check if best model
                 if current_validation_metric > best_validation_metric:
@@ -108,7 +108,7 @@ class ModelWrapper(object):
                     if save_best_model:
                         self.data_logger.save_model(model_sate_dict=self.network.state_dict(), name="best_model")
             # Save model
-            if (self.epoch + 1) // save_model_after_n_epochs:
+            if ((self.epoch + 1) % save_model_after_n_epochs) == 0:
                 self.data_logger.save_model(model_sate_dict=self.network.state_dict(), name=str(self.epoch + 1))
             # Save logs
             self.data_logger.save()
