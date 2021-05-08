@@ -46,7 +46,7 @@ class ModelWrapper(object):
         self.learning_rate_schedule = learning_rate_schedule
         self.device = device
 
-    def train(self, epochs: int = 100, validate_after_n_epochs: int = 10, save_model_after_n_epochs: int = 10,
+    def train(self, epochs: int = 100, validate_after_n_epochs: int = 2, save_model_after_n_epochs: int = 10,
               save_best_model: int = True) -> None:
         """
         Training method
