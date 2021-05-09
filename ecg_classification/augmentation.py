@@ -1,4 +1,3 @@
-from csv import excel
 from typing import Tuple, Dict, Any
 
 import torch
@@ -7,6 +6,7 @@ import torch.nn.functional as F
 import numpy as np
 import math
 import random
+from scipy import signal
 
 
 class AugmentationPipeline(nn.Module):
@@ -31,7 +31,7 @@ class AugmentationPipeline(nn.Module):
         self.p_resample: float = config["p_resample"]
         self.p_random_resample: float = config["p_random_resample"]
         self.p_sine: float = config["p_sine"]
-        self.p_low_pass_filter: float = config["p_low_pass_filter"]
+        self.p_band_pass_filter: float = config["p_band_pass_filter"]
         self.fs: int = config["fs"]
         self.scale_range: Tuple[float, float] = config["scale_range"]
         self.drop_rate = config["drop_rate"]
@@ -43,6 +43,8 @@ class AugmentationPipeline(nn.Module):
         self.max_sine_magnitude: float = config["max_sine_magnitude"]
         self.sine_frequency_range: Tuple[float, float] = config["sine_frequency_range"]
         self.kernel: Tuple[float, ...] = config["kernel"]
+        self.fs: int = config["fs"]
+        self.frequencies: Tuple[float, float] = config["frequencies"]
 
     def scale(self, ecg_lead: torch.Tensor, scale_range: Tuple[float, float] = (0.9, 1.1)) -> torch.Tensor:
         """
@@ -164,18 +166,18 @@ class AugmentationPipeline(nn.Module):
         ecg_lead = sine + ecg_lead
         return ecg_lead
 
-    def low_pass_filter(self, ecg_lead: torch.Tensor,
-                        kernel: Tuple[float, ...] = (1, 6, 15, 20, 15, 6, 1)) -> torch.Tensor:
+    def band_pass_filter(self, ecg_lead: torch.Tensor, frequencies: Tuple[float, float] = (0.2, 45.),
+                         fs: int = 300) -> torch.Tensor:
         """
-        Low pass filter: Applied via convolutional filter
+        Low pass filter: Applies a band pass filter
         :param ecg_lead: (torch.Tensor) ECG leads
+        :param frequencies: (Tuple[float, float]) Frequencies of the band pass filter
+        :param fs: (int) Sample frequency
         :return: (torch.Tensor) ECG lead augmented
         """
-        # Make kernel
-        kernel = torch.tensor(kernel, device=ecg_lead.device, dtype=torch.float32).view(1, 1, -1)
-        kernel = kernel / kernel.sum()
-        # Apply filtering
-        ecg_lead = F.conv1d(input=ecg_lead[None, None], weight=kernel, stride=1, padding=kernel.shape[-1] // 2)[0, 0]
+        # Init filter
+        sos = signal.butter(10, frequencies, 'bandpass', fs=fs, output='sos')
+        ecg_lead = torch.from_numpy(signal.sosfilt(sos, ecg_lead.numpy()))
         return ecg_lead
 
     def forward(self, ecg_lead: torch.Tensor) -> torch.Tensor:
@@ -209,8 +211,8 @@ class AugmentationPipeline(nn.Module):
             ecg_lead = self.sine(ecg_lead, max_sine_magnitude=self.max_sine_magnitude,
                                  sine_frequency_range=self.sine_frequency_range, fs=self.fs)
         # Apply low pass filter
-        if random.random() <= self.p_low_pass_filter:
-            ecg_lead = self.low_pass_filter(ecg_lead, kernel=self.kernel)
+        if random.random() <= self.p_band_pass_filter:
+            ecg_lead = self.band_pass_filter(ecg_lead, frequencies=self.frequencies, fs=self.fs)
         return ecg_lead
 
 

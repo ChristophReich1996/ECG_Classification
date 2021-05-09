@@ -127,7 +127,7 @@ AUGMENTATION_PIPELINE_CONFIG = {
     "p_resample": 0.5,
     "p_random_resample": 0.5,
     "p_sine": 0.2,
-    "p_low_pass_filter": 0.2,
+    "p_band_pass_filter": 0.2,
     "scale_range": (0.85, 1.15),
     "drop_rate": 0.03,
     "interval_length": 0.15,
@@ -140,6 +140,7 @@ AUGMENTATION_PIPELINE_CONFIG = {
     "kernel": (1, 6, 15, 20, 15, 6, 1),
     "ecg_sequence_length": 18000,
     "fs": 300,
+    "frequencies": (0.2, 45.)
 }
 
 TRAINING_SPLIT = [
