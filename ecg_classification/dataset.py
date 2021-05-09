@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset
-import scipy.signal
+import pywt
 import numpy as np
 
 
@@ -14,21 +14,16 @@ class ECGDataset(Dataset):
     """
 
     def __init__(self, ecg_leads: List[np.ndarray], ecg_labels: List[str],
-                 augmentation_pipeline: Optional[nn.Module] = None, spectrogram_length: int = 80,
-                 spectrogram_shape: Tuple[int, int] = (128, 128), ecg_sequence_length: int = 18000,
-                 ecg_window_size: int = 256, ecg_step: int = 256 - 32, normalize: bool = True, fs: int = 300) -> None:
+                 augmentation_pipeline: Optional[nn.Module] = None, spectrogram_length: int = 18000,
+                 normalize: bool = True, temporal_downscale: int = 8) -> None:
         """
         Constructor method
         :param ecg_leads: (List[np.ndarray]) ECG data as list of numpy arrays
         :param ecg_labels: (List[str]) ECG labels as list of strings (N, O, A, ~)
         :param augmentation_pipeline: (Optional[nn.Module]) Augmentation pipeline
         :param spectrogram_length: (int) Fixed spectrogram length (achieved by zero padding)
-        :param spectrogram_shape: (Tuple[int, int]) Final size of the spectrogram
-        :param ecg_sequence_length: (int) Fixed length of sequence
-        :param ecg_window_size: (int) Window size to be applied during unfolding
-        :param ecg_step: (int) Step size of unfolding
         :param normalize: (bool) If true signal is normalized to a mean and std of zero and one respectively
-        :param fs: (int) Sampling frequency
+        :param temporal_downscale: (int) Downscale factor for temporal dimension for spectrum
         """
         # Call super constructor
         super(ECGDataset, self).__init__()
@@ -39,14 +34,9 @@ class ECGDataset(Dataset):
             assert isinstance(augmentation_pipeline, nn.Module), "Augmentation pipeline must be a torch.nn.Module."
         assert isinstance(spectrogram_length, int) and spectrogram_length > 0, \
             "Spectrogram length must be a positive integer."
-        assert isinstance(spectrogram_shape, tuple), "Spectrogram shape must be a tuple of ints."
-        assert isinstance(ecg_sequence_length, int) and ecg_sequence_length > 0, \
-            "ECG sequence length must be a positive integer."
-        assert isinstance(ecg_window_size, int) and ecg_window_size > 0, "ECG window size must be a positive integer."
-        assert isinstance(ecg_step, int) and ecg_step > 0 and ecg_step < ecg_window_size, \
-            "ECG step must be a positive integer but must be smaller than the window size."
         assert isinstance(normalize, bool), "Normalize must be a bool"
-        assert isinstance(fs, int), "Sampling frequency fs must be a int value"
+        assert isinstance(temporal_downscale, int) and temporal_downscale > 0, \
+            "Temporal downscale must be a positive integer"
         # Save parameters
         self.ecg_leads = [torch.from_numpy(data_sample).float() for data_sample in ecg_leads]
         self.ecg_labels = []
@@ -63,12 +53,8 @@ class ECGDataset(Dataset):
                 raise RuntimeError("Invalid label value detected!")
         self.augmentation_pipeline = augmentation_pipeline if augmentation_pipeline is not None else nn.Identity()
         self.spectrogram_length = spectrogram_length
-        self.ecg_sequence_length = ecg_sequence_length
-        self.spectrogram_shape = spectrogram_shape
-        self.ecg_window_size = ecg_window_size
-        self.ecg_step = ecg_step
         self.normalize = normalize
-        self.fs = fs
+        self.temporal_downscale = temporal_downscale
 
     def __len__(self) -> int:
         """
@@ -84,7 +70,7 @@ class ECGDataset(Dataset):
         :return: (Tuple[torch.Tensor, torch.Tensor, torch.Tensor]) ECG lead, spectrogram, label
         """
         # Get ecg lead, label, and name
-        ecg_lead = self.ecg_leads[item][:self.ecg_sequence_length]
+        ecg_lead = self.ecg_leads[item][:18000]
         ecg_label = self.ecg_labels[item]
         # Apply augmentations
         ecg_lead = self.augmentation_pipeline(ecg_lead)
@@ -92,19 +78,29 @@ class ECGDataset(Dataset):
         if self.normalize:
             ecg_lead = (ecg_lead - ecg_lead.mean()) / (ecg_lead.std() + 1e-08)
         # Compute spectrogram of ecg_lead
-        f, t, spectrogram = scipy.signal.spectrogram(x=ecg_lead.numpy(), fs=self.fs)
+        spectrogram, _ = pywt.cwt(ecg_lead.numpy(), range(1, 129), wavelet="morl", )
         spectrogram = torch.from_numpy(spectrogram)
-        spectrogram = torch.log(spectrogram + 1e-05)
-        # Pad spectrogram to the desired shape
-        spectrogram = F.pad(spectrogram, pad=(0, self.spectrogram_length - spectrogram.shape[-1]),
-                            value=0., mode="constant")
-        # Reshape spectrogram
-        spectrogram = F.interpolate(spectrogram[None, None],
-                                    size=self.spectrogram_shape, mode="bicubic", align_corners=False)[0, 0]
-        # Pad ecg lead
-        ecg_lead = F.pad(ecg_lead, pad=(0, self.ecg_sequence_length - ecg_lead.shape[0]), value=0., mode="constant")
-        # Unfold ecg lead
-        ecg_lead = ecg_lead.unfold(dimension=-1, size=self.ecg_window_size, step=self.ecg_step)
+        spectrogram = F.avg_pool1d(spectrogram[None], kernel_size=self.temporal_downscale,
+                                   stride=self.temporal_downscale)[0]
+        spectrogram = (spectrogram - spectrogram.min()) / (spectrogram.max() - spectrogram.min())
+        spectrogram_padded = F.pad(spectrogram,
+                                   pad=(
+                                   0, (self.spectrogram_length // self.temporal_downscale) - spectrogram.shape[-1]))
+        # Make mask
+        mask = torch.zeros(spectrogram_padded.shape[1])
+        mask[((self.spectrogram_length // self.temporal_downscale) - spectrogram.shape[-1]):] = 1
         # Label to one hot encoding
         ecg_label = F.one_hot(ecg_label, num_classes=4)
-        return ecg_lead.float(), spectrogram.unsqueeze(dim=0).float(), ecg_label
+        return spectrogram_padded.permute(1, 0).float(), mask.bool(), ecg_label
+
+
+if __name__ == '__main__':
+    from wettbewerb import load_references
+
+    ecg_leads, ecg_labels, _, _ = load_references(folder="../data/training/")
+    dataset = ECGDataset(ecg_leads, ecg_labels)
+
+    lead, mask, label = dataset[0]
+
+    print(lead.shape, mask.shape, label.shape)
+

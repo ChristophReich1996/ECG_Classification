@@ -14,16 +14,12 @@ parser.add_argument("--data_parallel", default=False, action="store_true",
                     help="Binary flag. If set data parallel is utilized.")
 parser.add_argument("--epochs", default=100, type=int,
                     help="Number of epochs to perform while training.")
-parser.add_argument("--lr", default=1e-03, type=float,
+parser.add_argument("--lr", default=1e-05, type=float,
                     help="Learning rate to be employed.")
 parser.add_argument("--batch_size", default=16, type=int,
                     help="Number of epochs to perform while training.")
 parser.add_argument("--dataset_path", default="data/training/", type=str,
                     help="Path to dataset")
-parser.add_argument("--network_config", default="ECGCNN_M", type=str,
-                    choices=["ECGCNN_S", "ECGCNN_M", "ECGCNN_L", "ECGAttNet_S", "ECGAttNet_M", "ECGAttNet_L",
-                             "ECGInvNet_S", "ECGInvNet_M", "ECGInvNet_L"],
-                    help="Type of network configuration to be utilized.")
 # Get arguments
 args = parser.parse_args()
 
@@ -42,42 +38,10 @@ from ecg_classification import *
 
 if __name__ == '__main__':
     # Init network
-    if args.network_config == "ECGCNN_S":
-        network = ECGCNN(config=ECGCNN_CONFIG_S)
-        data_logger = Logger(experiment_path_extension="ECGCNN_S")
-        print("ECGCNN_S utilized")
-    elif args.network_config == "ECGCNN_M":
-        network = ECGCNN(config=ECGCNN_CONFIG_M)
-        data_logger = Logger(experiment_path_extension="ECGCNN_M")
-        print("ECGCNN_M utilized")
-    elif args.network_config == "ECGCNN_L":
-        network = ECGCNN(config=ECGCNN_CONFIG_L)
-        data_logger = Logger(experiment_path_extension="ECGCNN_L")
-        print("ECGCNN_L utilized")
-    elif args.network_config == "ECGAttNet_S":
-        network = ECGAttNet(config=ECGAttNet_CONFIG_S)
-        data_logger = Logger(experiment_path_extension="ECGAttNet_S")
-        print("ECGAttNet_S utilized")
-    elif args.network_config == "ECGAttNet_M":
-        network = ECGAttNet(config=ECGAttNet_CONFIG_M)
-        data_logger = Logger(experiment_path_extension="ECGAttNet_M")
-        print("ECGAttNet_M utilized")
-    elif args.network_config == "ECGAttNet_L":
-        network = ECGAttNet(config=ECGAttNet_CONFIG_L)
-        data_logger = Logger(experiment_path_extension="ECGAttNet_L")
-        print("ECGAttNet_L utilized")
-    elif args.network_config == "ECGInvNet_S":
-        network = ECGInvNet(config=ECGInvNet_CONFIG_S)
-        data_logger = Logger(experiment_path_extension="ECGInvNet_S")
-        print("ECGInvNet_S utilized")
-    elif args.network_config == "ECGInvNet_M":
-        network = ECGInvNet(config=ECGInvNet_CONFIG_M)
-        data_logger = Logger(experiment_path_extension="ECGInvNet_M")
-        print("ECGInvNet_M utilized")
-    else:
-        network = ECGInvNet(config=ECGInvNet_CONFIG_L)
-        data_logger = Logger(experiment_path_extension="ECGInvNet_L")
-        print("ECGInvNet_L utilized")
+    network = ECGTransformer()
+
+    # Init data logger
+    data_logger = Logger()
 
     # Print network parameters
     print("# parameters:", sum([p.numel() for p in network.parameters()]))
@@ -96,14 +60,14 @@ if __name__ == '__main__':
     ecg_leads, ecg_labels, fs, ecg_names = load_references(args.dataset_path)
     training_dataset = DataLoader(
         ECGDataset(ecg_leads=[ecg_leads[index] for index in TRAINING_SPLIT],
-                   ecg_labels=[ecg_labels[index] for index in TRAINING_SPLIT], fs=fs,
+                   ecg_labels=[ecg_labels[index] for index in TRAINING_SPLIT],
                    augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline(
                        AUGMENTATION_PIPELINE_CONFIG)),
         batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
         drop_last=False, shuffle=True)
     validation_dataset = DataLoader(
         ECGDataset(ecg_leads=[ecg_leads[index] for index in VALIDATION_SPLIT],
-                   ecg_labels=[ecg_labels[index] for index in VALIDATION_SPLIT], fs=fs,
+                   ecg_labels=[ecg_labels[index] for index in VALIDATION_SPLIT],
                    augmentation_pipeline=None),
         batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
         drop_last=False, shuffle=False)
@@ -120,4 +84,5 @@ if __name__ == '__main__':
                                  device=device)
 
     # Perform training
-    model_wrapper.train(epochs=args.epochs)
+    with torch.autograd.detect_anomaly():
+        model_wrapper.train(epochs=args.epochs)

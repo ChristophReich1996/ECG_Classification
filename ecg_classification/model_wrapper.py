@@ -77,13 +77,13 @@ class ModelWrapper(object):
                 # Reset gradients of model
                 self.optimizer.zero_grad()
                 # Unpack batch
-                ecg_leads, spectrogram, labels = batch
+                spectrogram, mask, labels = batch
                 # Data to device
-                ecg_leads = ecg_leads.to(self.device)
                 spectrogram = spectrogram.to(self.device)
+                mask = mask.to(self.device)
                 labels = labels.to(self.device)
                 # Make prediction
-                predictions = self.network(ecg_leads, spectrogram)
+                predictions = self.network(spectrogram, mask)
                 # Calc loss
                 loss = self.loss_function(predictions, labels)
                 # Calc backward pass
@@ -138,13 +138,13 @@ class ModelWrapper(object):
         # Validation loop
         for batch in self.validation_dataset:
             # Unpack batch
-            ecg_leads, spectrogram, labels = batch
+            spectrogram, mask, labels = batch
             # Data to device
-            ecg_leads = ecg_leads.to(self.device)
             spectrogram = spectrogram.to(self.device)
+            mask = mask.to(self.device)
             labels = labels.to(self.device)
             # Make prediction
-            predictions = self.network(ecg_leads, spectrogram)
+            predictions = self.network(spectrogram, mask)
             # Calc loss
             loss = self.loss_function(predictions, labels)
             # Track loss
