@@ -18,7 +18,7 @@ parser.add_argument("--lr", default=1e-03, type=float,
                     help="Learning rate to be employed.")
 parser.add_argument("--batch_size", default=16, type=int,
                     help="Number of epochs to perform while training.")
-parser.add_argument("--physio_net", type=bool, action="store_true",
+parser.add_argument("--physio_net", default=False, action="store_true",
                     help="Binary flag. Utilized PhysioNet dataset instead of default one.")
 parser.add_argument("--dataset_path", default="data/training/", type=str,
                     help="Path to dataset")
@@ -118,7 +118,8 @@ if __name__ == '__main__':
     model_wrapper = ModelWrapper(network=network,
                                  optimizer=optimizer,
                                  loss_function=SoftmaxCrossEntropyLoss(
-                                     weight=(0.40316665, 0.7145, 0.91316664, 0.96916664)),
+                                     weight=(0.40316665, 0.7145, 0.91316664, 0.96916664) if not args.physio_net else (
+                                     0.40783304, 0.7120075, 0.91346157, 0.96669793)),
                                  training_dataset=training_dataset,
                                  validation_dataset=validation_dataset,
                                  data_logger=data_logger,

@@ -38,8 +38,8 @@ ACTIVATION_FUNCTIONS = dict({
     "prelu": nn.PReLU,
     "rrelu": nn.RReLU})
 
-from pade_activation_unit.cuda.python_imp.Pade import PADEACTIVATION_Function_based, PADEACTIVATION_F_cpp, \
-    PADEACTIVATION_F_abs_cpp
+from ecg_classification.pade_activation_unit.cuda.python_imp.Pade import PADEACTIVATION_Function_based, \
+    PADEACTIVATION_F_cpp, PADEACTIVATION_F_abs_cpp
 
 
 class activationfunc():
