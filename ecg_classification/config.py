@@ -120,7 +120,14 @@ ECGInvNet_CONFIG_L = {
 
 # Configuration of augmentation pipeline
 AUGMENTATION_PIPELINE_CONFIG = {
-    "p_aug": 0.4,
+    "p_scale": 0.5,
+    "p_drop": 0.2,
+    "p_cutout": 0.5,
+    "p_shift": 0.5,
+    "p_resample": 0.5,
+    "p_random_resample": 0.5,
+    "p_sine": 0.2,
+    "p_low_pass_filter": 0.2,
     "scale_range": (0.85, 1.15),
     "drop_rate": 0.03,
     "interval_length": 0.15,

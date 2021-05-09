@@ -24,7 +24,14 @@ class AugmentationPipeline(nn.Module):
         super(AugmentationPipeline, self).__init__()
         # Save parameters
         self.ecg_sequence_length: int = config["ecg_sequence_length"]
-        self.p_aug: float = config["p_aug"]
+        self.p_scale: float = config["p_scale"]
+        self.p_drop: float = config["p_drop"]
+        self.p_cutout: float = config["p_cutout"]
+        self.p_shift: float = config["p_shift"]
+        self.p_resample: float = config["p_resample"]
+        self.p_random_resample: float = config["p_random_resample"]
+        self.p_sine: float = config["p_sine"]
+        self.p_low_pass_filter: float = config["p_low_pass_filter"]
         self.fs: int = config["fs"]
         self.scale_range: Tuple[float, float] = config["scale_range"]
         self.drop_rate = config["drop_rate"]
@@ -178,31 +185,31 @@ class AugmentationPipeline(nn.Module):
         :return: (torch.Tensor) ECG lead augmented
         """
         # Apply cut out augmentation
-        if random.random() <= self.p_aug:
+        if random.random() <= self.p_cutout:
             ecg_lead = self.cutout(ecg_lead, interval_length=self.interval_length)
         # Apply drop augmentation
-        if random.random() <= self.p_aug:
+        if random.random() <= self.p_drop:
             ecg_lead = self.drop(ecg_lead, drop_rate=self.drop_rate)
         # Apply random resample augmentation
-        if random.random() <= self.p_aug:
+        if random.random() <= self.p_random_resample:
             ecg_lead = self.random_resample(ecg_lead, ecg_sequence_length=self.ecg_sequence_length,
                                             max_offset=self.max_offset, resampling_points=self.resampling_points)
         # Apply resample augmentation
-        if random.random() <= self.p_aug:
+        if random.random() <= self.p_resample:
             ecg_lead = self.resample(ecg_lead, ecg_sequence_length=self.ecg_sequence_length,
                                      resample_factors=self.resample_factors)
         # Apply scale augmentation
-        if random.random() <= self.p_aug:
+        if random.random() <= self.p_scale:
             ecg_lead = self.scale(ecg_lead, scale_range=self.scale_range)
         # Apply shift augmentation
-        if random.random() <= self.p_aug:
+        if random.random() <= self.p_shift:
             ecg_lead = self.shift(ecg_lead, ecg_sequence_length=self.ecg_sequence_length, max_shift=self.max_shift)
         # Apply sine augmentation
-        if random.random() <= self.p_aug:
+        if random.random() <= self.p_sine:
             ecg_lead = self.sine(ecg_lead, max_sine_magnitude=self.max_sine_magnitude,
                                  sine_frequency_range=self.sine_frequency_range, fs=self.fs)
         # Apply low pass filter
-        if random.random() <= self.p_aug:
+        if random.random() <= self.p_low_pass_filter:
             ecg_lead = self.low_pass_filter(ecg_lead, kernel=self.kernel)
         return ecg_lead
 
