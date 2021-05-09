@@ -90,7 +90,7 @@ if __name__ == '__main__':
     network = torch.nn.DataParallel(network)
 
     # Init optimizer
-    optimizer = torch_optimizer.Lookahead(torch_optimizer.RAdam(params=network.parameters(), lr=args.lr))
+    optimizer = torch.optim.Adam(params=network.parameters(), lr=args.lr)
 
     # Init learning rate schedule
     learning_rate_schedule = torch.optim.lr_scheduler.MultiStepLR(
@@ -119,7 +119,7 @@ if __name__ == '__main__':
                                  optimizer=optimizer,
                                  loss_function=SoftmaxCrossEntropyLoss(
                                      weight=(0.40316665, 0.7145, 0.91316664, 0.96916664) if not args.physio_net else (
-                                     0.40783304, 0.7120075, 0.91346157, 0.96669793)),
+                                         0.40783304, 0.7120075, 0.91346157, 0.96669793)),
                                  training_dataset=training_dataset,
                                  validation_dataset=validation_dataset,
                                  data_logger=data_logger,
