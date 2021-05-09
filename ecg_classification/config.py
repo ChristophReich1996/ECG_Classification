@@ -1,5 +1,6 @@
 import torch.nn as nn
 from involution import Involution2d
+from ecg_classification.pade_activation_unit.utils import PAU
 
 # Configuration for ECGCNN S
 ECGCNN_CONFIG_S = {
@@ -8,7 +9,7 @@ ECGCNN_CONFIG_S = {
     "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.1,
-    "activation": nn.PReLU,
+    "activation": PAU,
     "convolution1d": nn.Conv1d,
     "convolution2d": nn.Conv2d,
     "normalization1d": nn.BatchNorm1d,
@@ -21,7 +22,7 @@ ECGCNN_CONFIG_M = {
     "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.1,
-    "activation": nn.PReLU,
+    "activation": PAU,
     "convolution1d": nn.Conv1d,
     "convolution2d": nn.Conv2d,
     "normalization1d": nn.BatchNorm1d,
@@ -34,7 +35,7 @@ ECGCNN_CONFIG_L = {
     "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.1,
-    "activation": nn.PReLU,
+    "activation": PAU,
     "convolution1d": nn.Conv1d,
     "convolution2d": nn.Conv2d,
     "normalization1d": nn.BatchNorm1d,
@@ -49,7 +50,7 @@ ECGAttNet_CONFIG_S = {
     "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.1,
-    "activation": nn.PReLU,
+    "activation": PAU,
     "normalization1d": nn.BatchNorm1d,
 }
 
@@ -62,7 +63,7 @@ ECGAttNet_CONFIG_M = {
     "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.1,
-    "activation": nn.PReLU,
+    "activation": PAU,
     "normalization1d": nn.BatchNorm1d,
 }
 
@@ -75,7 +76,7 @@ ECGAttNet_CONFIG_L = {
     "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.1,
-    "activation": nn.PReLU,
+    "activation": PAU,
     "normalization1d": nn.BatchNorm1d,
 }
 
@@ -87,7 +88,7 @@ ECGInvNet_CONFIG_S = {
     "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.1,
-    "activation": nn.PReLU,
+    "activation": PAU,
     "convolution2d": Involution2d,
     "normalization1d": nn.BatchNorm1d,
 }
@@ -100,7 +101,7 @@ ECGInvNet_CONFIG_M = {
     "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.1,
-    "activation": nn.PReLU,
+    "activation": PAU,
     "convolution2d": Involution2d,
     "normalization1d": nn.BatchNorm1d,
 }
@@ -113,7 +114,7 @@ ECGInvNet_CONFIG_L = {
     "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.1,
-    "activation": nn.PReLU,
+    "activation": PAU,
     "convolution2d": Involution2d,
     "normalization1d": nn.BatchNorm1d,
 }
