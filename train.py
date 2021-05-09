@@ -18,6 +18,8 @@ parser.add_argument("--lr", default=1e-03, type=float,
                     help="Learning rate to be employed.")
 parser.add_argument("--batch_size", default=16, type=int,
                     help="Number of epochs to perform while training.")
+parser.add_argument("--physio_net", type=bool, action="store_true",
+                    help="Binary flag. Utilized PhysioNet dataset instead of default one.")
 parser.add_argument("--dataset_path", default="data/training/", type=str,
                     help="Path to dataset")
 parser.add_argument("--network_config", default="ECGCNN_M", type=str,
