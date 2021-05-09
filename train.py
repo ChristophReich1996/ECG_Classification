@@ -43,48 +43,50 @@ from wettbewerb import load_references
 from ecg_classification import *
 
 if __name__ == '__main__':
+    # Add dataset info
+    dataset_info = "_default_dataset" if not args.physio_net else "_physio_net_dataset"
     # Init network
     if args.network_config == "ECGCNN_S":
         network = ECGCNN(config=ECGCNN_CONFIG_S)
-        data_logger = Logger(experiment_path_extension="ECGCNN_S")
+        data_logger = Logger(experiment_path_extension="ECGCNN_S" + dataset_info)
         print("ECGCNN_S utilized")
     elif args.network_config == "ECGCNN_M":
         network = ECGCNN(config=ECGCNN_CONFIG_M)
-        data_logger = Logger(experiment_path_extension="ECGCNN_M")
+        data_logger = Logger(experiment_path_extension="ECGCNN_M" + dataset_info)
         print("ECGCNN_M utilized")
     elif args.network_config == "ECGCNN_L":
         network = ECGCNN(config=ECGCNN_CONFIG_L)
-        data_logger = Logger(experiment_path_extension="ECGCNN_L")
+        data_logger = Logger(experiment_path_extension="ECGCNN_L" + dataset_info)
         print("ECGCNN_L utilized")
     elif args.network_config == "ECGAttNet_S":
         network = ECGAttNet(config=ECGAttNet_CONFIG_S)
-        data_logger = Logger(experiment_path_extension="ECGAttNet_S")
+        data_logger = Logger(experiment_path_extension="ECGAttNet_S" + dataset_info)
         print("ECGAttNet_S utilized")
     elif args.network_config == "ECGAttNet_M":
         network = ECGAttNet(config=ECGAttNet_CONFIG_M)
-        data_logger = Logger(experiment_path_extension="ECGAttNet_M")
+        data_logger = Logger(experiment_path_extension="ECGAttNet_M" + dataset_info)
         print("ECGAttNet_M utilized")
     elif args.network_config == "ECGAttNet_L":
         network = ECGAttNet(config=ECGAttNet_CONFIG_L)
-        data_logger = Logger(experiment_path_extension="ECGAttNet_L")
+        data_logger = Logger(experiment_path_extension="ECGAttNet_L" + dataset_info)
         print("ECGAttNet_L utilized")
     elif args.network_config == "ECGInvNet_S":
         network = ECGInvNet(config=ECGInvNet_CONFIG_S)
-        data_logger = Logger(experiment_path_extension="ECGInvNet_S")
+        data_logger = Logger(experiment_path_extension="ECGInvNet_S" + dataset_info)
         print("ECGInvNet_S utilized")
     elif args.network_config == "ECGInvNet_M":
         network = ECGInvNet(config=ECGInvNet_CONFIG_M)
-        data_logger = Logger(experiment_path_extension="ECGInvNet_M")
+        data_logger = Logger(experiment_path_extension="ECGInvNet_M" + dataset_info)
         print("ECGInvNet_M utilized")
     else:
         network = ECGInvNet(config=ECGInvNet_CONFIG_L)
-        data_logger = Logger(experiment_path_extension="ECGInvNet_L")
+        data_logger = Logger(experiment_path_extension="ECGInvNet_L" + dataset_info)
         print("ECGInvNet_L utilized")
 
     # Print network parameters
     print("# parameters:", sum([p.numel() for p in network.parameters()]))
 
-    # Init data parallel if utlized
+    # Init data parallel if utilized
     network = torch.nn.DataParallel(network)
 
     # Init optimizer
@@ -96,16 +98,18 @@ if __name__ == '__main__':
 
     # Init datasets
     ecg_leads, ecg_labels, fs, ecg_names = load_references(args.dataset_path)
+    training_split = TRAINING_SPLIT if not args.physio_net else TRAINING_SPLIT_PHYSIONET
+    validation_split = VALIDATION_SPLIT if not args.physio_net else VALIDATION_SPLIT_PHYSIONET
     training_dataset = DataLoader(
-        ECGDataset(ecg_leads=[ecg_leads[index] for index in TRAINING_SPLIT],
-                   ecg_labels=[ecg_labels[index] for index in TRAINING_SPLIT], fs=fs,
+        ECGDataset(ecg_leads=[ecg_leads[index] for index in training_split],
+                   ecg_labels=[ecg_labels[index] for index in training_split], fs=fs,
                    augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline(
                        AUGMENTATION_PIPELINE_CONFIG)),
         batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
         drop_last=False, shuffle=True)
     validation_dataset = DataLoader(
-        ECGDataset(ecg_leads=[ecg_leads[index] for index in VALIDATION_SPLIT],
-                   ecg_labels=[ecg_labels[index] for index in VALIDATION_SPLIT], fs=fs,
+        ECGDataset(ecg_leads=[ecg_leads[index] for index in validation_split],
+                   ecg_labels=[ecg_labels[index] for index in validation_split], fs=fs,
                    augmentation_pipeline=None),
         batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
         drop_last=False, shuffle=False)
