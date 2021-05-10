@@ -116,7 +116,7 @@ class AugmentationPipeline(nn.Module):
         # Resample ecg lead
         ecg_lead = F.interpolate(ecg_lead[None, None], size=int(resample_factor * ecg_lead.shape[-1]), mode="linear",
                                  align_corners=False)[0, 0]
-        # Apply max lenght if needed
+        # Apply max length if needed
         ecg_lead = ecg_lead[:ecg_sequence_length]
         return ecg_lead
 
