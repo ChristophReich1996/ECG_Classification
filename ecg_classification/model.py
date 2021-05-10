@@ -18,24 +18,18 @@ class ECGCNN(nn.Module):
         # Call super constructor
         super(ECGCNN, self).__init__()
         # Get parameters
-        ecg_encoder_channels: Tuple[Tuple[int, int], ...] = config["ecg_encoder_channels"]
+        ecg_features: int = config["ecg_features"]
+        lstm_features: int = config["lstm_features"]
+        lstm_layers: int = config["lstm_layers"]
         spectrogram_encoder_channels: Tuple[Tuple[int, int], ...] = config["spectrogram_encoder_channels"]
         latent_vector_features: int = config["latent_vector_features"]
         classes: int = config["classes"]
         activation: Type[nn.Module] = config["activation"]
-        convolution1d: Type[nn.Module] = config["convolution1d"]
         convolution2d: Type[nn.Module] = config["convolution2d"]
-        normalization1d: Type[nn.Module] = config["normalization1d"]
         dropout: float = config["dropout"]
         # Init ecg encoder
-        self.ecg_encoder = nn.Sequential(
-            *[Conv1dResidualBlock(in_channels=ecg_encoder_channel[0],
-                                  out_channels=ecg_encoder_channel[1],
-                                  activation=activation,
-                                  normalization=normalization1d,
-                                  convolution=convolution1d,
-                                  dropout=dropout) for
-              ecg_encoder_channel in ecg_encoder_channels])
+        self.ecg_encoder = nn.LSTM(input_size=ecg_features, hidden_size=lstm_features, bias=True, batch_first=True,
+                                   num_layers=lstm_layers, dropout=dropout)
         # Init spectrogram encoder
         self.spectrogram_encoder = nn.ModuleList([Conv2dResidualBlock(in_channels=spectrogram_encoder_channel[0],
                                                                       out_channels=spectrogram_encoder_channel[1],
@@ -45,11 +39,10 @@ class ECGCNN(nn.Module):
                                                                       dropout=dropout) for
                                                   spectrogram_encoder_channel in spectrogram_encoder_channels])
         # Init final linear layers
-        self.linear_layer_1 = nn.Sequential(nn.Linear(
-            in_features=(128 // 2 ** (len(spectrogram_encoder_channels))) ** 2 * spectrogram_encoder_channels[-1][-1],
-            out_features=classes, bias=True),
+        self.linear_layer_1 = nn.Sequential(
+            nn.Linear(in_features=spectrogram_encoder_channels[-1][-1], out_features=latent_vector_features, bias=True),
             activation())
-        self.linear_layer_2 = nn.Linear(in_features=latent_vector_features + classes, out_features=classes, bias=True)
+        self.linear_layer_2 = nn.Linear(in_features=latent_vector_features, out_features=classes, bias=True)
 
     def forward(self, ecg_lead: torch.Tensor, spectrogram: torch.Tensor) -> torch.Tensor:
         """
@@ -59,18 +52,19 @@ class ECGCNN(nn.Module):
         :return: (torch.Tensor) Output prediction
         """
         # Encode ECG lead
-        latent_vector = self.ecg_encoder(ecg_lead).flatten(start_dim=1)
+        latent_vector = self.ecg_encoder(ecg_lead)[0][:, -1].flatten(start_dim=1)
         # Forward pass spectrogram encoder
         for block in self.spectrogram_encoder:
             spectrogram = block(spectrogram, latent_vector)
+        # Perform average pooling
+        spectrogram = F.adaptive_avg_pool2d(spectrogram, output_size=(1, 1))
         # Final linear layer
         output = self.linear_layer_1(spectrogram.flatten(start_dim=1))
-        output = self.linear_layer_2(torch.cat([output, latent_vector], dim=-1))
+        output = self.linear_layer_2(output + latent_vector)
         # Apply softmax if not training mode
         if self.training:
             return output
-        else:
-            return output.softmax(dim=-1)
+        return output.softmax(dim=-1)
 
 
 class ECGAttNet(nn.Module):
@@ -86,30 +80,30 @@ class ECGAttNet(nn.Module):
         # Call super constructor
         super(ECGAttNet, self).__init__()
         # Get parameters
-        ecg_encoder_channels: Tuple[Tuple[int, int], ...] = config["ecg_encoder_channels"]
-        ecg_encoder_spans: Tuple[int, ...] = config["ecg_encoder_spans"]
+        ecg_features: int = config["ecg_features"]
+        transformer_heads: int = config["transformer_heads"]
+        transformer_ff_features: int = config["transformer_ff_features"]
+        transformer_activation: str = config["transformer_activation"]
+        transformer_layers: str = config["transformer_layers"]
         spectrogram_encoder_channels: Tuple[Tuple[int, int], ...] = config["spectrogram_encoder_channels"]
         spectrogram_encoder_spans: Tuple[int, ...] = config["spectrogram_encoder_spans"]
         latent_vector_features: int = config["latent_vector_features"]
         classes: int = config["classes"]
         activation: Type[nn.Module] = config["activation"]
-        normalization1d: Type[nn.Module] = config["normalization1d"]
         dropout: float = config["dropout"]
         # Init ecg encoder
-        self.ecg_encoder = nn.Sequential(
-            *[AxialAttention1dBlock(
-                in_channels=ecg_encoder_channel[0],
-                out_channels=ecg_encoder_channel[1],
-                span=ecg_encoder_span,
-                activation=activation,
-                normalization=normalization1d,
-                dropout=dropout) for ecg_encoder_channel, ecg_encoder_span in
-                zip(ecg_encoder_channels, ecg_encoder_spans)])
+        self.ecg_encoder = nn.TransformerEncoder(
+            encoder_layer=nn.TransformerEncoderLayer(d_model=ecg_features, nhead=transformer_heads,
+                                                     dim_feedforward=transformer_ff_features, dropout=dropout,
+                                                     activation=transformer_activation),
+            num_layers=transformer_layers,
+            norm=nn.LayerNorm(normalized_shape=ecg_features)
+        )
         # Init spectrogram encoder
         self.spectrogram_encoder = nn.ModuleList()
         for index, (spectrogram_encoder_channel, spectrogram_encoder_span) in \
                 enumerate(zip(spectrogram_encoder_channels, spectrogram_encoder_spans)):
-            if index in [0, 1]:
+            if spectrogram_encoder_span is None:
                 self.spectrogram_encoder.append(
                     Conv2dResidualBlock(
                         in_channels=spectrogram_encoder_channel[0],
@@ -129,11 +123,10 @@ class ECGAttNet(nn.Module):
                         dropout=dropout)
                 )
         # Init final linear layers
-        self.linear_layer_1 = nn.Sequential(nn.Linear(
-            in_features=(128 // 2 ** (len(spectrogram_encoder_channels))) ** 2 * spectrogram_encoder_channels[-1][-1],
-            out_features=classes, bias=True),
+        self.linear_layer_1 = nn.Sequential(
+            nn.Linear(in_features=spectrogram_encoder_channels[-1][-1], out_features=latent_vector_features, bias=True),
             activation())
-        self.linear_layer_2 = nn.Linear(in_features=latent_vector_features + classes, out_features=classes, bias=True)
+        self.linear_layer_2 = nn.Linear(in_features=latent_vector_features, out_features=classes, bias=True)
 
     def forward(self, ecg_lead: torch.Tensor, spectrogram: torch.Tensor) -> torch.Tensor:
         """
@@ -143,89 +136,19 @@ class ECGAttNet(nn.Module):
         :return: (torch.Tensor) Output prediction
         """
         # Encode ECG lead
-        latent_vector = self.ecg_encoder(ecg_lead).flatten(start_dim=1)
+        latent_vector = self.ecg_encoder(ecg_lead.permute(1, 0, 2)).permute(1, 0, 2).mean(dim=1)
         # Forward pass spectrogram encoder
         for block in self.spectrogram_encoder:
             spectrogram = block(spectrogram, latent_vector)
+        # Perform average pooling
+        spectrogram = F.adaptive_avg_pool2d(spectrogram, output_size=(1, 1))
         # Final linear layer
         output = self.linear_layer_1(spectrogram.flatten(start_dim=1))
-        output = self.linear_layer_2(torch.cat([output, latent_vector], dim=-1))
+        output = self.linear_layer_2(output + latent_vector)
         # Apply softmax if not training mode
         if self.training:
             return output
-        else:
-            return output.softmax(dim=-1)
-
-
-class ECGInvNet(nn.Module):
-    """
-    This class implements a involution network for ECG classification.
-    """
-
-    def __init__(self, config: Dict[str, Any]) -> None:
-        """
-        Constructor method
-        :param config: (Dict[str, Any]) Dict with network hyperparameters
-        """
-        # Call super constructor
-        super(ECGInvNet, self).__init__()
-        # Get parameters
-        ecg_encoder_channels: Tuple[Tuple[int, int], ...] = config["ecg_encoder_channels"]
-        ecg_encoder_spans: Tuple[int, ...] = config["ecg_encoder_spans"]
-        spectrogram_encoder_channels: Tuple[Tuple[int, int], ...] = config["spectrogram_encoder_channels"]
-        latent_vector_features: int = config["latent_vector_features"]
-        classes: int = config["classes"]
-        activation: Type[nn.Module] = config["activation"]
-        convolution2d: Type[nn.Module] = config["convolution2d"]
-        normalization1d: Type[nn.Module] = config["normalization1d"]
-        dropout: float = config["dropout"]
-        # Init ecg encoder
-        self.ecg_encoder = nn.Sequential(
-            *[AxialAttention1dBlock(
-                in_channels=ecg_encoder_channel[0],
-                out_channels=ecg_encoder_channel[1],
-                span=ecg_encoder_span,
-                activation=activation,
-                normalization=normalization1d,
-                dropout=dropout) for ecg_encoder_channel, ecg_encoder_span in
-                zip(ecg_encoder_channels, ecg_encoder_spans)])
-        # Init spectrogram encoder
-        self.spectrogram_encoder = nn.ModuleList(
-            [Conv2dResidualBlock(
-                in_channels=spectrogram_encoder_channel[0],
-                out_channels=spectrogram_encoder_channel[1],
-                latent_vector_features=latent_vector_features,
-                activation=activation,
-                convolution=convolution2d,
-                dropout=dropout) for
-                spectrogram_encoder_channel in spectrogram_encoder_channels])
-        # Init final linear layers
-        self.linear_layer_1 = nn.Sequential(nn.Linear(
-            in_features=(128 // 2 ** (len(spectrogram_encoder_channels))) ** 2 * spectrogram_encoder_channels[-1][-1],
-            out_features=classes, bias=True),
-            activation())
-        self.linear_layer_2 = nn.Linear(in_features=latent_vector_features + classes, out_features=classes, bias=True)
-
-    def forward(self, ecg_lead: torch.Tensor, spectrogram: torch.Tensor) -> torch.Tensor:
-        """
-        Forward pass
-        :param ecg_lead: (torch.Tensor) ECG lead tensor
-        :param spectrogram: (torch.Tensor) Spectrogram tensor
-        :return: (torch.Tensor) Output prediction
-        """
-        # Encode ECG lead
-        latent_vector = self.ecg_encoder(ecg_lead).flatten(start_dim=1)
-        # Forward pass spectrogram encoder
-        for block in self.spectrogram_encoder:
-            spectrogram = block(spectrogram, latent_vector)
-        # Final linear layer
-        output = self.linear_layer_1(spectrogram.flatten(start_dim=1))
-        output = self.linear_layer_2(torch.cat([output, latent_vector], dim=-1))
-        # Apply softmax if not training mode
-        if self.training:
-            return output
-        else:
-            return output.softmax(dim=-1)
+        return output.softmax(dim=-1)
 
 
 class Conv1dResidualBlock(nn.Module):

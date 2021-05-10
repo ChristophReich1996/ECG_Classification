@@ -1,132 +1,98 @@
 import torch.nn as nn
-from involution import Involution2d
 from ecg_classification.pade_activation_unit.utils import PAU
 
 # Configuration for ECGCNN S
 ECGCNN_CONFIG_S = {
-    "ecg_encoder_channels": ((80, 128), (128, 128), (128, 128), (128, 64), (64, 32)),
+    "ecg_features": 256,
+    "lstm_features": 128,
+    "lstm_layers": 2,
     "spectrogram_encoder_channels": ((1, 16), (16, 32), (32, 64), (64, 128), (128, 256)),
-    "latent_vector_features": 256,
+    "latent_vector_features": 128,
     "classes": 4,
     "dropout": 0.05,
     "activation": PAU,
-    "convolution1d": nn.Conv1d,
     "convolution2d": nn.Conv2d,
-    "normalization1d": nn.BatchNorm1d,
 }
 
 # Configuration for ECGCNN M
 ECGCNN_CONFIG_M = {
-    "ecg_encoder_channels": ((80, 128), (128, 256), (256, 256), (256, 128), (128, 32)),
+    "ecg_features": 256,
+    "lstm_features": 256,
+    "lstm_layers": 2,
     "spectrogram_encoder_channels": ((1, 32), (32, 64), (64, 128), (128, 256), (256, 256)),
     "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.05,
     "activation": PAU,
-    "convolution1d": nn.Conv1d,
     "convolution2d": nn.Conv2d,
-    "normalization1d": nn.BatchNorm1d,
 }
 
 # Configuration for ECGCNN L
 ECGCNN_CONFIG_L = {
-    "ecg_encoder_channels": ((80, 256), (256, 512), (512, 512), (512, 128), (128, 32)),
+    "ecg_features": 256,
+    "lstm_features": 256,
+    "lstm_layers": 3,
     "spectrogram_encoder_channels": ((1, 64), (64, 128), (128, 256), (256, 256), (256, 256)),
     "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.05,
     "activation": PAU,
-    "convolution1d": nn.Conv1d,
     "convolution2d": nn.Conv2d,
-    "normalization1d": nn.BatchNorm1d,
 }
 
 # Configuration for ECGAttNet S
 ECGAttNet_CONFIG_S = {
-    "ecg_encoder_channels": ((80, 128), (128, 128), (128, 128), (128, 64), (64, 32)),
-    "ecg_encoder_spans": (256, 128, 64, 32, 16),
+    "ecg_features": 256,
+    "transformer_heads": 8,
+    "transformer_ff_features": 128,
+    "transformer_activation": "gelu",
+    "transformer_layers": 2,
     "spectrogram_encoder_channels": ((1, 16), (16, 32), (32, 64), (64, 128), (128, 256)),
-    "spectrogram_encoder_spans": (128, 64, 32, 16, 8),
+    "spectrogram_encoder_spans": (None, None, (140, 8), (70, 4), (35, 2)),
     "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.05,
     "activation": PAU,
-    "normalization1d": nn.BatchNorm1d,
 }
 
 # Configuration for ECGAttNet M
 ECGAttNet_CONFIG_M = {
-    "ecg_encoder_channels": ((80, 128), (128, 256), (256, 256), (256, 128), (128, 32)),
-    "ecg_encoder_spans": (256, 128, 64, 32, 16),
+    "ecg_features": 256,
+    "transformer_heads": 8,
+    "transformer_ff_features": 256,
+    "transformer_activation": "gelu",
+    "transformer_layers": 2,
     "spectrogram_encoder_channels": ((1, 32), (32, 64), (64, 128), (128, 256), (256, 256)),
-    "spectrogram_encoder_spans": (128, 64, 32, 16, 8),
+    "spectrogram_encoder_spans": (None, None, (140, 8), (70, 4), (35, 2)),
     "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.05,
     "activation": PAU,
-    "normalization1d": nn.BatchNorm1d,
 }
 
 # Configuration for ECGAttNet L
 ECGAttNet_CONFIG_L = {
-    "ecg_encoder_channels": ((80, 256), (256, 512), (512, 512), (512, 128), (128, 32)),
-    "ecg_encoder_spans": (256, 128, 64, 32, 16),
+    "ecg_features": 256,
+    "transformer_heads": 8,
+    "transformer_ff_features": 256,
+    "transformer_activation": "gelu",
+    "transformer_layers": 3,
     "spectrogram_encoder_channels": ((1, 64), (64, 128), (128, 256), (256, 256), (256, 256)),
-    "spectrogram_encoder_spans": (128, 64, 32, 16, 8),
+    "spectrogram_encoder_spans": (None, None, (140, 8), (70, 4), (35, 2)),
     "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.05,
     "activation": PAU,
-    "normalization1d": nn.BatchNorm1d,
-}
-
-# Configuration for ECGInvNet S
-ECGInvNet_CONFIG_S = {
-    "ecg_encoder_channels": ((80, 128), (128, 128), (128, 128), (128, 64), (64, 32)),
-    "ecg_encoder_spans": (256, 128, 64, 32, 16),
-    "spectrogram_encoder_channels": ((1, 16), (16, 32), (32, 64), (64, 128), (128, 256)),
-    "latent_vector_features": 256,
-    "classes": 4,
-    "dropout": 0.05,
-    "activation": PAU,
-    "convolution2d": Involution2d,
-    "normalization1d": nn.BatchNorm1d,
-}
-
-# Configuration for ECGInvNet M
-ECGInvNet_CONFIG_M = {
-    "ecg_encoder_channels": ((80, 128), (128, 256), (256, 256), (256, 128), (128, 32)),
-    "ecg_encoder_spans": (256, 128, 64, 32, 16),
-    "spectrogram_encoder_channels": ((1, 32), (32, 64), (64, 128), (128, 256), (256, 256)),
-    "latent_vector_features": 256,
-    "classes": 4,
-    "dropout": 0.05,
-    "activation": PAU,
-    "convolution2d": Involution2d,
-    "normalization1d": nn.BatchNorm1d,
-}
-
-# Configuration for ECGInvNet L
-ECGInvNet_CONFIG_L = {
-    "ecg_encoder_channels": ((80, 256), (256, 512), (512, 512), (512, 128), (128, 32)),
-    "ecg_encoder_spans": (256, 128, 64, 32, 16),
-    "spectrogram_encoder_channels": ((1, 64), (64, 128), (128, 256), (256, 256), (256, 256)),
-    "latent_vector_features": 256,
-    "classes": 4,
-    "dropout": 0.05,
-    "activation": PAU,
-    "convolution2d": Involution2d,
-    "normalization1d": nn.BatchNorm1d,
 }
 
 # Configuration of augmentation pipeline
 AUGMENTATION_PIPELINE_CONFIG = {
-    "p_scale": 0.5,
+    "p_scale": 0.2,
     "p_drop": 0.2,
-    "p_cutout": 0.5,
-    "p_shift": 0.5,
-    "p_resample": 0.5,
-    "p_random_resample": 0.5,
+    "p_cutout": 0.2,
+    "p_shift": 0.2,
+    "p_resample": 0.2,
+    "p_random_resample": 0.2,
     "p_sine": 0.2,
     "p_band_pass_filter": 0.2,
     "scale_range": (0.85, 1.15),

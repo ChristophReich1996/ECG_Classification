@@ -66,22 +66,10 @@ if __name__ == '__main__':
         network = ECGAttNet(config=ECGAttNet_CONFIG_M)
         data_logger = Logger(experiment_path_extension="ECGAttNet_M" + dataset_info)
         print("ECGAttNet_M utilized")
-    elif args.network_config == "ECGAttNet_L":
+    else:
         network = ECGAttNet(config=ECGAttNet_CONFIG_L)
         data_logger = Logger(experiment_path_extension="ECGAttNet_L" + dataset_info)
         print("ECGAttNet_L utilized")
-    elif args.network_config == "ECGInvNet_S":
-        network = ECGInvNet(config=ECGInvNet_CONFIG_S)
-        data_logger = Logger(experiment_path_extension="ECGInvNet_S" + dataset_info)
-        print("ECGInvNet_S utilized")
-    elif args.network_config == "ECGInvNet_M":
-        network = ECGInvNet(config=ECGInvNet_CONFIG_M)
-        data_logger = Logger(experiment_path_extension="ECGInvNet_M" + dataset_info)
-        print("ECGInvNet_M utilized")
-    else:
-        network = ECGInvNet(config=ECGInvNet_CONFIG_L)
-        data_logger = Logger(experiment_path_extension="ECGInvNet_L" + dataset_info)
-        print("ECGInvNet_L utilized")
 
     # Print network parameters
     print("# parameters:", sum([p.numel() for p in network.parameters()]))
