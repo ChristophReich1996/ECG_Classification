@@ -40,6 +40,19 @@ ECGCNN_CONFIG_L = {
     "convolution2d": nn.Conv2d,
 }
 
+# Configuration for ECGCNN XL
+ECGCNN_CONFIG_XL = {
+    "ecg_features": 256,
+    "lstm_features": 512,
+    "lstm_layers": 3,
+    "spectrogram_encoder_channels": ((1, 128), (128, 256), (256, 512), (512, 512), (512, 256)),
+    "latent_vector_features": 512,
+    "classes": 4,
+    "dropout": 0.05,
+    "activation": PAU,
+    "convolution2d": nn.Conv2d,
+}
+
 # Configuration for ECGAttNet S
 ECGAttNet_CONFIG_S = {
     "ecg_features": 256,
@@ -78,6 +91,21 @@ ECGAttNet_CONFIG_L = {
     "transformer_activation": "gelu",
     "transformer_layers": 3,
     "spectrogram_encoder_channels": ((1, 64), (64, 128), (128, 256), (256, 256), (256, 256)),
+    "spectrogram_encoder_spans": (None, None, (140, 8), (70, 4), (35, 2)),
+    "latent_vector_features": 256,
+    "classes": 4,
+    "dropout": 0.05,
+    "activation": PAU,
+}
+
+# Configuration for ECGAttNet XL
+ECGAttNet_CONFIG_XL = {
+    "ecg_features": 256,
+    "transformer_heads": 8,
+    "transformer_ff_features": 512,
+    "transformer_activation": "gelu",
+    "transformer_layers": 3,
+    "spectrogram_encoder_channels": ((1, 128), (128, 256), (256, 512), (512, 512), (512, 256)),
     "spectrogram_encoder_spans": (None, None, (140, 8), (70, 4), (35, 2)),
     "latent_vector_features": 256,
     "classes": 4,

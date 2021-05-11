@@ -21,8 +21,8 @@ parser.add_argument("--physio_net", default=False, action="store_true",
 parser.add_argument("--dataset_path", default="data/training/", type=str,
                     help="Path to dataset.")
 parser.add_argument("--network_config", default="ECGCNN_M", type=str,
-                    choices=["ECGCNN_S", "ECGCNN_M", "ECGCNN_L", "ECGAttNet_S", "ECGAttNet_M", "ECGAttNet_L",
-                             "ECGInvNet_S", "ECGInvNet_M", "ECGInvNet_L"],
+                    choices=["ECGCNN_S", "ECGCNN_M", "ECGCNN_L", "ECGCNN_XL", "ECGAttNet_S", "ECGAttNet_M",
+                             "ECGAttNet_L", "ECGAttNet_XL"],
                     help="Type of network configuration to be utilized.")
 # Get arguments
 args = parser.parse_args()
@@ -56,6 +56,10 @@ if __name__ == '__main__':
         network = ECGCNN(config=ECGCNN_CONFIG_L)
         data_logger = Logger(experiment_path_extension="ECGCNN_L" + dataset_info)
         print("ECGCNN_L utilized")
+    elif args.network_config == "ECGCNN_XL":
+        network = ECGCNN(config=ECGCNN_CONFIG_XL)
+        data_logger = Logger(experiment_path_extension="ECGCNN_XL" + dataset_info)
+        print("ECGCNN_XL utilized")
     elif args.network_config == "ECGAttNet_S":
         network = ECGAttNet(config=ECGAttNet_CONFIG_S)
         data_logger = Logger(experiment_path_extension="ECGAttNet_S" + dataset_info)
@@ -64,10 +68,14 @@ if __name__ == '__main__':
         network = ECGAttNet(config=ECGAttNet_CONFIG_M)
         data_logger = Logger(experiment_path_extension="ECGAttNet_M" + dataset_info)
         print("ECGAttNet_M utilized")
-    else:
+    elif args.network_config == "ECGAttNet_L":
         network = ECGAttNet(config=ECGAttNet_CONFIG_L)
         data_logger = Logger(experiment_path_extension="ECGAttNet_L" + dataset_info)
         print("ECGAttNet_L utilized")
+    else:
+        network = ECGAttNet(config=ECGAttNet_CONFIG_XL)
+        data_logger = Logger(experiment_path_extension="ECGAttNet_XL" + dataset_info)
+        print("ECGAttNet_XL utilized")
 
     # Print network parameters
     print("# parameters:", sum([p.numel() for p in network.parameters()]))
