@@ -70,6 +70,8 @@ To run custom training runs the `train.py` script can be used. This script takes
 | `--dataset_path` | False | Path to dataset. |
 | `--network_config` | "ECGCNN_M" | Type of network configuration to be utilized. |
 
+All network hyperparameters can be found and adjusted in the `ecg_classification\config.py` file.
+
 ## References
 
 ```bibtex
