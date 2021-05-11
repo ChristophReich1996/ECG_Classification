@@ -25,12 +25,20 @@ execution on the CPU. The functionality of this repository can not be guaranteed
 We implement ECG-AttNet with [PyTorch](https://pytorch.org/) 1.8.1 and 
 [Torchaudio](https://pytorch.org/audio/stable/index.html) 0.8.1. All required packages can be seen 
 in the `requirements.txt` file. For the pade activation unit we adopted the 
-[implementation (cuda extension) from the authors](https://github.com/ml-research/pau).
+[implementation (cuda extension) from the authors](https://github.com/ml-research/pau) [1].
 
 ## Usage
 
 ## Results
 
-## Related Work
-
 ## References
+
+````bibtex
+[1] @article{Molina2019,
+        title={Pad\'{e} Activation Units: End-to-end Learning of Flexible Activation Functions in Deep Networks},
+        author={Molina, Alejandro and Schramowski, Patrick and Kersting, Kristian},
+        journal={preprint arXiv:1907.06732},
+        year={2019}
+}
+````
+
