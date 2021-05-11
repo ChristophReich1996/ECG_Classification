@@ -33,13 +33,15 @@ We achieved the following validation results for our custom training/validation 
 dataset [2].
 
 | Model | ACC | F1 | # Parameters |
-| --- | --- | --- | --- |
-| CNN + LSTM baseline S |  |  |  |
-| CNN + LSTM baseline M |  |  |  |
-| CNN + LSTM baseline L |  |  |  |
-| ECG-AttNet S |  |  |  |
-| ECG-AttNet M |  |  |  |
-| ECG-AttNet L |  |  |  |
+| --- | ---: | ---: | ---: |
+| CNN + LSTM baseline S |  |  | 1840210 |
+| CNN + LSTM baseline M |  |  | 4269618 |
+| CNN + LSTM baseline L |  |  | 6176498 |
+| CNN + LSTM baseline XL |  |  | 20683122 |
+| ECG-AttNet S |  |  | 1785186 |
+| ECG-AttNet M |  |  | 2589714 |
+| ECG-AttNet L |  |  | 3717426 |
+| ECG-AttNet XL |  |  | 8212658 |
 
 ## Usage
 
