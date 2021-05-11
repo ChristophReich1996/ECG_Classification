@@ -56,6 +56,19 @@ This script trains all models listed in the table above. During training all log
 [state dict](https://pytorch.org/tutorials/beginner/saving_loading_models.html#what-is-a-state-dict) and can be loaded 
 by `state_dict:Dict[str, torch.Tensor] = torch.load("best_model.pt")`.
 
+To run custom training runs the `train.py` script can be used. This script takes the following commands:
+
+| Argument | Default Value | Info |
+| --- | --- | --- |
+| `--cuda_devices` | "0" | String of cuda device indexes to be used. Indexes must be separated by a comma. |
+| `--no_data_aug` | False | Binary flag. If set no data augmentation is utilized. |
+| `--data_parallel` | False | Binary flag. If set data parallel is utilized. |
+| `--epochs` | 100 | Number of epochs to perform while training. |
+| `--lr` | 1e-03 | Learning rate to be employed. |
+| `--physio_net` | False | Binary flag. Utilized PhysioNet dataset instead of default one. |
+| `--batch_size` | 24 | Number of epochs to perform while training. |
+| `--dataset_path` | False | Path to dataset. |
+| `--network_config` | "ECGCNN_M" | Type of network configuration to be utilized. |
 
 ## References
 
