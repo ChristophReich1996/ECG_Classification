@@ -43,6 +43,20 @@ dataset [2].
 
 ## Usage
 
+To reproduce the presented results simply run:
+
+```shell script
+sh run_experiments.sh
+```
+
+This script trains all models listed in the table above. During training all logs are saved in the experiments folder 
+(produced automatically). Most logs are stored in the 
+[PyTorch tensor format](https://pytorch.org/docs/stable/generated/torch.load.html) `.pt` and can be loaded by 
+`loss:torch.Tensor = torch.load("loss.pt"")`. Network weights are stored as a 
+[state dict](https://pytorch.org/tutorials/beginner/saving_loading_models.html#what-is-a-state-dict) and can be loaded 
+by `state_dict:Dict[str, torch.Tensor] = torch.load("best_model.pt")`.
+
+
 ## References
 
 ```bibtex
