@@ -1,7 +1,7 @@
 # ECG Classification
 
 This repository includes the code of the ECG-AttNet for ECG classification. This work was done as part of the 
-competition "Wetbewerb künstliche Interligenz in der Medizin" at TU Darmstadt.
+competition "Wettbewerb künstliche Intelligenz in der Medizin" at TU Darmstadt.
 
 ## Installation
 
