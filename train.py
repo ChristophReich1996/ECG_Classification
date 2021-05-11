@@ -4,10 +4,8 @@ import os
 # Manage command line arguments
 parser = ArgumentParser()
 
-parser.add_argument("--cuda_devices", default="0, 1, 2, 3", type=str,
+parser.add_argument("--cuda_devices", default="0", type=str,
                     help="String of cuda device indexes to be used. Indexes must be separated by a comma.")
-parser.add_argument("--cpu", default=False, action="store_true",
-                    help="Binary flag. If set all operations are performed on the CPU.")
 parser.add_argument("--no_data_aug", default=False, action="store_true",
                     help="Binary flag. If set no data augmentation is utilized.")
 parser.add_argument("--data_parallel", default=False, action="store_true",
@@ -16,12 +14,12 @@ parser.add_argument("--epochs", default=100, type=int,
                     help="Number of epochs to perform while training.")
 parser.add_argument("--lr", default=1e-03, type=float,
                     help="Learning rate to be employed.")
-parser.add_argument("--batch_size", default=16, type=int,
+parser.add_argument("--batch_size", default=24, type=int,
                     help="Number of epochs to perform while training.")
 parser.add_argument("--physio_net", default=False, action="store_true",
                     help="Binary flag. Utilized PhysioNet dataset instead of default one.")
 parser.add_argument("--dataset_path", default="data/training/", type=str,
-                    help="Path to dataset")
+                    help="Path to dataset.")
 parser.add_argument("--network_config", default="ECGCNN_M", type=str,
                     choices=["ECGCNN_S", "ECGCNN_M", "ECGCNN_L", "ECGAttNet_S", "ECGAttNet_M", "ECGAttNet_L",
                              "ECGInvNet_S", "ECGInvNet_M", "ECGInvNet_L"],
@@ -30,7 +28,7 @@ parser.add_argument("--network_config", default="ECGCNN_M", type=str,
 args = parser.parse_args()
 
 # Set device type
-device = "cpu" if args.cpu else "cuda"
+device = "cuda"
 
 # Set cuda devices
 os.environ["CUDA_VISIBLE_DEVICES"] = args.cuda_devices
