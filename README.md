@@ -27,18 +27,41 @@ We implement ECG-AttNet with [PyTorch](https://pytorch.org/) 1.8.1 and
 in the `requirements.txt` file. For the pade activation unit we adopted the 
 [implementation (cuda extension) from the authors](https://github.com/ml-research/pau) [1].
 
-## Usage
-
 ## Results
+
+We achieved the following validation results for our custom training/validation split on the 2017 PhysioNet Challenge 
+dataset [2].
+
+| Model | ACC | F1 | # Parameters |
+| --- | --- | --- | --- |
+| CNN + LSTM baseline S |  |  |  |
+| CNN + LSTM baseline M |  |  |  |
+| CNN + LSTM baseline L |  |  |  |
+| ECG-AttNet S |  |  |  |
+| ECG-AttNet M |  |  |  |
+| ECG-AttNet L |  |  |  |
+
+## Usage
 
 ## References
 
-````bibtex
+```bibtex
 [1] @article{Molina2019,
         title={Pad\'{e} Activation Units: End-to-end Learning of Flexible Activation Functions in Deep Networks},
         author={Molina, Alejandro and Schramowski, Patrick and Kersting, Kristian},
         journal={preprint arXiv:1907.06732},
         year={2019}
 }
-````
+```
 
+```bibtex
+[2] @inproceedings{Clifford2017,
+        title={{AF Classification from a Short Single Lead ECG Recording: the
+        PhysioNet/Computing in Cardiology Challenge 2017}},
+        author={Clifford, Gari D and Liu, Chengyu and Moody, Benjamin and Li-wei, H Lehman and Silva, Ikaro and Li, Qiao and Johnson, AE and Mark, Roger G},
+        booktitle={2017 Computing in Cardiology (CinC)},
+        pages={1--4},
+        year={2017},
+        organization={IEEE}
+}
+```
