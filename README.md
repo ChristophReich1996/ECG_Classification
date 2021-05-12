@@ -1,6 +1,6 @@
 # ECG Classification
 
-This repository includes the code of the ECG-AttNet for ECG classification. This work was done as part of the 
+This repository includes the code of the ECG-DualNet for ECG classification. This work was done as part of the 
 competition "Wettbewerb künstliche Intelligenz in der Medizin" at TU Darmstadt.
 
 ## Installation
@@ -34,14 +34,14 @@ dataset [2].
 
 | Model | ACC | F1 | # Parameters |
 | --- | ---: | ---: | ---: |
-| CNN + LSTM baseline S | 0.8467 | 0.8467 | 1840210 |
-| CNN + LSTM baseline M | 0.8623 | 0.8623 | 4269618 |
-| CNN + LSTM baseline L | 0.8548 | 0.8548 | 6176498 |
-| CNN + LSTM baseline XL | 0.8519 | 0.8519 | 20683122 |
-| ECG-AttNet S | 0.7549 | 0.7549 | 1785186 |
-| ECG-AttNet M | 0.7884 | 0.7884 | 2589714 |
-| ECG-AttNet L | 0.8477 | 0.8477 | 3717426 |
-| ECG-AttNet XL |  |  | 8212658 |
+| ECG-DualNet S (CNN + LSTM) | 0.8467 | 0.8467 | 1840210 |
+| ECG-DualNet M (CNN + LSTM) | 0.8623 | 0.8623 | 4269618 |
+| ECG-DualNet L (CNN + LSTM) | 0.8548 | 0.8548 | 6176498 |
+| ECG-DualNet XL (CNN + LSTM) | 0.8519 | 0.8519 | 20683122 |
+| ECG-DualNet++ S (AxAtt + Trans.) | 0.7549 | 0.7549 | 1785186 |
+| ECG-DualNet++ M (AxAtt + Trans.) | 0.7884 | 0.7884 | 2589714 |
+| ECG-DualNet++ L (AxAtt + Trans.) | 0.8477 | 0.8477 | 3717426 |
+| ECG-DualNet++ XL (AxAtt + Trans.) |  |  | 8212658 |
 
 ## Usage
 
