@@ -34,13 +34,13 @@ dataset [2].
 
 | Model | ACC | F1 | # Parameters |
 | --- | ---: | ---: | ---: |
-| CNN + LSTM baseline S |  |  | 1840210 |
-| CNN + LSTM baseline M |  |  | 4269618 |
-| CNN + LSTM baseline L |  |  | 6176498 |
-| CNN + LSTM baseline XL |  |  | 20683122 |
-| ECG-AttNet S |  |  | 1785186 |
-| ECG-AttNet M |  |  | 2589714 |
-| ECG-AttNet L |  |  | 3717426 |
+| CNN + LSTM baseline S | 0.8467 | 0.8467 | 1840210 |
+| CNN + LSTM baseline M | 0.8623 | 0.8623 | 4269618 |
+| CNN + LSTM baseline L | 0.8548 | 0.8548 | 6176498 |
+| CNN + LSTM baseline XL | 0.8519 | 0.8519 | 20683122 |
+| ECG-AttNet S | 0.7549 | 0.7549 | 1785186 |
+| ECG-AttNet M | 0.7884 | 0.7884 | 2589714 |
+| ECG-AttNet L | 0.8477 | 0.8477 | 3717426 |
 | ECG-AttNet XL |  |  | 8212658 |
 
 ## Usage
