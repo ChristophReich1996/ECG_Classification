@@ -1,4 +1,4 @@
-from typing import Optional, Union, Tuple
+from typing import Optional, Union, Tuple, List
 
 import torch
 import torch.nn as nn
@@ -135,27 +135,33 @@ class ModelWrapper(object):
             self.progress_bar.set_description("Validation")
         except AttributeError as e:
             pass
+        # Init lists to store all labels and predictions
+        predictions: List[torch.Tensor] = []
+        labels: List[torch.Tensor] = []
         # Validation loop
         for batch in self.validation_dataset:
             # Unpack batch
-            ecg_leads, spectrogram, labels = batch
+            ecg_leads, spectrogram, labels_ = batch
             # Data to device
             ecg_leads = ecg_leads.to(self.device)
             spectrogram = spectrogram.to(self.device)
-            labels = labels.to(self.device)
+            labels_ = labels_.to(self.device)
             # Make prediction
-            predictions = self.network(ecg_leads, spectrogram)
+            predictions_ = self.network(ecg_leads, spectrogram)
             # Calc loss
-            loss = self.loss_function(predictions, labels)
+            loss = self.loss_function(predictions_, labels_)
             # Track loss
             self.data_logger.log_temp_metric(metric_name="validation_loss", value=loss.item())
-            # Compute all validation metrics
-            for validation_metric in validation_metrics:
-                self.data_logger.log_temp_metric(metric_name=str(validation_metric),
-                                                 value=validation_metric(predictions, labels))
-        # Average metrics
-        metric_results = self.data_logger.save_temp_metric(
-            metric_name=["validation_loss"] + [str(validation_metric) for validation_metric in validation_metrics])
+            # Save predictions and labels
+            predictions.append(predictions_)
+            labels.append(labels_)
+        # Pack predictions
+        predictions = torch.cat(predictions, dim=0)
+        labels = torch.cat(labels, dim=0)
+        # Compute metrics
+        for metric in validation_metrics:
+            metric_value = metric(predictions, labels)
+            self.data_logger.log_metric(metric_name=str(metric), value=metric_value)
         # Model back into training mode
         self.network.train()
-        return metric_results[str(validation_metrics[-1])]
+        return metric_value
