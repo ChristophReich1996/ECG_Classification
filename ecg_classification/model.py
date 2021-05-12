@@ -84,7 +84,8 @@ class ECGAttNet(nn.Module):
         transformer_heads: int = config["transformer_heads"]
         transformer_ff_features: int = config["transformer_ff_features"]
         transformer_activation: str = config["transformer_activation"]
-        transformer_layers: str = config["transformer_layers"]
+        transformer_layers: int = config["transformer_layers"]
+        transformer_sequence_length: int = config["transformer_sequence_length"]
         spectrogram_encoder_channels: Tuple[Tuple[int, int], ...] = config["spectrogram_encoder_channels"]
         spectrogram_encoder_spans: Tuple[int, ...] = config["spectrogram_encoder_spans"]
         latent_vector_features: int = config["latent_vector_features"]
@@ -99,6 +100,9 @@ class ECGAttNet(nn.Module):
             num_layers=transformer_layers,
             norm=nn.LayerNorm(normalized_shape=ecg_features)
         )
+        # Init positional embedding
+        self.positional_embedding = nn.Parameter(0.1 * torch.randn(transformer_sequence_length, 1, ecg_features),
+                                                 requires_grad=True)
         # Init spectrogram encoder
         self.spectrogram_encoder = nn.ModuleList()
         for index, (spectrogram_encoder_channel, spectrogram_encoder_span) in \
@@ -136,7 +140,8 @@ class ECGAttNet(nn.Module):
         :return: (torch.Tensor) Output prediction
         """
         # Encode ECG lead
-        latent_vector = self.ecg_encoder(ecg_lead.permute(1, 0, 2)).permute(1, 0, 2).mean(dim=1)
+        latent_vector = self.ecg_encoder(
+            ecg_lead.permute(1, 0, 2) + self.positional_embedding).permute(1, 0, 2).mean(dim=1)
         # Forward pass spectrogram encoder
         for block in self.spectrogram_encoder:
             spectrogram = block(spectrogram, latent_vector)
