@@ -45,7 +45,7 @@ class F1(nn.Module):
     This class implements the F1 score as a nn.Module
     """
 
-    def __init__(self, classes:Tuple[int, ...] = (0, 1, 2)) -> None:
+    def __init__(self, classes:Tuple[int, ...] = (0, 1, 2, 3)) -> None:
         """
         Constructor method
         """
