@@ -34,7 +34,7 @@ dataset [2]. Three different training runs are reported. Weights of the best per
 
 | Model | ACC | F1 | # Parameters |  |
 | --- | --- | --- | ---: | --- |
-| ECG-DualNet S (CNN + LSTM) | 0.8527; 0.8410; 0.8455 | 0.8049; 0.7923; 0.7799 | 1840210 | weights |
+| ECG-DualNet S (CNN + LSTM) | 0.8527; 0.8410; 0.8455 | 0.8049; 0.7923; 0.7799 | 1840210 | [weights](experiments/13_05_2021__01_37_34ECGCNN_S_physio_net_dataset/models/best_model.pt) |
 | ECG-DualNet M (CNN + LSTM) | 0.8560; 0.8442; 0.8495 | 0.7938; 0.7955; 0.7928 | 4269618 | weights |
 | ECG-DualNet L (CNN + LSTM) |  0.8508; 0.8213; 0.8514 | 0.8097; 0.7515; 0.8038 | 6176498 | weights |
 | ECG-DualNet XL (CNN + LSTM) | 0.7702; 0.8612; 0.7866 | 0.6899; 0.8164; 0.7162 | 20683122 | weights |
