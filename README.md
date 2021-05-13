@@ -40,7 +40,7 @@ dataset [2]. Three different training runs are reported. Weights of the best per
 | ECG-DualNet XL (CNN + LSTM) | 0.7702; 0.8612; 0.7866 | 0.6899; 0.8164; 0.7162 | 20683122 | weights |
 | ECG-DualNet++ S (AxAtt + Trans.) | 0.7323; 0.8174; 0.7912 | 0.6239; 0.7291; 0.7127 | 1785186 | weights |
 | ECG-DualNet++ M (AxAtt + Trans.) | 0.8226; 0.8259; 0.7938 | 0.7544; 0.7730; 0.6947 | 2589714 | weights |
-| ECG-DualNet++ L (AxAtt + Trans.) | 0.8449; 0.8442 | 0.7859; 0.7750 | 3717426 | weights |
+| ECG-DualNet++ L (AxAtt + Trans.) | 0.8449; 0.8442; 0.8396 | 0.7859; 0.7750; 0.7671 | 3717426 | weights |
 | ECG-DualNet++ XL (AxAtt + Trans.) | 0.8593; 0.8351; 0.8501 | 0.8051; 0.7799; 0.7851 | 8212658 | weights |
 
 ## Usage
