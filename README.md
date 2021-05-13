@@ -41,7 +41,7 @@ dataset [2].
 | ECG-DualNet++ S (AxAtt + Trans.) | 0.7323; 0.8174 | 0.6239; 0.7291 | 1785186 |
 | ECG-DualNet++ M (AxAtt + Trans.) | 0.8226; 0.8259 | 0.7544; 0.7730 | 2589714 |
 | ECG-DualNet++ L (AxAtt + Trans.) | 0.8449; 0.8442 | 0.7859; 0.7750 | 3717426 |
-| ECG-DualNet++ XL (AxAtt + Trans.) |  |  | 8212658 |
+| ECG-DualNet++ XL (AxAtt + Trans.) | 0.8593; | 0.8051; | 8212658 |
 
 ## Usage
 
