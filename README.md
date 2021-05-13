@@ -35,13 +35,13 @@ dataset [2]. Three different training runs are reported. Weights of the best per
 | Model | ACC | F1 | # Parameters |  |
 | --- | --- | --- | ---: | --- |
 | ECG-DualNet S (CNN + LSTM) | 0.8527; 0.8410; 0.8455 | 0.8049; 0.7923; 0.7799 | 1840210 | [weights](experiments/13_05_2021__01_37_34ECGCNN_S_physio_net_dataset/models/best_model.pt) |
-| ECG-DualNet M (CNN + LSTM) | 0.8560; 0.8442; 0.8495 | 0.7938; 0.7955; 0.7928 | 4269618 | weights |
-| ECG-DualNet L (CNN + LSTM) |  0.8508; 0.8213; 0.8514 | 0.8097; 0.7515; 0.8038 | 6176498 | weights |
-| ECG-DualNet XL (CNN + LSTM) | 0.7702; 0.8612; 0.7866 | 0.6899; 0.8164; 0.7162 | 20683122 | weights |
-| ECG-DualNet++ S (AxAtt + Trans.) | 0.7323; 0.8174; 0.7912 | 0.6239; 0.7291; 0.7127 | 1785186 | weights |
-| ECG-DualNet++ M (AxAtt + Trans.) | 0.8226; 0.8259; 0.7938 | 0.7544; 0.7730; 0.6947 | 2589714 | weights |
-| ECG-DualNet++ L (AxAtt + Trans.) | 0.8449; 0.8442; 0.8396 | 0.7859; 0.7750; 0.7671 | 3717426 | weights |
-| ECG-DualNet++ XL (AxAtt + Trans.) | 0.8593; 0.8351; 0.8501 | 0.8051; 0.7799; 0.7851 | 8212658 | weights |
+| ECG-DualNet M (CNN + LSTM) | 0.8560; 0.8442; 0.8495 | 0.7938; 0.7955; 0.7928 | 4269618 | [weights](experiments/13_05_2021__02_06_41ECGCNN_M_physio_net_dataset/models/best_model.pt) |
+| ECG-DualNet L (CNN + LSTM) |  0.8508; 0.8213; 0.8514 | 0.8097; 0.7515; 0.8038 | 6176498 | [weights](experiments/13_05_2021__13_54_12ECGCNN_L_physio_net_dataset/models/best_model.pt) |
+| ECG-DualNet XL (CNN + LSTM) | 0.7702; 0.8612; 0.7866 | 0.6899; 0.8164; 0.7162 | 20683122 | [weights]() |
+| ECG-DualNet++ S (AxAtt + Trans.) | 0.7323; 0.8174; 0.7912 | 0.6239; 0.7291; 0.7127 | 1785186 | [weights](experiments/13_05_2021__05_35_44ECGAttNet_S_physio_net_dataset/models/best_model.pt) |
+| ECG-DualNet++ M (AxAtt + Trans.) | 0.8226; 0.8259; 0.7938 | 0.7544; 0.7730; 0.6947 | 2589714 | [weights](experiments/13_05_2021__06_46_54ECGAttNet_M_physio_net_dataset/models/best_model.pt) |
+| ECG-DualNet++ L (AxAtt + Trans.) | 0.8449; 0.8442; 0.8396 | 0.7859; 0.7750; 0.7671 | 3717426 | [weights](experiments/13_05_2021__07_56_52ECGAttNet_L_physio_net_dataset/models/best_model.pt) |
+| ECG-DualNet++ XL (AxAtt + Trans.) | 0.8593; 0.8351; 0.8501 | 0.8051; 0.7799; 0.7851 | 8212658 | [weights](experiments/13_05_2021__09_42_13ECGAttNet_XL_physio_net_dataset/models/best_model.pt) |
 
 ## Usage
 
