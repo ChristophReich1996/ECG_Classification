@@ -43,6 +43,8 @@ dataset [2]. Three different training runs are reported. Weights of the best per
 | ECG-DualNet++ L (AxAtt + Trans.) | 0.8449; 0.8442; 0.8396 | 0.7859; 0.7750; 0.7671 | 3717426 | [weights](experiments/13_05_2021__07_56_52ECGAttNet_L_physio_net_dataset/models/best_model.pt) |
 | ECG-DualNet++ XL (AxAtt + Trans.) | 0.8593; 0.8351; 0.8501 | 0.8051; 0.7799; 0.7851 | 8212658 | [weights](experiments/13_05_2021__09_42_13ECGAttNet_XL_physio_net_dataset/models/best_model.pt) |
 
+Note that for the weights of ECG-DualNet XL an external link is provided.
+
 ## Usage
 
 To reproduce the presented results simply run:
