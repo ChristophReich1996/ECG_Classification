@@ -33,7 +33,7 @@ We achieved the following validation results for our custom training/validation 
 dataset [2].
 
 | Model | ACC | F1 | # Parameters |
-| --- | ---: | ---: | ---: |
+| --- | --- | --- | ---: |
 | ECG-DualNet S (CNN + LSTM) | 0.8527; 0.8410; 0.8455 | 0.8049; 0.7923; 0.7799 | 1840210 |
 | ECG-DualNet M (CNN + LSTM) | 0.8560; 0.8442; 0.8495 | 0.7938; 0.7955; 0.7928 | 4269618 |
 | ECG-DualNet L (CNN + LSTM) |  0.8508; 0.8213; 0.8514 | 0.8097; 0.7515; 0.8038 | 6176498 |
