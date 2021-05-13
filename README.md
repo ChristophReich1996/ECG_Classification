@@ -34,13 +34,13 @@ dataset [2].
 
 | Model | ACC | F1 | # Parameters |
 | --- | ---: | ---: | ---: |
-| ECG-DualNet S (CNN + LSTM) | 0.8467 | 0.8467 | 1840210 |
-| ECG-DualNet M (CNN + LSTM) | 0.8623 | 0.8623 | 4269618 |
-| ECG-DualNet L (CNN + LSTM) | 0.8548 | 0.8548 | 6176498 |
-| ECG-DualNet XL (CNN + LSTM) | 0.8519 | 0.8519 | 20683122 |
-| ECG-DualNet++ S (AxAtt + Trans.) | 0.7549 | 0.7549 | 1785186 |
-| ECG-DualNet++ M (AxAtt + Trans.) | 0.7884 | 0.7884 | 2589714 |
-| ECG-DualNet++ L (AxAtt + Trans.) | 0.8477 | 0.8477 | 3717426 |
+| ECG-DualNet S (CNN + LSTM) | 0.8527; 0.8410 | 0.8049; 0.7923 | 1840210 |
+| ECG-DualNet M (CNN + LSTM) | 0.8560; 0.8442 | 0.7938; 0.7955 | 4269618 |
+| ECG-DualNet L (CNN + LSTM) |  0.8508; 0.8213 | 0.8097; 0.7515 | 6176498 |
+| ECG-DualNet XL (CNN + LSTM) | 0.7702; 0.8612 | 0.6899; 0.8164 | 20683122 |
+| ECG-DualNet++ S (AxAtt + Trans.) | 0.7323; 0.8174 | 0.6239; 0.7291 | 1785186 |
+| ECG-DualNet++ M (AxAtt + Trans.) | 0.8226; 0.8259 | 0.7544; 0.7730 | 2589714 |
+| ECG-DualNet++ L (AxAtt + Trans.) | 0.8449; 0.8442 | 0.7859; 0.7750 | 3717426 |
 | ECG-DualNet++ XL (AxAtt + Trans.) |  |  | 8212658 |
 
 ## Usage
