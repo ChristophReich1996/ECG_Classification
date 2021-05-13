@@ -117,6 +117,22 @@ ECGAttNet_CONFIG_XL = {
     "activation": PAU,
 }
 
+# Configuration for ECGAttNet XXL
+ECGAttNet_CONFIG_XXL = {
+    "ecg_features": 256,
+    "transformer_heads": 8,
+    "transformer_ff_features": 512,
+    "transformer_activation": "gelu",
+    "transformer_layers": 5,
+    "transformer_sequence_length": 80,
+    "spectrogram_encoder_channels": ((1, 128), (128, 512), (512, 1024), (1024, 1024), (1024, 512)),
+    "spectrogram_encoder_spans": (None, None, (140, 8), (70, 4), (35, 2)),
+    "latent_vector_features": 256,
+    "classes": 4,
+    "dropout": 0.05,
+    "activation": PAU,
+}
+
 # Configuration of augmentation pipeline
 AUGMENTATION_PIPELINE_CONFIG = {
     "p_scale": 0.2,
