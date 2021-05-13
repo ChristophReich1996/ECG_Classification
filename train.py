@@ -112,8 +112,7 @@ if __name__ == '__main__':
     model_wrapper = ModelWrapper(network=network,
                                  optimizer=optimizer,
                                  loss_function=SoftmaxCrossEntropyLoss(
-                                     weight=(0.40316665, 0.7145, 0.91316664, 0.96916664) if not args.physio_net else (
-                                         0.40783304, 0.7120075, 0.91346157, 0.96669793)),
+                                     weight=(0.4, 0.7, 0.9, 0.9)),
                                  training_dataset=training_dataset,
                                  validation_dataset=validation_dataset,
                                  data_logger=data_logger,
