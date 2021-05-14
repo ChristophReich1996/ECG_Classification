@@ -100,7 +100,7 @@ class ModelWrapper(object):
             if self.learning_rate_schedule is not None:
                 self.learning_rate_schedule.step()
             # Perform validation
-            if (((self.epoch + 1) % validate_after_n_epochs) == 0) or (self.epoch == epochs - 1):
+            if (((self.epoch + 1) % validate_after_n_epochs) == 0) or (self.epoch == (epochs - 1)):
                 current_validation_metric = self.validate()
                 # Check if best model
                 if current_validation_metric > best_validation_metric:
