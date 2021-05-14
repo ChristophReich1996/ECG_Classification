@@ -73,6 +73,7 @@ To run custom training runs the `train.py` script can be used. This script takes
 | `--batch_size` | 24 | Number of epochs to perform while training. |
 | `--dataset_path` | False | Path to dataset. |
 | `--network_config` | "ECGCNN_M" | Type of network configuration to be utilized. |
+| `--load_network` | None | If set given network (state dict) is loaded. |
 
 All network hyperparameters can be found and adjusted in the `ecg_classification\config.py` file.
 
