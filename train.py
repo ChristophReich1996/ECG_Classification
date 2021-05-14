@@ -24,6 +24,8 @@ parser.add_argument("--network_config", default="ECGCNN_M", type=str,
                     choices=["ECGCNN_S", "ECGCNN_M", "ECGCNN_L", "ECGCNN_XL", "ECGAttNet_S", "ECGAttNet_M",
                              "ECGAttNet_L", "ECGAttNet_XL", "ECGAttNet_XXL"],
                     help="Type of network configuration to be utilized.")
+parser.add_argument("--load_network", default=None, type=str,
+                    help="If set given network (state dict) is loaded.")
 # Get arguments
 args = parser.parse_args()
 
@@ -80,6 +82,10 @@ if __name__ == '__main__':
         network = ECGAttNet(config=ECGAttNet_CONFIG_XXL)
         data_logger = Logger(experiment_path_extension="ECGAttNet_XXL" + dataset_info)
         print("ECGAttNet_XXL utilized")
+
+    # Load network
+    if args.load_network is not None:
+        network.load_state_dict(torch.load(args.load_network))
 
     # Print network parameters
     print("# parameters:", sum([p.numel() for p in network.parameters()]))
