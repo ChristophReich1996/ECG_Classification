@@ -11,7 +11,8 @@ if __name__ == '__main__':
     ecg_leads, ecg_labels, fs, ecg_names = load_references("D:/ECG_Classification Data/training/")
     # Plot a few data samples
     for ecg_lead, ecg_label in zip(ecg_leads, ecg_labels):
-        AugmentationPipeline.scale(ecg_lead)
+        ecg = AugmentationPipeline()
+        ecg.scale(ecg_lead)
         # Limit x- and y-axis of plot
         plt.xlim(0, 1000)
         plt.ylim(-150, 300)
@@ -19,8 +20,8 @@ if __name__ == '__main__':
         # Label x- and y-axis of plot
         plt.xlabel('time (ms)')
         plt.ylabel('voltage (mV)')
-        plt.plot(ecg_lead)
-        plt.show()
+        plt.plot(ecg)
 
-        #tikzplotlib.save("plot_scale.tex")
+
+        tikzplotlib.save("augmented_plot_scale.tex")
         pass
