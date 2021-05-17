@@ -4,7 +4,7 @@ import numpy as np
 import torch
 
 from wettbewerb import load_references
-from ecg_classification import AugmentationPipeline, AUGMENTATION_PIPELINE_CONFIG, ECGDataset
+from ecg_classification import AugmentationPipeline, AUGMENTATION_PIPELINE_CONFIG, PhysioNetDataset
 
 if __name__ == '__main__':
     # Get data

@@ -8,7 +8,7 @@ import numpy as np
 from torchaudio.transforms import Spectrogram
 
 
-class ECGDataset(Dataset):
+class PhysioNetDataset(Dataset):
     """
     This class implements the ECG dataset for atrial fibrillation classification.
     """
@@ -36,7 +36,7 @@ class ECGDataset(Dataset):
         :param spectrogram_normalized: (int) If true spectrogram is normalized
         """
         # Call super constructor
-        super(ECGDataset, self).__init__()
+        super(PhysioNetDataset, self).__init__()
         # Check parameters
         assert isinstance(ecg_leads, List), "ECG leads musst be a list of np.ndarray."
         assert isinstance(ecg_labels, List), "ECG labels musst be a list of strings."
@@ -123,6 +123,6 @@ if __name__ == '__main__':
     from wettbewerb import load_references
 
     ecg_leads, ecg_labels, _, _ = load_references("../data/training/")
-    dataset = ECGDataset(ecg_leads=ecg_leads, ecg_labels=ecg_labels)
+    dataset = PhysioNetDataset(ecg_leads=ecg_leads, ecg_labels=ecg_labels)
     ecg_lead, spectrogram, ecg_label = dataset[0]
     print(ecg_lead.shape, spectrogram.shape, ecg_label.shape)

@@ -105,16 +105,16 @@ if __name__ == '__main__':
     training_split = TRAINING_SPLIT if not args.physio_net else TRAINING_SPLIT_PHYSIONET
     validation_split = VALIDATION_SPLIT if not args.physio_net else VALIDATION_SPLIT_PHYSIONET
     training_dataset = DataLoader(
-        ECGDataset(ecg_leads=[ecg_leads[index] for index in training_split],
-                   ecg_labels=[ecg_labels[index] for index in training_split], fs=fs,
-                   augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline(
+        PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in training_split],
+                         ecg_labels=[ecg_labels[index] for index in training_split], fs=fs,
+                         augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline(
                        AUGMENTATION_PIPELINE_CONFIG)),
         batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
         drop_last=False, shuffle=True)
     validation_dataset = DataLoader(
-        ECGDataset(ecg_leads=[ecg_leads[index] for index in validation_split],
-                   ecg_labels=[ecg_labels[index] for index in validation_split], fs=fs,
-                   augmentation_pipeline=None),
+        PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in validation_split],
+                         ecg_labels=[ecg_labels[index] for index in validation_split], fs=fs,
+                         augmentation_pipeline=None),
         batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
         drop_last=False, shuffle=False)
 
