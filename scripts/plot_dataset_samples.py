@@ -19,6 +19,5 @@ if __name__ == '__main__':
             plt.plot(x, ecg_lead[-sample_length:])
             plt.xlabel("time/s")
             plt.ylabel("voltage/mV")
-            plt.title(ecg_label)
             tikzplotlib.save("{}_{}.tex".format(index, ecg_label), axis_width="\\figW", axis_height="\\figH")
             plt.show()
