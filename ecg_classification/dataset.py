@@ -6,6 +6,9 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset
 import numpy as np
 from torchaudio.transforms import Spectrogram
+import os
+import gzip
+import pickle
 
 
 class PhysioNetDataset(Dataset):
@@ -37,27 +40,6 @@ class PhysioNetDataset(Dataset):
         """
         # Call super constructor
         super(PhysioNetDataset, self).__init__()
-        # Check parameters
-        assert isinstance(ecg_leads, List), "ECG leads musst be a list of np.ndarray."
-        assert isinstance(ecg_labels, List), "ECG labels musst be a list of strings."
-        if augmentation_pipeline is not None:
-            assert isinstance(augmentation_pipeline, nn.Module), "Augmentation pipeline must be a torch.nn.Module."
-        assert isinstance(spectrogram_length, int) and spectrogram_length > 0, \
-            "Spectrogram length must be a positive integer."
-        assert isinstance(ecg_sequence_length, int) and ecg_sequence_length > 0, \
-            "ECG sequence length must be a positive integer."
-        assert isinstance(ecg_window_size, int) and ecg_window_size > 0, "ECG window size must be a positive integer."
-        assert isinstance(ecg_step, int) and ecg_step > 0 and ecg_step < ecg_window_size, \
-            "ECG step must be a positive integer but must be smaller than the window size."
-        assert isinstance(normalize, bool), "Normalize must be a bool"
-        assert isinstance(fs, int), "Sampling frequency fs must be a int value"
-        assert isinstance(spectrogram_n_fft, int) and spectrogram_n_fft > 0, \
-            "Spectrogram number of ffts must be an positive integer"
-        assert isinstance(spectrogram_win_length, int) and spectrogram_win_length > 0, \
-            "Spectrogram window length must be an positive integer"
-        assert isinstance(spectrogram_power, int) and spectrogram_power > 0, \
-            "Spectrogram power must be an positive integer"
-        assert isinstance(spectrogram_normalized, bool), "Spectrogram normalized must be a bool"
         # Save parameters
         self.ecg_leads = [torch.from_numpy(data_sample).float() for data_sample in ecg_leads]
         self.ecg_labels = []
@@ -119,10 +101,95 @@ class PhysioNetDataset(Dataset):
         return ecg_lead.float(), spectrogram.unsqueeze(dim=0).float(), ecg_label
 
 
-if __name__ == '__main__':
-    from wettbewerb import load_references
+class Icentia11kDataset(Dataset):
+    """
+    This class implements the Icentia11k. The data of the Icentia11k will be resampled to a target frequency and
+    preprocessed. In the final step the sequences are cropped to a size between 9000 and 18000 samples.
+    """
 
-    ecg_leads, ecg_labels, _, _ = load_references("../data/training/")
-    dataset = PhysioNetDataset(ecg_leads=ecg_leads, ecg_labels=ecg_labels)
-    ecg_lead, spectrogram, ecg_label = dataset[0]
-    print(ecg_lead.shape, spectrogram.shape, ecg_label.shape)
+    def __init__(self, path: str, split: List[int], ecg_crop_lengths: Tuple[int, int] = (9000, 18000),
+                 original_fs: int = 250, spectrogram_length: int = 563, ecg_sequence_length: int = 18000,
+                 ecg_window_size: int = 256, ecg_step: int = 256 - 32, normalize: bool = True, fs: int = 300,
+                 spectrogram_n_fft: int = 64, spectrogram_win_length: int = 64, spectrogram_power: int = 1,
+                 spectrogram_normalized: bool = True) -> None:
+        """
+        Constructor method
+        :param path: (str) Path to dataset
+        :param split: (List[int]) Index of files belonging to the current dataset
+        :param ecg_crop_lengths: (Tuple[int, int]) Max and min crop lengths
+        :param original_fs: (int) Original sampling frequence
+        :param ecg_leads: (List[np.ndarray]) ECG data as list of numpy arrays
+        :param ecg_labels: (List[str]) ECG labels as list of strings (N, O, A, ~)
+        :param augmentation_pipeline: (Optional[nn.Module]) Augmentation pipeline
+        :param spectrogram_length: (int) Fixed spectrogram length (achieved by zero padding)
+        :param spectrogram_shape: (Tuple[int, int]) Final size of the spectrogram
+        :param ecg_sequence_length: (int) Fixed length of sequence
+        :param ecg_window_size: (int) Window size to be applied during unfolding
+        :param ecg_step: (int) Step size of unfolding
+        :param normalize: (bool) If true signal is normalized to a mean and std of zero and one respectively
+        :param fs: (int) Sampling frequency
+        :param spectrogram_n_fft: (int) FFT size utilized in spectrogram
+        :param spectrogram_win_length: (int) Spectrogram window length
+        :param spectrogram_power: (int) Power utilized in spectrogram
+        :param spectrogram_normalized: (int) If true spectrogram is normalized
+        """
+        # Call super constructor
+        super(Icentia11kDataset, self).__init__()
+        # Save parameters
+        self.path = path
+        self.split = split
+        self.ecg_crop_lengths = ecg_crop_lengths
+        self.original_fs = original_fs
+        self.spectrogram_length = spectrogram_length
+        self.ecg_sequence_length = ecg_sequence_length
+        self.ecg_window_size = ecg_window_size
+        self.ecg_step = ecg_step
+        self.normalize = normalize
+        self.fs = fs
+        self.spectrogram_module = Spectrogram(n_fft=spectrogram_n_fft, win_length=spectrogram_win_length,
+                                              hop_length=spectrogram_win_length // 2, power=spectrogram_power,
+                                              normalized=spectrogram_normalized)
+        # Get paths to samples
+        self.paths: List[Tuple[str, str]] = []
+        for index in self.split:
+            self.paths.append((os.path.join(self.path, "{}_batched.pkl.gz".format(str(index).zfill(5))),
+                               os.path.join(self.path, "{}_batched_lbls.pkl.gz".format(str(index).zfill(5)))))
+        # Check if files exists
+        for file_input, file_label in self.paths:
+            assert os.path.isfile(file_input), "File {} not found!".format(file_input)
+            assert os.path.isfile(file_label), "File {} not found!".format(file_label)
+
+    def __len__(self) -> int:
+        """
+        This method returns the length of the dataset
+        :return: (int) Dataset length
+        """
+        return len(self.paths)
+
+    def __getitem__(self, item: int) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """
+        Method returns one instance of the dataset
+        :param item: (int) Item index to be returned
+        :return: (Tuple[torch.Tensor, torch.Tensor, torch.Tensor]) ECG lead, spectrogram, label
+        """
+        # Load inputs and labels
+        with gzip.open(self.paths[item][0], "rb") as file:
+            inputs = torch.from_numpy(pickle.load(file)).float()
+        with gzip.open(self.paths[item][1], "rb") as file:
+            labels = pickle.load(file)
+        # Make crop indexes
+        crop_indexes_low = torch.randint(low=0, high=inputs.shape[-1] - max(self.ecg_crop_lengths),
+                                         size=(inputs.shape[0],))
+        crop_indexes_length = torch.randint(low=min(self.ecg_crop_lengths), high=max(self.ecg_crop_lengths),
+                                            size=(inputs.shape[0],))
+        # Crop signals
+        inputs = [input[low:low + length] for input, low, length in zip(inputs, crop_indexes_low, crop_indexes_length)]
+        # Pad signals
+        inputs = torch.stack([], dim=0)
+        exit(22)
+
+
+if __name__ == '__main__':
+    dataset = Icentia11kDataset(path="E:\\ECG_Data\\icentia11k", split=list(range(10000)))
+    print(len(dataset))
+    dataset[32]
