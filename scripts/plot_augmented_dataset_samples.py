@@ -9,8 +9,11 @@ from ecg_classification.augmentation import AugmentationPipeline
 if __name__ == '__main__':
     # Get data
     ecg_leads, ecg_labels, fs, ecg_names = load_references("D:/ECG_Classification Data/training/")
+    # Init augmentation pipeline
     # Plot a few data samples
-    for ecg_lead, ecg_label in zip(ecg_leads, ecg_labels):
+    for ecg_lead, ecg_label in enumerate(zip(ecg_leads, ecg_labels)):
+
+
         ecg = AugmentationPipeline()
         ecg.scale(ecg_lead)
         # Limit x- and y-axis of plot
