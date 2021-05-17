@@ -63,7 +63,7 @@ class AugmentationPipeline(nn.Module):
         """
         Drop augmentation: Randomly missing signal values
         :param ecg_lead: (torch.Tensor) ECG leads
-        :param drop_rate: (float) Relative umber of samples to be dropped
+        :param drop_rate: (float) Relative number of samples to be dropped
         :return: (torch.Tensor) ECG lead augmented
         """
         # Estimate number of sample to be dropped
