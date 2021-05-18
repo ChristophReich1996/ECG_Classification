@@ -178,15 +178,34 @@ class Icentia11kDataset(Dataset):
         with gzip.open(self.paths[item][1], "rb") as file:
             labels = pickle.load(file)
         # Make crop indexes
-        crop_indexes_low = torch.randint(low=0, high=inputs.shape[-1] - max(self.ecg_crop_lengths),
-                                         size=(inputs.shape[0],))
-        crop_indexes_length = torch.randint(low=min(self.ecg_crop_lengths), high=max(self.ecg_crop_lengths),
-                                            size=(inputs.shape[0],))
+        crop_indexes_low = torch.randint(
+            low=0,
+            high=int(inputs.shape[-1] - (self.fs / self.original_fs) * max(self.ecg_crop_lengths)),
+            size=(inputs.shape[0],))
+        crop_indexes_length = torch.randint(
+            low=int((self.fs / self.original_fs) * min(self.ecg_crop_lengths)),
+            high=int((self.fs / self.original_fs) * max(self.ecg_crop_lengths)),
+            size=(inputs.shape[0],))
         # Crop signals
         inputs = [input[low:low + length] for input, low, length in zip(inputs, crop_indexes_low, crop_indexes_length)]
-        # Pad signals
-        inputs = torch.stack([], dim=0)
-        exit(22)
+        # Interpolate signals
+        inputs = [F.interpolate(input[None, None], scale_factor=self.fs / self.original_fs, mode="linear",
+                                align_corners=False)[0, 0] for input in inputs]
+        # Compute spectrogram
+        spectrograms = [self.spectrogram_module(input).abs().clamp(min=1e-08).log() for input in inputs]
+        # Pad inputs
+        inputs = torch.stack(
+            [F.pad(input, pad=(0, self.ecg_sequence_length - input.shape[0]), value=0., mode="constant")
+             for input in inputs], dim=0)
+        # Unfold ecg lead
+        inputs = inputs.unfold(dimension=-1, size=self.ecg_window_size, step=self.ecg_step)
+        print(inputs.shape)
+        # Pad spectrograms
+        spectrograms = torch.stack(
+            [F.pad(spectrogram, pad=(0, self.spectrogram_length - spectrogram.shape[-1]), value=0.,
+                   mode="constant").permute(1, 0) for spectrogram in spectrograms], dim=0)
+        # Get labels
+        return inputs, spectrograms, None
 
 
 if __name__ == '__main__':
