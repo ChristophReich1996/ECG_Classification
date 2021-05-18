@@ -60,6 +60,12 @@ This script trains all models listed in the table above. During training all log
 [state dict](https://pytorch.org/tutorials/beginner/saving_loading_models.html#what-is-a-state-dict) and can be loaded 
 by `state_dict:Dict[str, torch.Tensor] = torch.load("best_model.pt")`.
 
+To reproduce our presented ablation studies run:
+
+```shell script
+sh run_ablations.sh
+```
+
 To run custom training runs the `train.py` script can be used. This script takes the following commands:
 
 | Argument | Default Value | Info |
