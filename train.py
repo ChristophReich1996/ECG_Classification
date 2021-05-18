@@ -47,41 +47,48 @@ if __name__ == '__main__':
     dataset_info = "_default_dataset" if not args.physio_net else "_physio_net_dataset"
     # Init network
     if args.network_config == "ECGCNN_S":
-        network = ECGCNN(config=ECGCNN_CONFIG_S)
+        config = ECGCNN_CONFIG_S
         data_logger = Logger(experiment_path_extension="ECGCNN_S" + dataset_info)
         print("ECGCNN_S utilized")
     elif args.network_config == "ECGCNN_M":
-        network = ECGCNN(config=ECGCNN_CONFIG_M)
+        config = ECGCNN_CONFIG_M
         data_logger = Logger(experiment_path_extension="ECGCNN_M" + dataset_info)
         print("ECGCNN_M utilized")
     elif args.network_config == "ECGCNN_L":
-        network = ECGCNN(config=ECGCNN_CONFIG_L)
+        config = ECGCNN_CONFIG_L
         data_logger = Logger(experiment_path_extension="ECGCNN_L" + dataset_info)
         print("ECGCNN_L utilized")
     elif args.network_config == "ECGCNN_XL":
-        network = ECGCNN(config=ECGCNN_CONFIG_XL)
+        config = ECGCNN_CONFIG_XL
         data_logger = Logger(experiment_path_extension="ECGCNN_XL" + dataset_info)
         print("ECGCNN_XL utilized")
     elif args.network_config == "ECGAttNet_S":
-        network = ECGAttNet(config=ECGAttNet_CONFIG_S)
+        config = ECGAttNet_CONFIG_S
         data_logger = Logger(experiment_path_extension="ECGAttNet_S" + dataset_info)
         print("ECGAttNet_S utilized")
     elif args.network_config == "ECGAttNet_M":
-        network = ECGAttNet(config=ECGAttNet_CONFIG_M)
+        config = ECGAttNet_CONFIG_M
         data_logger = Logger(experiment_path_extension="ECGAttNet_M" + dataset_info)
         print("ECGAttNet_M utilized")
     elif args.network_config == "ECGAttNet_L":
-        network = ECGAttNet(config=ECGAttNet_CONFIG_L)
+        config = ECGAttNet_CONFIG_L
         data_logger = Logger(experiment_path_extension="ECGAttNet_L" + dataset_info)
         print("ECGAttNet_L utilized")
     elif args.network_config == "ECGAttNet_XL":
-        network = ECGAttNet(config=ECGAttNet_CONFIG_XL)
+        config = ECGAttNet_CONFIG_XL
         data_logger = Logger(experiment_path_extension="ECGAttNet_XL" + dataset_info)
         print("ECGAttNet_XL utilized")
     else:
-        network = ECGAttNet(config=ECGAttNet_CONFIG_XXL)
+        config = ECGAttNet_CONFIG_XXL
         data_logger = Logger(experiment_path_extension="ECGAttNet_XXL" + dataset_info)
         print("ECGAttNet_XXL utilized")
+    # Not dropout of no data augmentation
+    if args.no_data_aug:
+        config["dropout"] = 0.
+    if "CNN" in args.network_config:
+        network = ECGCNN(config=config)
+    else:
+        network = ECGAttNet(config=config)
 
     # Load network
     if args.load_network is not None:
@@ -108,7 +115,7 @@ if __name__ == '__main__':
         PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in training_split],
                          ecg_labels=[ecg_labels[index] for index in training_split], fs=fs,
                          augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline(
-                       AUGMENTATION_PIPELINE_CONFIG)),
+                             AUGMENTATION_PIPELINE_CONFIG)),
         batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
         drop_last=False, shuffle=True)
     validation_dataset = DataLoader(
