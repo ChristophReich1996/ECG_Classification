@@ -97,8 +97,10 @@ if __name__ == '__main__':
     # Set used of encoders for ablation
     if args.no_signal_encoder:
         network.no_signal_encoder = True
+        print("No signal encoder is utilized")
     if args.no_spectrogram_encoder:
         network.no_spectrogram_encoder = True
+        print("No spectrogram encoder is utilized")
 
     # Load network
     if args.load_network is not None:
