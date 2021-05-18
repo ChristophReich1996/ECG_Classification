@@ -1,5 +1,5 @@
 # Import dataset class
-from ecg_classification.dataset import PhysioNetDataset
+from ecg_classification.dataset import PhysioNetDataset, Icentia11kDataset
 # Import loss functions
 from ecg_classification.loss import SoftmaxFocalLoss, SoftmaxCrossEntropyLoss
 # Import models
