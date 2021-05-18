@@ -21,5 +21,7 @@ if __name__ == '__main__':
                 lbls = pickle.load(file)
             for lbl in lbls:
                 classes.append(sum([label.shape[0] != 0 for label in lbl["rtype"]]))
+                if classes[-1] == 3:
+                    print("Stop")
         if index > 1000:
             exit(22)
