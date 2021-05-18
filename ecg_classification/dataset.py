@@ -199,13 +199,30 @@ class Icentia11kDataset(Dataset):
              for input in inputs], dim=0)
         # Unfold ecg lead
         inputs = inputs.unfold(dimension=-1, size=self.ecg_window_size, step=self.ecg_step)
-        print(inputs.shape)
         # Pad spectrograms
         spectrograms = torch.stack(
             [F.pad(spectrogram, pad=(0, self.spectrogram_length - spectrogram.shape[-1]), value=0.,
                    mode="constant").permute(1, 0) for spectrogram in spectrograms], dim=0)
         # Get labels
-        return inputs, spectrograms, None
+        classes = []
+        for index, label in enumerate(labels):
+            # Get rhythm
+            label = label["rtype"]
+            # Init max class
+            max_class = (0, -1)
+            for class_index, rtype in enumerate(label):
+                if rtype.shape[0] != 0:
+                    beats_labels_low = rtype <= crop_indexes_low[index].item()
+                    beats_labels_high = rtype >= (crop_indexes_low[index].item() + crop_indexes_length[index].item())
+                    beats_labels = (beats_labels_low == beats_labels_high).sum()
+                    if max_class[0] < beats_labels.sum():
+                        max_class = (beats_labels, class_index)
+            # Save class
+            classes.append(max_class[-1] + 1)
+        classes = torch.tensor(classes, dtype=torch.long)
+        # Classes to one hot
+        one_hot_classes = F.one_hot(classes, num_classes=7)
+        return inputs, spectrograms, one_hot_classes
 
 
 if __name__ == '__main__':
