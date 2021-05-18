@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple, Type, Union
+from typing import Any, Dict, Tuple, Type, Union, Optional
 
 import torch
 import torch.nn as nn
@@ -43,6 +43,9 @@ class ECGCNN(nn.Module):
             nn.Linear(in_features=spectrogram_encoder_channels[-1][-1], out_features=latent_vector_features, bias=True),
             activation())
         self.linear_layer_2 = nn.Linear(in_features=latent_vector_features, out_features=classes, bias=True)
+        # Init variables for ablations
+        self.no_spectrogram_encoder: bool = False
+        self.no_signal_encoder: bool = False
 
     def forward(self, ecg_lead: torch.Tensor, spectrogram: torch.Tensor) -> torch.Tensor:
         """
@@ -51,16 +54,30 @@ class ECGCNN(nn.Module):
         :param spectrogram: (torch.Tensor) Spectrogram tensor
         :return: (torch.Tensor) Output prediction
         """
-        # Encode ECG lead
-        latent_vector = self.ecg_encoder(ecg_lead)[0][:, -1].flatten(start_dim=1)
-        # Forward pass spectrogram encoder
-        for block in self.spectrogram_encoder:
-            spectrogram = block(spectrogram, latent_vector)
-        # Perform average pooling
-        spectrogram = F.adaptive_avg_pool2d(spectrogram, output_size=(1, 1))
-        # Final linear layer
-        output = self.linear_layer_1(spectrogram.flatten(start_dim=1))
-        output = self.linear_layer_2(output + latent_vector)
+        if self.no_spectrogram_encoder:
+            # Encode ECG lead
+            latent_vector = self.ecg_encoder(ecg_lead)[0][:, -1].flatten(start_dim=1)
+            output = self.linear_layer_2(latent_vector)
+        elif self.no_signal_encoder:
+            # Forward pass spectrogram encoder
+            for block in self.spectrogram_encoder:
+                spectrogram = block(spectrogram, None)
+            # Perform average pooling
+            spectrogram = F.adaptive_avg_pool2d(spectrogram, output_size=(1, 1))
+            # Final linear layer
+            output = self.linear_layer_1(spectrogram.flatten(start_dim=1))
+            output = self.linear_layer_2(output)
+        else:
+            # Encode ECG lead
+            latent_vector = self.ecg_encoder(ecg_lead)[0][:, -1].flatten(start_dim=1)
+            # Forward pass spectrogram encoder
+            for block in self.spectrogram_encoder:
+                spectrogram = block(spectrogram, latent_vector)
+            # Perform average pooling
+            spectrogram = F.adaptive_avg_pool2d(spectrogram, output_size=(1, 1))
+            # Final linear layer
+            output = self.linear_layer_1(spectrogram.flatten(start_dim=1))
+            output = self.linear_layer_2(output + latent_vector)
         # Apply softmax if not training mode
         if self.training:
             return output
@@ -131,6 +148,9 @@ class ECGAttNet(nn.Module):
             nn.Linear(in_features=spectrogram_encoder_channels[-1][-1], out_features=latent_vector_features, bias=True),
             activation())
         self.linear_layer_2 = nn.Linear(in_features=latent_vector_features, out_features=classes, bias=True)
+        # Init variables for ablations
+        self.no_spectrogram_encoder: bool = False
+        self.no_signal_encoder: bool = False
 
     def forward(self, ecg_lead: torch.Tensor, spectrogram: torch.Tensor) -> torch.Tensor:
         """
@@ -139,17 +159,32 @@ class ECGAttNet(nn.Module):
         :param spectrogram: (torch.Tensor) Spectrogram tensor
         :return: (torch.Tensor) Output prediction
         """
-        # Encode ECG lead
-        latent_vector = self.ecg_encoder(
-            ecg_lead.permute(1, 0, 2) + self.positional_embedding).permute(1, 0, 2).mean(dim=1)
-        # Forward pass spectrogram encoder
-        for block in self.spectrogram_encoder:
-            spectrogram = block(spectrogram, latent_vector)
-        # Perform average pooling
-        spectrogram = F.adaptive_avg_pool2d(spectrogram, output_size=(1, 1))
-        # Final linear layer
-        output = self.linear_layer_1(spectrogram.flatten(start_dim=1))
-        output = self.linear_layer_2(output + latent_vector)
+        if self.no_spectrogram_encoder:
+            # Encode ECG lead
+            latent_vector = self.ecg_encoder(
+                ecg_lead.permute(1, 0, 2) + self.positional_embedding).permute(1, 0, 2).mean(dim=1)
+            output = self.linear_layer_2(latent_vector)
+        elif self.no_signal_encoder:
+            # Forward pass spectrogram encoder
+            for block in self.spectrogram_encoder:
+                spectrogram = block(spectrogram, None)
+            # Perform average pooling
+            spectrogram = F.adaptive_avg_pool2d(spectrogram, output_size=(1, 1))
+            # Final linear layer
+            output = self.linear_layer_1(spectrogram.flatten(start_dim=1))
+            output = self.linear_layer_2(output)
+        else:
+            # Encode ECG lead
+            latent_vector = self.ecg_encoder(
+                ecg_lead.permute(1, 0, 2) + self.positional_embedding).permute(1, 0, 2).mean(dim=1)
+            # Forward pass spectrogram encoder
+            for block in self.spectrogram_encoder:
+                spectrogram = block(spectrogram, latent_vector)
+            # Perform average pooling
+            spectrogram = F.adaptive_avg_pool2d(spectrogram, output_size=(1, 1))
+            # Final linear layer
+            output = self.linear_layer_1(spectrogram.flatten(start_dim=1))
+            output = self.linear_layer_2(output + latent_vector)
         # Apply softmax if not training mode
         if self.training:
             return output
@@ -315,7 +350,7 @@ class ConditionalBatchNormalization(nn.Module):
         # Init linear mapping
         self.linear_mapping = nn.Linear(in_features=latent_vector_features, out_features=2 * num_features, bias=False)
 
-    def forward(self, input: torch.Tensor, latent_vector: torch.Tensor) -> torch.Tensor:
+    def forward(self, input: torch.Tensor, latent_vector: Optional[torch.Tensor]) -> torch.Tensor:
         """
         Forward pass
         :param input: (torch.Tensor) Input tensor
@@ -325,11 +360,12 @@ class ConditionalBatchNormalization(nn.Module):
         # Normalize input
         output = self.batch_normalization(input)
         # Predict parameters
-        scale, bias = self.linear_mapping(latent_vector).chunk(chunks=2, dim=-1)
-        scale = scale[..., None, None]
-        bias = bias[..., None, None]
-        # Apply parameters
-        output = scale * output + bias
+        if latent_vector is not None:
+            scale, bias = self.linear_mapping(latent_vector).chunk(chunks=2, dim=-1)
+            scale = scale[..., None, None]
+            bias = bias[..., None, None]
+            # Apply parameters
+            output = scale * output + bias
         return output
 
 
