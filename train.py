@@ -26,6 +26,10 @@ parser.add_argument("--network_config", default="ECGCNN_M", type=str,
                     help="Type of network configuration to be utilized.")
 parser.add_argument("--load_network", default=None, type=str,
                     help="If set given network (state dict) is loaded.")
+parser.add_argument("--no_signal_encoder", default=False, action="store_true",
+                    help="Binary flag. If set no signal encoder is utilized.")
+parser.add_argument("--no_spectrogram_encoder", default=False, action="store_true",
+                    help="Binary flag. If set no spectrogram encoder is utilized.")
 # Get arguments
 args = parser.parse_args()
 
@@ -89,6 +93,12 @@ if __name__ == '__main__':
         network = ECGCNN(config=config)
     else:
         network = ECGAttNet(config=config)
+
+    # Set used of encoders for ablation
+    if args.no_signal_encoder:
+        network.no_signal_encoder = True
+    if args.no_spectrogram_encoder:
+        network.no_spectrogram_encoder = True
 
     # Load network
     if args.load_network is not None:
