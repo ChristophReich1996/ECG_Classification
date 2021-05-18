@@ -225,7 +225,28 @@ class Icentia11kDataset(Dataset):
         return inputs, spectrograms, one_hot_classes
 
 
+def icentia11k_dataset_collate_fn(inputs: List[Tuple[torch.Tensor, torch.Tensor, torch.Tensor]]) -> Tuple[
+    torch.Tensor, torch.Tensor, torch.Tensor]:
+    """
+    Custom collate function for PyTorch DataLoader
+    :param inputs: (List[Tuple[torch.Tensor, torch.Tensor, torch.Tensor]])) Batch of data
+    :return: (Tuple[torch.Tensor, torch.Tensor, torch.Tensor]) Packed data
+    """
+    # Pack data
+    ecg_leads = torch.cat([input[0] for input in inputs], dim=0)
+    spectrograms = torch.cat([input[1] for input in inputs], dim=0)
+    labels = torch.cat([input[2] for input in inputs], dim=0)
+    return ecg_leads, spectrograms, labels
+
+
 if __name__ == '__main__':
+    from torch.utils.data import DataLoader
+
     dataset = Icentia11kDataset(path="E:\\ECG_Data\\icentia11k", split=list(range(10000)))
+    dataset = DataLoader(dataset=dataset, batch_size=2, num_workers=0, shuffle=False,
+                         collate_fn=icentia11k_dataset_collate_fn)
     print(len(dataset))
-    dataset[32]
+    ecg_leads, spectrograms, labels = next(iter(dataset))
+    print(ecg_leads.shape)
+    print(spectrograms.shape)
+    print(labels.shape)
