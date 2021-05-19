@@ -182,7 +182,7 @@ class Icentia11kDataset(Dataset):
         # Use generator if random seed is utilized
         if self.random_seed is not None:
             generator = torch.Generator()
-            generator.manual_seed(seed=self.random_seed)
+            generator.manual_seed(self.random_seed)
         else:
             generator = None
         # Make crop indexes
@@ -230,7 +230,7 @@ class Icentia11kDataset(Dataset):
         classes = torch.tensor(classes, dtype=torch.long)
         # Classes to one hot
         one_hot_classes = F.one_hot(classes, num_classes=7)
-        return inputs, spectrograms, one_hot_classes
+        return inputs, spectrograms.unsqueeze(dim=1), one_hot_classes
 
 
 def icentia11k_dataset_collate_fn(inputs: List[Tuple[torch.Tensor, torch.Tensor, torch.Tensor]]) -> Tuple[

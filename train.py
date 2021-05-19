@@ -132,12 +132,12 @@ if __name__ == '__main__':
         training_dataset = DataLoader(
             Icentia11kDataset(path=args.dataset_path, split=TRAINING_SPLIT_ICENTIA11K),
             batch_size=min(1, args.batch_size // 50), num_workers=min(args.batch_size // 50, 20), pin_memory=True,
-            drop_last=False, shuffle=True)
+            drop_last=False, shuffle=True, collate_fn=icentia11k_dataset_collate_fn)
         validation_dataset = DataLoader(
             Icentia11kDataset(path=args.dataset_path, split=VALIDATION_SPLIT_ICENTIA11K,
                               random_seed=VALIDATION_SEED_ICENTIA11K),
             batch_size=min(1, args.batch_size // 50), num_workers=min(args.batch_size // 50, 20), pin_memory=True,
-            drop_last=False, shuffle=False)
+            drop_last=False, shuffle=False, collate_fn=icentia11k_dataset_collate_fn)
     else:
         ecg_leads, ecg_labels, fs, ecg_names = load_references(args.dataset_path)
         training_split = TRAINING_SPLIT if not args.physio_net else TRAINING_SPLIT_PHYSIONET
