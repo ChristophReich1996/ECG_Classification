@@ -50,7 +50,12 @@ from ecg_classification import *
 
 if __name__ == '__main__':
     # Add dataset info
-    dataset_info = "_default_dataset" if not args.physio_net else "_physio_net_dataset"
+    if args.physio_net:
+        dataset_info = "_physio_net_dataset"
+    elif args.icentia11k:
+        dataset_info = "_icentia11k_dataset"
+    else:
+        dataset_info = "_default_dataset"
     # Init network
     if args.network_config == "ECGCNN_S":
         config = ECGCNN_CONFIG_S
@@ -131,13 +136,13 @@ if __name__ == '__main__':
     if args.icentia11k:
         training_dataset = DataLoader(
             Icentia11kDataset(path=args.dataset_path, split=TRAINING_SPLIT_ICENTIA11K),
-            batch_size=max(1, args.batch_size // 50), num_workers=min(args.batch_size // 50, 20), pin_memory=True,
-            drop_last=False, shuffle=True, collate_fn=icentia11k_dataset_collate_fn)
+            batch_size=max(1, args.batch_size // 50), num_workers=min(max(args.batch_size // 50, 4), 20),
+            pin_memory=True, drop_last=False, shuffle=True, collate_fn=icentia11k_dataset_collate_fn)
         validation_dataset = DataLoader(
             Icentia11kDataset(path=args.dataset_path, split=VALIDATION_SPLIT_ICENTIA11K,
                               random_seed=VALIDATION_SEED_ICENTIA11K),
-            batch_size=max(1, args.batch_size // 50), num_workers=min(args.batch_size // 50, 20), pin_memory=True,
-            drop_last=False, shuffle=False, collate_fn=icentia11k_dataset_collate_fn)
+            batch_size=max(1, args.batch_size // 50), num_workers=min(max(args.batch_size // 50, 4), 20),
+            pin_memory=True, drop_last=False, shuffle=False, collate_fn=icentia11k_dataset_collate_fn)
     else:
         ecg_leads, ecg_labels, fs, ecg_names = load_references(args.dataset_path)
         training_split = TRAINING_SPLIT if not args.physio_net else TRAINING_SPLIT_PHYSIONET
