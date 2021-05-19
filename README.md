@@ -83,6 +83,10 @@ To run custom training runs the `train.py` script can be used. This script takes
 
 All network hyperparameters can be found and adjusted in the `ecg_classification\config.py` file.
 
+## Data
+
+The cleaned data of the challenge (also coming from [2]) as well as the publically available PhysioNet [2] samples can be downloaded [here](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/Ebl-lX1RfsFLjLWNfdmOaFMBczbye6m_vOYjbhhvFHd7Lg?e=XxcvzV).
+
 ## References
 
 ```bibtex
