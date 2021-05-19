@@ -30,6 +30,8 @@ parser.add_argument("--no_signal_encoder", default=False, action="store_true",
                     help="Binary flag. If set no signal encoder is utilized.")
 parser.add_argument("--no_spectrogram_encoder", default=False, action="store_true",
                     help="Binary flag. If set no spectrogram encoder is utilized.")
+parser.add_argument("--icentia11k", default=False, action="store_true",
+                    help="Binary flag. If set icentia11k dataset is utilized.")
 # Get arguments
 args = parser.parse_args()
 
@@ -86,9 +88,15 @@ if __name__ == '__main__':
         config = ECGAttNet_CONFIG_XXL
         data_logger = Logger(experiment_path_extension="ECGAttNet_XXL" + dataset_info)
         print("ECGAttNet_XXL utilized")
+
     # Not dropout of no data augmentation
     if args.no_data_aug:
         config["dropout"] = 0.
+
+    # Change number of classes if icentia11k dataset is used
+    if args.icentia11k:
+        config["classes"] = 7
+
     if "CNN" in args.network_config:
         network = ECGCNN(config=config)
     else:
@@ -120,22 +128,33 @@ if __name__ == '__main__':
         optimizer=optimizer, milestones=[1 * args.epochs // 4, 2 * args.epochs // 4, 3 * args.epochs // 4], gamma=0.1)
 
     # Init datasets
-    ecg_leads, ecg_labels, fs, ecg_names = load_references(args.dataset_path)
-    training_split = TRAINING_SPLIT if not args.physio_net else TRAINING_SPLIT_PHYSIONET
-    validation_split = VALIDATION_SPLIT if not args.physio_net else VALIDATION_SPLIT_PHYSIONET
-    training_dataset = DataLoader(
-        PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in training_split],
-                         ecg_labels=[ecg_labels[index] for index in training_split], fs=fs,
-                         augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline(
-                             AUGMENTATION_PIPELINE_CONFIG)),
-        batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
-        drop_last=False, shuffle=True)
-    validation_dataset = DataLoader(
-        PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in validation_split],
-                         ecg_labels=[ecg_labels[index] for index in validation_split], fs=fs,
-                         augmentation_pipeline=None),
-        batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
-        drop_last=False, shuffle=False)
+    if args.icentia11k:
+        training_dataset = DataLoader(
+            Icentia11kDataset(path=args.dataset_path, split=TRAINING_SPLIT_ICENTIA11K),
+            batch_size=min(1, args.batch_size // 50), num_workers=min(args.batch_size // 50, 20), pin_memory=True,
+            drop_last=False, shuffle=True)
+        validation_dataset = DataLoader(
+            Icentia11kDataset(path=args.dataset_path, split=VALIDATION_SPLIT_ICENTIA11K,
+                              random_seed=VALIDATION_SEED_ICENTIA11K),
+            batch_size=min(1, args.batch_size // 50), num_workers=min(args.batch_size // 50, 20), pin_memory=True,
+            drop_last=False, shuffle=False)
+    else:
+        ecg_leads, ecg_labels, fs, ecg_names = load_references(args.dataset_path)
+        training_split = TRAINING_SPLIT if not args.physio_net else TRAINING_SPLIT_PHYSIONET
+        validation_split = VALIDATION_SPLIT if not args.physio_net else VALIDATION_SPLIT_PHYSIONET
+        training_dataset = DataLoader(
+            PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in training_split],
+                             ecg_labels=[ecg_labels[index] for index in training_split], fs=fs,
+                             augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline(
+                                 AUGMENTATION_PIPELINE_CONFIG)),
+            batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
+            drop_last=False, shuffle=True)
+        validation_dataset = DataLoader(
+            PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in validation_split],
+                             ecg_labels=[ecg_labels[index] for index in validation_split], fs=fs,
+                             augmentation_pipeline=None),
+            batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
+            drop_last=False, shuffle=False)
 
     # Init model wrapper
     model_wrapper = ModelWrapper(network=network,
