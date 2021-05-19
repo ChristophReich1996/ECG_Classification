@@ -64,13 +64,13 @@ class ModelWrapper(object):
         # Init best validation metric
         best_validation_metric = 0.0
         # Init rtpt
-        rtpt = RTPT(name_initials="CR", experiment_name="ECG_Class.", max_iterations=epochs)
+        rtpt = RTPT(name_initials="CR", experiment_name="DeepFovea++", max_iterations=epochs)
         # Start rtpt
         rtpt.start()
         # Main training loop
         for self.epoch in range(epochs):
             # Rtpt step
-            rtpt.step(subtitle="ACC={:.3f}".format(best_validation_metric))
+            rtpt.step(subtitle="{:.3f}".format(best_validation_metric))
             for batch in self.training_dataset:
                 # Update progress bar
                 self.progress_bar.update(n=1)
