@@ -111,7 +111,7 @@ class Icentia11kDataset(Dataset):
                  original_fs: int = 250, spectrogram_length: int = 563, ecg_sequence_length: int = 18000,
                  ecg_window_size: int = 256, ecg_step: int = 256 - 32, normalize: bool = True, fs: int = 300,
                  spectrogram_n_fft: int = 64, spectrogram_win_length: int = 64, spectrogram_power: int = 1,
-                 spectrogram_normalized: bool = True) -> None:
+                 spectrogram_normalized: bool = True, random_seed: Optional[int] = 1904) -> None:
         """
         Constructor method
         :param path: (str) Path to dataset
@@ -132,6 +132,7 @@ class Icentia11kDataset(Dataset):
         :param spectrogram_win_length: (int) Spectrogram window length
         :param spectrogram_power: (int) Power utilized in spectrogram
         :param spectrogram_normalized: (int) If true spectrogram is normalized
+        :param random_seed: (int) Random seed used in validation dataset to keep cropping deterministic
         """
         # Call super constructor
         super(Icentia11kDataset, self).__init__()
@@ -146,6 +147,7 @@ class Icentia11kDataset(Dataset):
         self.ecg_step = ecg_step
         self.normalize = normalize
         self.fs = fs
+        self.random_seed = random_seed
         self.spectrogram_module = Spectrogram(n_fft=spectrogram_n_fft, win_length=spectrogram_win_length,
                                               hop_length=spectrogram_win_length // 2, power=spectrogram_power,
                                               normalized=spectrogram_normalized)
@@ -177,15 +179,21 @@ class Icentia11kDataset(Dataset):
             inputs = torch.from_numpy(pickle.load(file)).float()
         with gzip.open(self.paths[item][1], "rb") as file:
             labels = pickle.load(file)
+        # Use generator if random seed is utilized
+        if self.random_seed is not None:
+            generator = torch.Generator()
+            generator.manual_seed(seed=self.random_seed)
+        else:
+            generator = None
         # Make crop indexes
         crop_indexes_low = torch.randint(
             low=0,
             high=int(inputs.shape[-1] - (self.fs / self.original_fs) * max(self.ecg_crop_lengths)),
-            size=(inputs.shape[0],))
+            size=(inputs.shape[0],), generator=generator)
         crop_indexes_length = torch.randint(
             low=int((self.fs / self.original_fs) * min(self.ecg_crop_lengths)),
             high=int((self.fs / self.original_fs) * max(self.ecg_crop_lengths)),
-            size=(inputs.shape[0],))
+            size=(inputs.shape[0],), generator=generator)
         # Crop signals
         inputs = [input[low:low + length] for input, low, length in zip(inputs, crop_indexes_low, crop_indexes_length)]
         # Interpolate signals
