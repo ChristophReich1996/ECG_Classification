@@ -131,12 +131,12 @@ if __name__ == '__main__':
     if args.icentia11k:
         training_dataset = DataLoader(
             Icentia11kDataset(path=args.dataset_path, split=TRAINING_SPLIT_ICENTIA11K),
-            batch_size=min(1, args.batch_size // 50), num_workers=min(args.batch_size // 50, 20), pin_memory=True,
+            batch_size=max(1, args.batch_size // 50), num_workers=min(args.batch_size // 50, 20), pin_memory=True,
             drop_last=False, shuffle=True, collate_fn=icentia11k_dataset_collate_fn)
         validation_dataset = DataLoader(
             Icentia11kDataset(path=args.dataset_path, split=VALIDATION_SPLIT_ICENTIA11K,
                               random_seed=VALIDATION_SEED_ICENTIA11K),
-            batch_size=min(1, args.batch_size // 50), num_workers=min(args.batch_size // 50, 20), pin_memory=True,
+            batch_size=max(1, args.batch_size // 50), num_workers=min(args.batch_size // 50, 20), pin_memory=True,
             drop_last=False, shuffle=False, collate_fn=icentia11k_dataset_collate_fn)
     else:
         ecg_leads, ecg_labels, fs, ecg_names = load_references(args.dataset_path)
@@ -160,7 +160,8 @@ if __name__ == '__main__':
     model_wrapper = ModelWrapper(network=network,
                                  optimizer=optimizer,
                                  loss_function=SoftmaxCrossEntropyLoss(
-                                     weight=(0.4, 0.7, 0.9, 0.9)),
+                                     weight=(0.4, 0.7, 0.9, 0.9)
+                                     if not args.icentia11k else (1., 1., 1., 1., 1., 1., 1.)),
                                  training_dataset=training_dataset,
                                  validation_dataset=validation_dataset,
                                  data_logger=data_logger,
