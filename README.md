@@ -66,6 +66,16 @@ To reproduce our presented ablation studies run:
 sh run_ablations.sh
 ```
 
+To perform pretraining on the Icentia11k dataset [3] run:
+
+```shell script
+python -W ignore train.py --cuda_devices "0" --batch_size 100 --dataset_path "/dataset/icentia11k" --icentia11k --network_config "ECGAttNet_XL" --epochs 20
+```
+
+Pretraining with a batch size of 100 requres a GPU with at least 32GB. If a batch size of 50 is utilized a 16GB GPU is needed. Batch size can only be set in steps of 50.
+
+Pleas note that the dataset path as well as the cuda devices might change for different systems!
+
 To run custom training runs the `train.py` script can be used. This script takes the following commands:
 
 | Argument | Default Value | Info |
@@ -87,6 +97,8 @@ All network hyperparameters can be found and adjusted in the `ecg_classification
 
 The cleaned data of the challenge (also coming from [2]) as well as the publically available PhysioNet [2] samples can be downloaded [here](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/Ebl-lX1RfsFLjLWNfdmOaFMBczbye6m_vOYjbhhvFHd7Lg?e=XxcvzV).
 
+The Icentia11k dataset [3] used for pretraining can be downloaded [here](https://academictorrents.com/details/af04abfe9a3c96b30e5dd029eb185e19a7055272).
+
 ## References
 
 ```bibtex
@@ -107,5 +119,14 @@ The cleaned data of the challenge (also coming from [2]) as well as the publical
         pages={1--4},
         year={2017},
         organization={IEEE}
+}
+```
+
+```bibtex
+[3] @article{Tan2019,
+        title={Icentia11k: An unsupervised representation learning dataset for arrhythmia subtype discovery},
+        author={Tan, Shawn and Androz, Guillaume and Chamseddine, Ahmad and Fecteau, Pierre and Courville, Aaron and Bengio, Yoshua and Cohen, Joseph Paul},
+        journal={preprint arXiv:1910.09570},
+        year={2019}
 }
 ```
