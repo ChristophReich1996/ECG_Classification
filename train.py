@@ -32,6 +32,8 @@ parser.add_argument("--no_spectrogram_encoder", default=False, action="store_tru
                     help="Binary flag. If set no spectrogram encoder is utilized.")
 parser.add_argument("--icentia11k", default=False, action="store_true",
                     help="Binary flag. If set icentia11k dataset is utilized.")
+parser.add_argument("--challange", default=False, action="store_true",
+                    help="Binary flag. If set challange split is utilized.")
 # Get arguments
 args = parser.parse_args()
 
@@ -117,7 +119,11 @@ if __name__ == '__main__':
 
     # Load network
     if args.load_network is not None:
-        network.load_state_dict(torch.load(args.load_network))
+        state_dict = torch.load(args.load_network)
+        model_state_dict = network.state_dict()
+        state_dict = {k: v for k, v in model_state_dict.items() if k in model_state_dict}
+        model_state_dict.update(state_dict)
+        network.load_state_dict(model_state_dict)
 
     # Print network parameters
     print("# parameters:", sum([p.numel() for p in network.parameters()]))
@@ -145,8 +151,16 @@ if __name__ == '__main__':
             pin_memory=True, drop_last=False, shuffle=False, collate_fn=icentia11k_dataset_collate_fn)
     else:
         ecg_leads, ecg_labels, fs, ecg_names = load_references(args.dataset_path)
-        training_split = TRAINING_SPLIT if not args.physio_net else TRAINING_SPLIT_PHYSIONET
-        validation_split = VALIDATION_SPLIT if not args.physio_net else VALIDATION_SPLIT_PHYSIONET
+        if args.physio_net:
+            if args.challange:
+                training_split = TRAINING_SPLIT_CHALLANGE
+                validation_split = VALIDATION_SPLIT_CHALLANGE
+            else:
+                training_split = TRAINING_SPLIT_PHYSIONET
+                validation_split = VALIDATION_SPLIT_PHYSIONET
+        else:
+            training_split = TRAINING_SPLIT
+            validation_split = VALIDATION_SPLIT
         training_dataset = DataLoader(
             PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in training_split],
                              ecg_labels=[ecg_labels[index] for index in training_split], fs=fs,
