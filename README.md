@@ -11,9 +11,9 @@ All dependencies can be installed by running the following commands:
 git clone https://github.com/ChristophReich1996/ECG_Classification
 cd ECG_Classification
 pip install -r requirements.txt
-cd pade_activation_unit/cuda
+cd ecg_classification/pade_activation_unit/cuda
 python setup.py install
-cd ../../
+cd ../../../
 ```
 
 The implementation was tested [Gentoo Linux](https://www.gentoo.org/) 5.10.7, Python 3.8.5, and CUDA 11.1. **To perform 
