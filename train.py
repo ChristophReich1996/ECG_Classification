@@ -124,6 +124,7 @@ if __name__ == '__main__':
         state_dict = {k: v for k, v in model_state_dict.items() if k in model_state_dict}
         model_state_dict.update(state_dict)
         network.load_state_dict(model_state_dict)
+        print("Network loaded")
 
     # Print network parameters
     print("# parameters:", sum([p.numel() for p in network.parameters()]))
