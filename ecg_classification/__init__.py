@@ -15,7 +15,8 @@ from ecg_classification.model_wrapper import ModelWrapper
 from ecg_classification.logger import Logger
 # Import splits
 from ecg_classification.config import TRAINING_SPLIT, VALIDATION_SPLIT, TRAINING_SPLIT_PHYSIONET, \
-    VALIDATION_SPLIT_PHYSIONET, TRAINING_SPLIT_ICENTIA11K, VALIDATION_SPLIT_ICENTIA11K, VALIDATION_SEED_ICENTIA11K
+    VALIDATION_SPLIT_PHYSIONET, TRAINING_SPLIT_ICENTIA11K, VALIDATION_SPLIT_ICENTIA11K, VALIDATION_SEED_ICENTIA11K, \
+    TRAINING_SPLIT_CHALLANGE, VALIDATION_SPLIT_CHALLANGE
 # Import metrics
 from ecg_classification.metric import Accuracy, F1
 # Import augmentation pipeline
