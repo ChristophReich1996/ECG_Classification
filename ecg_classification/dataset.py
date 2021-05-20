@@ -199,6 +199,9 @@ class Icentia11kDataset(Dataset):
         # Interpolate signals
         inputs = [F.interpolate(input[None, None], scale_factor=self.fs / self.original_fs, mode="linear",
                                 align_corners=False)[0, 0] for input in inputs]
+        # Normalize signals
+        if self.normalize:
+            inputs = [(input - input.mean()) / (input.std() + 1e-08) for input in inputs]
         # Compute spectrogram
         spectrograms = [self.spectrogram_module(input).abs().clamp(min=1e-08).log() for input in inputs]
         # Pad inputs
