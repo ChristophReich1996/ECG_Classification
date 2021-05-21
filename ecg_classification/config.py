@@ -134,14 +134,14 @@ ECGAttNet_CONFIG_XXL = {
 }
 
 # Configuration for ECGAttNet XXL
-ECGAttNet_CONFIG_100M = {
+ECGAttNet_CONFIG_130M = {
     "ecg_features": 256,
-    "transformer_heads": 8,
-    "transformer_ff_features": 768,
+    "transformer_heads": 32,
+    "transformer_ff_features": 2048,
     "transformer_activation": "gelu",
-    "transformer_layers": 8,
+    "transformer_layers": 12,
     "transformer_sequence_length": 80,
-    "spectrogram_encoder_channels": ((1, 256), (256, 1024), (1024, 1024), (1024, 1024), (1024, 512)),
+    "spectrogram_encoder_channels": ((1, 512), (512, 2048), (2048, 2048), (2048, 2048), (2048, 512)),
     "spectrogram_encoder_spans": (None, None, (140, 8), (70, 4), (35, 2)),
     "latent_vector_features": 256,
     "classes": 4,
