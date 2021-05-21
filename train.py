@@ -22,7 +22,7 @@ parser.add_argument("--dataset_path", default="data/training/", type=str,
                     help="Path to dataset.")
 parser.add_argument("--network_config", default="ECGCNN_M", type=str,
                     choices=["ECGCNN_S", "ECGCNN_M", "ECGCNN_L", "ECGCNN_XL", "ECGAttNet_S", "ECGAttNet_M",
-                             "ECGAttNet_L", "ECGAttNet_XL", "ECGAttNet_XXL"],
+                             "ECGAttNet_L", "ECGAttNet_XL", "ECGAttNet_XXL, ECGAttNet_100M"],
                     help="Type of network configuration to be utilized.")
 parser.add_argument("--load_network", default=None, type=str,
                     help="If set given network (state dict) is loaded.")
@@ -91,10 +91,14 @@ if __name__ == '__main__':
         config = ECGAttNet_CONFIG_XL
         data_logger = Logger(experiment_path_extension="ECGAttNet_XL" + dataset_info)
         print("ECGAttNet_XL utilized")
-    else:
+    elif args.network_config == "ECGAttNet_XXL":
         config = ECGAttNet_CONFIG_XXL
         data_logger = Logger(experiment_path_extension="ECGAttNet_XXL" + dataset_info)
         print("ECGAttNet_XXL utilized")
+    else:
+        config = ECGAttNet_CONFIG_100M
+        data_logger = Logger(experiment_path_extension="ECGAttNet_100M" + dataset_info)
+        print("ECGAttNet_100M utilized")
 
     # Not dropout of no data augmentation
     if args.no_data_aug:
