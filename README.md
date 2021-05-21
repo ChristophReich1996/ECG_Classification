@@ -20,6 +20,8 @@ The implementation was tested [Gentoo Linux](https://www.gentoo.org/) 5.10.7, Py
 training and validation a CUDA device is needed!** This is due to the PAU implementation, which does not support 
 execution on the CPU. The functionality of this repository can not be guaranteed for other system configurations.
 
+If only CUDA 11.0 is available the code can also be executed with PyTorch 1.7.1 and Torchaudio 0.7.2.
+
 ### Used Implementation
 
 We implement ECG-AttNet with [PyTorch](https://pytorch.org/) 1.8.1 and 
@@ -73,6 +75,14 @@ python -W ignore train.py --cuda_devices "0" --batch_size 100 --dataset_path "/d
 ```
 
 Pretraining with a batch size of 100 requres a GPU with at least 32GB. If a batch size of 50 is utilized a 16GB GPU is needed. Batch size can only be set in steps of 50.
+
+To train the biggest ECG-DualNet++ with 130M parameters run:
+
+```shell script
+python -W ignore train.py --cuda_devices "0, 1, 2, 3" --epochs 100 --batch_size 24 --physio_net --dataset_path "data/training2017/" --network_config "ECGAttNet_130M"
+```
+
+Four GPUs with 16GB are recommended. Reducing the batch size is a possible workaround if limited GPU memory is available.
 
 Pleas note that the dataset path as well as the cuda devices might change for different systems!
 
