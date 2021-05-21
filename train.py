@@ -154,6 +154,7 @@ if __name__ == '__main__':
         ecg_leads, ecg_labels, fs, ecg_names = load_references(args.dataset_path)
         if args.physio_net:
             if args.challange:
+                print("Challange split is utilized")
                 training_split = TRAINING_SPLIT_CHALLANGE
                 validation_split = VALIDATION_SPLIT_CHALLANGE
             else:
