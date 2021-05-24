@@ -44,6 +44,7 @@ dataset [2]. Three different training runs are reported. Weights of the best per
 | ECG-DualNet++ M (AxAtt + Trans.) | 0.8226; 0.8259; 0.7938 | 0.7544; 0.7730; 0.6947 | 2589714 | [weights](experiments/13_05_2021__06_46_54ECGAttNet_M_physio_net_dataset/models/best_model.pt) |
 | ECG-DualNet++ L (AxAtt + Trans.) | 0.8449; 0.8442; 0.8396 | 0.7859; 0.7750; 0.7671 | 3717426 | [weights](experiments/13_05_2021__07_56_52ECGAttNet_L_physio_net_dataset/models/best_model.pt) |
 | ECG-DualNet++ XL (AxAtt + Trans.) | 0.8593; 0.8351; 0.8501 | 0.8051; 0.7799; 0.7851 | 8212658 | [weights](experiments/13_05_2021__09_42_13ECGAttNet_XL_physio_net_dataset/models/best_model.pt) |
+| ECG-DualNet++ 130M (AxAtt + Trans.) | 0.8475; 0.8534; 0.8462 | 0.7878; 0.7963; 0.7740 | 127833010 | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EfQSSiciRjBOvUORGYyMEMEBqjD5yjolLFoZIMjywyiKXw?e=z2p7vh) |
 
 Note that for the weights of ECG-DualNet XL an external link is provided.
 
