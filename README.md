@@ -48,6 +48,13 @@ dataset [2]. Three different training runs are reported. Weights of the best per
 
 Note that for the weights of ECG-DualNet XL an external link is provided.
 
+For training on the Icentia11k dataset [3] we achieved the following results:
+
+| Model | ACC | F1 | # Parameters | best | 20 epochs |
+| --- | --- | --- | ---: | --- | --- |
+| ECG-DualNet XL (CNN + LSTM) | 0.8989 | 0.4564 | 20683122 | [weights](experiments/20_05_2021__18_32_19ECGAttNet_XL_icentia11k_dataset/models/best_model.pt) | [weights](experiments/20_05_2021__18_32_19ECGAttNet_XL_icentia11k_dataset/models/20.pt) |
+| ECG-DualNet++ XL (AxAtt + Trans.) | 0.8899 | 0.4970 | 8212658 |[weights]()  | [weights]() |
+
 ## Usage
 
 To reproduce the presented results simply run:
