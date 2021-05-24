@@ -73,7 +73,7 @@ by `state_dict:Dict[str, torch.Tensor] = torch.load("best_model.pt")`.
 To train the biggest ECG-DualNet++ with 130M parameters run:
 
 ```shell script
-python -W ignore train.py --cuda_devices "0, 1, 2, 3" --epochs 100 --batch_size 24 --physio_net --dataset_path "data/training2017/" --network_config "ECGAttNet_130M"
+python -W ignore train.py --cuda_devices "0, 1, 2, 3" --epochs 100 --batch_size 24 --physio_net --dataset_path "data/training2017/" --network_config "ECGAttNet_130M" --data_parallel
 ```
 
 Four GPUs with 16GB are recommended. Reducing the batch size is a possible workaround if limited GPU memory is available.
@@ -95,13 +95,13 @@ Pretraining with a batch size of 100 requres a GPU with at least 32GB. If a batc
 To train the pretrained models on the 2017 PhysioNet dataset [2] run:
 
 ```shell script
-python -W ignore train.py --cuda_devices "0, 1, 2, 3" --epochs 100 --batch_size 24 --physio_net --dataset_path "data/training2017/" --network_config "ECGAttNet_XL" --load_network "experiments/20_05_2021__18_32_19ECGAttNet_XL_icentia11k_dataset/models/20.pt"
+python -W ignore train.py --cuda_devices "0" --epochs 100 --batch_size 24 --physio_net --dataset_path "data/training2017/" --network_config "ECGAttNet_XL" --load_network "experiments/20_05_2021__18_32_19ECGAttNet_XL_icentia11k_dataset/models/20.pt"
 ```
 
 or
 
 ```shell script
-python -W ignore train.py --cuda_devices "0, 1, 2, 3" --epochs 100 --batch_size 24 --physio_net --dataset_path "data/training2017/" --network_config "ECGCNN_XL" --load_network "experiments/21_05_2021__12_15_06ECGCNN_XL_icentia11k_dataset/models/20.pt"
+python -W ignore train.py --cuda_devices "0" --epochs 100 --batch_size 24 --physio_net --dataset_path "data/training2017/" --network_config "ECGCNN_XL" --load_network "experiments/21_05_2021__12_15_06ECGCNN_XL_icentia11k_dataset/models/20.pt"
 ```
 
 The challange submission can be reproduced by setting the additional flag `--challange`.
