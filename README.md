@@ -20,7 +20,7 @@ The implementation was tested [Gentoo Linux](https://www.gentoo.org/) 5.10.7, Py
 training and validation a CUDA device is needed!** This is due to the PAU implementation, which does not support 
 execution on the CPU. The functionality of this repository can not be guaranteed for other system configurations.
 
-If only CUDA 11.0 is available the code can also be executed with PyTorch 1.7.1 and Torchaudio 0.7.2.
+If only CUDA 11.0 is available the code can also be executed with PyTorch 1.7.1 and Torchaudio 0.7.2 [see](https://pytorch.org/get-started/previous-versions/).
 
 ### Used Implementation
 
