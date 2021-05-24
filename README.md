@@ -70,6 +70,14 @@ This script trains all models listed in the table above except ECG-DualNet++ 130
 [state dict](https://pytorch.org/tutorials/beginner/saving_loading_models.html#what-is-a-state-dict) and can be loaded 
 by `state_dict:Dict[str, torch.Tensor] = torch.load("best_model.pt")`.
 
+To train the biggest ECG-DualNet++ with 130M parameters run:
+
+```shell script
+python -W ignore train.py --cuda_devices "0, 1, 2, 3" --epochs 100 --batch_size 24 --physio_net --dataset_path "data/training2017/" --network_config "ECGAttNet_130M"
+```
+
+Four GPUs with 16GB are recommended. Reducing the batch size is a possible workaround if limited GPU memory is available.
+
 To reproduce our presented ablation studies run:
 
 ```shell script
@@ -83,14 +91,6 @@ python -W ignore train.py --cuda_devices "0" --batch_size 100 --dataset_path "/d
 ```
 
 Pretraining with a batch size of 100 requres a GPU with at least 32GB. If a batch size of 50 is utilized a 16GB GPU is needed. Batch size can only be set in steps of 50.
-
-To train the biggest ECG-DualNet++ with 130M parameters run:
-
-```shell script
-python -W ignore train.py --cuda_devices "0, 1, 2, 3" --epochs 100 --batch_size 24 --physio_net --dataset_path "data/training2017/" --network_config "ECGAttNet_130M"
-```
-
-Four GPUs with 16GB are recommended. Reducing the batch size is a possible workaround if limited GPU memory is available.
 
 Pleas note that the dataset path as well as the cuda devices might change for different systems!
 
