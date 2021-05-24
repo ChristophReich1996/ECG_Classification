@@ -58,6 +58,8 @@ if __name__ == '__main__':
         dataset_info = "_icentia11k_dataset"
     else:
         dataset_info = "_default_dataset"
+    if args.challange:
+        dataset_info += "_challange"
     # Init network
     if args.network_config == "ECGCNN_S":
         config = ECGCNN_CONFIG_S
