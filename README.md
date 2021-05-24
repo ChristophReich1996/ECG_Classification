@@ -53,7 +53,7 @@ For training on the Icentia11k dataset [3] we achieved the following results:
 | Model | ACC | F1 | # Parameters | best | 20 epochs |
 | --- | --- | --- | ---: | --- | --- |
 | ECG-DualNet XL (CNN + LSTM) | 0.8989 | 0.4564 | 20683122 | [weights](experiments/20_05_2021__18_32_19ECGAttNet_XL_icentia11k_dataset/models/best_model.pt) | [weights](experiments/20_05_2021__18_32_19ECGAttNet_XL_icentia11k_dataset/models/20.pt) |
-| ECG-DualNet++ XL (AxAtt + Trans.) | 0.8899 | 0.4970 | 8212658 | [weights]() | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EVaS1KbQ6fRDo-IJYjOL1GQB5oRkx4IZB5IUWCOWWsoomA?e=3Nr9RD) |
+| ECG-DualNet++ XL (AxAtt + Trans.) | 0.8899 | 0.4970 | 8212658 | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EULh87xNGmBAueOrFQCkbxYB9xHukZjmyk4wujNvuw58lA?e=Dbdw86) | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EVaS1KbQ6fRDo-IJYjOL1GQB5oRkx4IZB5IUWCOWWsoomA?e=3Nr9RD) |
 
 ## Usage
 
@@ -108,7 +108,7 @@ The challange submission can be reproduced by setting the additional flag `--cha
 
 Pleas note that the dataset or model paths as well as the cuda devices might change for different systems!
 
-To run custom training runs the `train.py` script can be used. This script takes the following commands:
+To run custom training the `train.py` script can be used. This script takes the following commands:
 
 | Argument | Default Value | Info |
 | --- | --- | --- |
