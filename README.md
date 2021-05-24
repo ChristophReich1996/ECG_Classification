@@ -57,13 +57,13 @@ For training on the Icentia11k dataset [3] we achieved the following results:
 
 ## Usage
 
-To reproduce the presented results simply run:
+To reproduce the presented results simply run (a single GPU is needed):
 
 ```shell script
 sh run_experiments.sh
 ```
 
-This script trains all models listed in the table above. During training all logs are saved in the experiments folder 
+This script trains all models listed in the table above except ECG-DualNet++ 130M. During training all logs are saved in the experiments folder 
 (produced automatically). Most logs are stored in the 
 [PyTorch tensor format](https://pytorch.org/docs/stable/generated/torch.load.html) `.pt` and can be loaded by 
 `loss:torch.Tensor = torch.load("loss.pt"")`. Network weights are stored as a 
