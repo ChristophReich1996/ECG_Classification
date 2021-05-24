@@ -92,7 +92,21 @@ python -W ignore train.py --cuda_devices "0" --batch_size 100 --dataset_path "/d
 
 Pretraining with a batch size of 100 requres a GPU with at least 32GB. If a batch size of 50 is utilized a 16GB GPU is needed. Batch size can only be set in steps of 50.
 
-Pleas note that the dataset path as well as the cuda devices might change for different systems!
+To train the pretrained models in the 2017 PhysioNet dataset [2] run:
+
+```shell script
+python -W ignore train.py --cuda_devices "0, 1, 2, 3" --epochs 100 --batch_size 24 --physio_net --dataset_path "data/training2017/" --network_config "ECGAttNet_XL" --load_network "experiments/20_05_2021__18_32_19ECGAttNet_XL_icentia11k_dataset/models/20.pt"
+```
+
+or
+
+```shell script
+python -W ignore train.py --cuda_devices "0, 1, 2, 3" --epochs 100 --batch_size 24 --physio_net --dataset_path "data/training2017/" --network_config "ECGCNN_XL" --load_network "experiments/21_05_2021__12_15_06ECGCNN_XL_icentia11k_dataset/models/20.pt"
+```
+
+The challange submission can be trained by setting the additional flag `--challange`.
+
+Pleas note that the dataset or model paths as well as the cuda devices might change for different systems!
 
 To run custom training runs the `train.py` script can be used. This script takes the following commands:
 
