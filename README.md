@@ -125,7 +125,7 @@ To run custom training the `train.py` script can be used. This script takes the 
 | `--network_config` | "ECGCNN_M" | Type of network configuration to be utilized. |
 | `--load_network` | None | If set given network (state dict) is loaded. |
 
-All network hyperparameters can be found and adjusted in the `ecg_classification\config.py` file.
+All network hyperparameters can be found and adjusted in the [ecg_classification\config.py](ecg_classification\config.py) file.
 
 ## Data
 
