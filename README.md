@@ -61,14 +61,14 @@ If fine tuning the pretrained networks on the PhysioNet dataset [2] the followin
 
 | Model | ACC | F1 | # Parameters | best |
 | --- | --- | --- | ---: | --- |
-| ECG-DualNet XL (CNN + LSTM) | 0.8534; 0.8167; 0.7663 | 0.8024; 0.7385; 0.5880 | 20683122 |  |
+| ECG-DualNet XL (CNN + LSTM) | 0.8534; 0.8167; 0.7663 | 0.8024; 0.7385; 0.5880 | 20683122 | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EREhkBNLtFNAv_aIC102lqQBKe1m_1xPBShFOtdmIAoQ7Q?e=2Ozla2) |
 | ECG-DualNet++ XL (AxAtt + Trans.) | 0.8534; 0.8534; 0.8508 | 0.8004; 0.7844; 0.7952 | 8212658 | [weights](experiments/25_05_2021__02_24_04ECGAttNet_XL_physio_net_dataset_pretrained/models/best_model.pt) |
 
 In the challange setting (pretrained weights used) the following results were achieved:
 
 | Model | ACC | F1 | # Parameters | best |
 | --- | --- | --- | ---: | --- |
-| ECG-DualNet XL (CNN + LSTM) | 0.8840; 0.8820; 0.8080 | 0.8549; 0.8449; 0.7360 | 20683122 |  |
+| ECG-DualNet XL (CNN + LSTM) | 0.8840; 0.8820; 0.8080 | 0.8549; 0.8449; 0.7360 | 20683122 | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EegBTv_x2_ZGtu4vFLTnotoBnIHLlPdBw4prQ_vxuwBdYw?e=2b4xII) |
 | ECG-DualNet++ XL (AxAtt + Trans.) | 0.8620; 0.8720; 0.8460 | 0.8296; 0.8386; 0.7984 | 8212658 | [weights](experiments/25_05_2021__02_43_45ECGAttNet_XL_physio_net_dataset_challange/models/best_model.pt) |
 
 ## Usage
