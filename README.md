@@ -36,7 +36,7 @@ in the `requirements.txt` file. For the Pade Activation Unit we adopted the
 We achieved the following validation results for our custom training/validation split on the 2017 PhysioNet Challenge 
 dataset [2]. Three different training runs are reported. Weights of the best performing model are provided.
 
-| Model | ACC | F1 | # Parameters |  |
+| Model | ACC | F1 | # Parameters | best |
 | --- | --- | --- | ---: | --- |
 | ECG-DualNet S (CNN + LSTM) | 0.8527; 0.8410; 0.8455 | 0.8049; 0.7923; 0.7799 | 1840210 | [weights](experiments/13_05_2021__01_37_34ECGCNN_S_physio_net_dataset/models/best_model.pt) |
 | ECG-DualNet M (CNN + LSTM) | 0.8560; 0.8442; 0.8495 | 0.7938; 0.7955; 0.7928 | 4269618 | [weights](experiments/13_05_2021__02_06_41ECGCNN_M_physio_net_dataset/models/best_model.pt) |
@@ -139,7 +139,7 @@ To run custom training the `train.py` script can be used. This script takes the 
 | `--network_config` | "ECGCNN_M" | Type of network configuration to be utilized. |
 | `--load_network` | None | If set given network (state dict) is loaded. |
 
-All network hyperparameters can be found and adjusted in the `ecg_classification\config.py` file.
+All network hyperparameters can be found and adjusted in the [config.py](/ecg_classification/config.py) file.
 
 ## Data
 
