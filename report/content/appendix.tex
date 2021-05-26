@@ -6,6 +6,13 @@ This section includes additional information and results of this study work.
 
 This subsection includes visualizations and additional information of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017}.
 
+\begin{table}[!ht]
+    \centering
+    \caption{Class distribution of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017}.}
+    \input{table/physionet_distribution}
+    \label{tab:physionet_distribution}
+\end{table}
+
 \begin{figure}[!ht]
     \setlength{\figH}{4cm}
     \setlength{\figW}{88.9mm}
@@ -41,13 +48,6 @@ This subsection includes visualizations and additional information of the 2017 P
     \caption{ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} labeled as AF.}
     \label{fig:ecg_signal_A}
 \end{figure}
-
-\begin{table}[!ht]
-    \centering
-    \caption{Class distribution of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017}.}
-    \input{table/physionet_distribution}
-    \label{tab:physionet_distribution}
-\end{table}
 
 \newpage
 
@@ -153,7 +153,14 @@ We experimented also with a full transformer-based architecture \cite{Vaswani201
 
 \subsection{Challenge Submission} \label{subsec:challenge}
 
-Our final challenge submission includes an ECG-DualNet++ XL. This model is trained on the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017}. However, instead of the random training and validation split used in the reported results, an optimized split is used. Since it is known that a fraction of the final test set is taken from the publicly available samples of the 2017 PhysioNet/CinC Challenge dataset we detected these samples with the provided samples. Samples that are not included in the provided dataset but are included in the 2017 PhysioNet/CinC Challenge dataset are put into the training set. The final split includes $8000$ training samples (including potential test data) and $528$ samples to validate the network's performance during training.
+Our final challenge submission includes an ECG-DualNet XL. This model was pre-trained on the Icentia$11$k dataset \cite{Tan2019} and fine-tuned on the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017}. However, instead of the random training and validation split used in the reported results, an optimized split is used. Since it is known that a fraction of the final test set is taken from the publicly available samples of the 2017 PhysioNet/CinC Challenge dataset we detected these samples with the provided samples. Samples that are not included in the provided dataset but are included in the 2017 PhysioNet/CinC Challenge dataset are put into the training set. The final split includes $8000$ training samples (including potential test data) and $528$ samples to validate the network's performance during training. The achieved validation results are presented in Table \ref{tab:results_challange}.
+
+\begin{table}[!ht]
+    \centering
+    \caption{Classification results of ECG-DualNet XL pre-trained on the Icentia$11$k dataset and fine-tuned on the PhysioNet dataset with optimizer split. Metric computed on the small validation set.}
+    \input{table/results_challange}
+    \label{tab:results_challange}
+\end{table}
 
 \subsection{Hyperparameters}\label{subsec:hyperparameters}
 
