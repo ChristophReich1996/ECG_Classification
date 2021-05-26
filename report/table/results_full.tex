@@ -1,0 +1,21 @@
+\begin{tabular}{@{\extracolsep{2.75pt}}>{\raggedright\arraybackslash}p{0.275\columnwidth}>{\centering\arraybackslash}p{0.0595\columnwidth}>{\centering\arraybackslash}p{0.0595\columnwidth}>{\centering\arraybackslash}p{0.0595\columnwidth}>{\centering\arraybackslash}p{0.0595\columnwidth}>{\centering\arraybackslash}p{0.0595\columnwidth}>{\centering\arraybackslash}p{0.0595\columnwidth}}
+    \hline
+	& \multicolumn{2}{c}{Run 1} & \multicolumn{2}{c}{Run 2} & \multicolumn{2}{c}{Run 3} \\
+	\cline{2-3} \cline{4-5} \cline{6-7}
+	Model & ACC & F1 & ACC & F1 & ACC & F1 \\
+	\hline
+	\scriptsize{ECG-DualNet S} & \scriptsize{0.8527} & \scriptsize{0.8049} & \scriptsize{0.8410} & \scriptsize{0.7923} & \scriptsize{0.8455} & \scriptsize{0.7799}  \\
+	\scriptsize{ECG-DualNet M} & \scriptsize{0.8560} & \scriptsize{0.7938} & \scriptsize{0.8442} & \scriptsize{0.7955} & \scriptsize{0.8495} & \scriptsize{0.7928} \\
+	\scriptsize{ECG-DualNet L} & \scriptsize{0.8508} & \scriptsize{0.8097} & \scriptsize{0.8213} & \scriptsize{0.7515} & \scriptsize{0.8514} & \scriptsize{0.8038} \\
+	\scriptsize{ECG-DualNet XL} & \scriptsize{0.7702} & \scriptsize{0.6899} & \scriptsize{0.8612} & \scriptsize{0.8164} & \scriptsize{0.7866} & \scriptsize{0.7162} \\
+	\hline
+	\scriptsize{ECG-DualNet++ S} & \scriptsize{0.7323} & \scriptsize{0.6239} & \scriptsize{0.8174} & \scriptsize{0.7291} & \scriptsize{0.7912} & \scriptsize{0.7127} \\
+	\scriptsize{ECG-DualNet++ M} & \scriptsize{0.8226} & \scriptsize{0.7544} & \scriptsize{0.8259} & \scriptsize{0.7730} & \scriptsize{0.7938} & \scriptsize{0.6947} \\
+	\scriptsize{ECG-DualNet++ L} & \scriptsize{0.8449} & \scriptsize{0.7859} & \scriptsize{0.8442} & \scriptsize{0.7750} & \scriptsize{0.8396} & \scriptsize{0.7671} \\
+	\scriptsize{ECG-DualNet++ XL} & \scriptsize{0.8593} & \scriptsize{0.8051} & \scriptsize{0.8051} & \scriptsize{0.7799} & \scriptsize{0.8501} & \scriptsize{0.7851} \\
+	% \scriptsize{ECG-DualNet++ XXL}\textsuperscript{\ddag} & \scriptsize{0.8591} & \scriptsize{0.7994} & \scriptsize{-} & \scriptsize{-} & \scriptsize{-} & \scriptsize{-} \\
+	\scriptsize{ECG-DualNet++ $130\si{\mega}$} & \scriptsize{0.8475} & \scriptsize{0.7878} & \scriptsize{0.8534} & \scriptsize{0.7963} & \scriptsize{0.8462} & \scriptsize{0.7740} \\
+	\hline
+	% \multicolumn{7}{l}{\textsuperscript{\ddag} No tested in detail due to the huge network size}\\
+	% \multicolumn{7}{l}{\ \ ($\sim 24\si{\mega}$ param. and $>6\si{\hour}$ training time).}\\
+\end{tabular}

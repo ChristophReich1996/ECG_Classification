@@ -1,0 +1,48 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+\input{content/packages}
+
+\begin{document}
+
+\title{Atrial Fibrillation Classification in Electrocardiography using Deep Learning}
+
+\author{ 
+\IEEEauthorblockN{ 
+	Christoph Reich\IEEEauthorrefmark{3}, Vladislav Kruk}
+\vspace{0.05in}\IEEEauthorblockA{Department of Electrical Engineering and Information Technology,\\
+	Technische Universit\"at Darmstadt\\
+	\emph{\IEEEauthorrefmark{3}christoph.reich@stud.tu-darmstadt.de}}
+}
+
+    % Make the title area
+    \maketitle
+    
+    % Abstract
+    \begin{abstract}
+    The evaluation of electrocardiogram recordings is the most common approach to diagnose and monitor cardiac arrhythmia such as atrial fibrillation. The electrocardiogram evaluation typically requires expert knowledge, which is not always available. We present a novel approach for the automated classification of atrial fibrillation in electrocardiogram recordings with variable length. Our deep learning approach utilizes both input data in the time and frequency domain. The performance of the proposed dual network for ECG classification (ECG-DualNet) is showcased on the 2017 PhysioNet/CinC Challenge dataset. ECG-DualNet outperforms recent Convolutional Neural Network approaches in terms of classification accuracy. Code and trained models are available at \url{https://github.com/ChristophReich1996/ECG_Classification}.
+    \end{abstract}
+    
+    % Keywords
+    \begin{IEEEkeywords}
+    deep learning, attention, arrhythmia classification, atrial fibrillation classification, electrocardiography.
+    \end{IEEEkeywords}
+    
+    % Content
+    \input{content/introduction}
+    \input{content/related_work}
+    \input{content/method}
+    \input{content/experiments}
+    \input{content/discussion}
+    \input{content/conclusion}
+    
+    % Bib
+    \bibliographystyle{IEEEtran}
+    \bibliography{IEEEabrv, references}
+    
+    % Appendix
+    \input{content/appendix}
+    
+\end{document}
+
+

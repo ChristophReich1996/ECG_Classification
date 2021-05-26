@@ -3,6 +3,8 @@
 This repository includes the code of the ECG-DualNet for ECG classification. This work was done as part of the 
 competition "Wettbewerb künstliche Intelligenz in der Medizin" at TU Darmstadt.
 
+A report of the project is available [here](report/report.pdf).
+
 <img src="/github/architecture.png"  alt="architecture" width = 600px height = 320px >
 
 ## Installation

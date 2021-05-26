@@ -1,0 +1,21 @@
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.425\columnwidth}>{\raggedright\arraybackslash}p{0.1\columnwidth}>{\raggedright\arraybackslash}p{0.1\columnwidth}>{\raggedleft\arraybackslash}p{0.175\columnwidth}}
+    \hline
+	Model & ACC $\uparrow$ & F1 $\uparrow$ & \# Parameters\\
+	\hline
+	CNN baseline\textsuperscript{*} \cite{Zihlmann2017} & $0.812$ & $\mathit{0.790}$\textsuperscript{\dag} & $\sim 3.5\si{\mega}$ \\
+	CRNN baseline\textsuperscript{*} \cite{Zihlmann2017} & $0.823$ & $\mathit{0.792}$\textsuperscript{\dag} & $\sim 3.5\si{\mega}$ \\
+	\hline
+	ECG-DualNet S & $0.8527$ & $0.8049$ & $1.8\si{\mega}$ \\
+	ECG-DualNet M & $0.8560$ & $0.7938$ & $4.3\si{\mega}$ \\
+	ECG-DualNet L & $0.8514$ & $0.8038$ & $6.2\si{\mega}$ \\
+	ECG-DualNet XL & $\mathbf{0.8612}$ & $\mathbf{0.8164}$ & $20.7\si{\mega}$ \\
+	\hline
+	ECG-DualNet++ S & $0.8174$ & $0.7291$ & $1.8\si{\mega}$ \\
+	ECG-DualNet++ M & $0.8259$ & $0.7730$ & $2.6\si{\mega}$ \\
+	ECG-DualNet++ L & $0.8449$ & $0.7859$ & $3.7\si{\mega}$ \\
+	ECG-DualNet++ XL & $0.8593$ & $0.8051$ & $8.2\si{\mega}$ \\
+	ECG-DualNet++ $130\si{\mega}$ & $0.8534$ & $0.7963$ & $128\si{\mega}$ \\
+	\hline
+	\multicolumn{4}{l}{\textsuperscript{*} Reported literature values.}\\
+	\multicolumn{4}{l}{\textsuperscript{\dag} F1 score computed over three classes, thus not directly comparable.}
+\end{tabular}

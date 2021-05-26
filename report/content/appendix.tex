@@ -1,0 +1,165 @@
+\section{Appendix} \label{sec:appendix}
+
+This section includes additional information and results of this study work.
+
+\subsection{Dataset} \label{subsec:dataset_samples}
+
+This subsection includes visualizations and additional information of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017}.
+
+\begin{figure}[!ht]
+    \setlength{\figH}{4cm}
+    \setlength{\figW}{88.9mm}
+    \centering
+    \input{artwork/0_N}
+    \caption{ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} labeled as normal.}
+    \label{fig:ecg_signal_N}
+\end{figure}
+
+\begin{figure}[!ht]
+    \setlength{\figH}{4cm}
+    \setlength{\figW}{88.9mm}
+    \centering
+    \input{artwork/2_O}
+    \caption{ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} labeled as other rhythm.}
+    \label{fig:ecg_signal_O}
+\end{figure}
+
+\begin{figure}[!ht]
+    \setlength{\figH}{4cm}
+    \setlength{\figW}{88.9mm}
+    \centering
+    \input{artwork/10_tild}
+    \caption{ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} labeled as noisy.}
+    \label{fig:ecg_signal_tild}
+\end{figure}
+
+\begin{figure}[!ht]
+    \setlength{\figH}{4cm}
+    \setlength{\figW}{88.9mm}
+    \centering
+    \input{artwork/15_A}
+    \caption{ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} labeled as AF.}
+    \label{fig:ecg_signal_A}
+\end{figure}
+
+\begin{table}[!ht]
+    \centering
+    \caption{Class distribution of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017}.}
+    \input{table/physionet_distribution}
+    \label{tab:physionet_distribution}
+\end{table}
+
+\newpage
+
+\subsection{Augmentation Pipeline}
+
+This section includes visualization of the each augmentation included in our augmentation pipeline.
+
+\begin{figure}[!ht]
+    \setlength{\figH}{4cm}
+    \setlength{\figW}{88.9mm}
+    \centering
+    \input{artwork/scale}
+    \caption{Standardized ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} processed by scaling augmentation.}
+    \label{fig:aug_scale}
+\end{figure}
+
+\begin{figure}[!ht]
+    \setlength{\figH}{4cm}
+    \setlength{\figW}{88.9mm}
+    \centering
+    \input{artwork/shift}
+    \caption{Standardized ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} processed by shift augmentation.}
+    \label{fig:aug_shift}
+\end{figure}
+
+\begin{figure}[!ht]
+    \setlength{\figH}{4cm}
+    \setlength{\figW}{88.9mm}
+    \centering
+    \input{artwork/band_pass_filter}
+    \caption{Standardized ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} processed by band pass filter augmentation.}
+    \label{fig:aug_band_pass}
+\end{figure}
+
+\begin{figure}[!ht]
+    \setlength{\figH}{4cm}
+    \setlength{\figW}{88.9mm}
+    \centering
+    \input{artwork/drop}
+    \caption{Standardized ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} processed by dropping augmentation.}
+    \label{fig:aug_drop}
+\end{figure}
+
+\begin{figure}[!ht]
+    \setlength{\figH}{4cm}
+    \setlength{\figW}{88.9mm}
+    \centering
+    \input{artwork/cutout}
+    \caption{Standardized ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} processed by cutout augmentation.}
+    \label{fig:aug_cutout}
+\end{figure}
+
+\begin{figure}[!ht]
+    \setlength{\figH}{4cm}
+    \setlength{\figW}{88.9mm}
+    \centering
+    \input{artwork/sine}
+    \caption{Standardized ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} processed by sine augmentation.}
+    \label{fig:aug_sine}
+\end{figure}
+
+\begin{figure}[!ht]
+    \setlength{\figH}{4cm}
+    \setlength{\figW}{88.9mm}
+    \centering
+    \input{artwork/resample}
+    \caption{Standardized ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} processed by resample augmentation.}
+    \label{fig:aug_resample}
+\end{figure}
+
+\begin{figure}[!ht]
+    \setlength{\figH}{4cm}
+    \setlength{\figW}{88.9mm}
+    \centering
+    \input{artwork/random_resample}
+    \caption{Standardized ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} processed by random resample augmentation.}
+    \label{fig:aug_random_resample}
+\end{figure}
+
+\newpage
+\ 
+\newpage
+
+\subsection{Failed Experiments} \label{subsec:failed_experiments}
+
+We experimented also with a full transformer-based architecture \cite{Vaswani2017}. In which the ECG signal builds the input to the transformer encoder. The transformer decoder was feed with patches of the spectrogram. Unfortunately, this architecture achieved a weak classification accuracy ($<0.72$) during early tests. Because of this, a full transformer-based architecture was not considered further.
+
+\subsection{Experimental Results} \label{subsec:experimental_results}
+
+\begin{table}[!ht]
+    \centering
+    \caption{Classification results of ECG-DualNet(++) on the PhysioNet 2017 validation set for three different training runs with different seeds.}
+    \input{table/results_full}
+    \label{tab:full_results}
+\end{table}
+
+\begin{table}[!ht]
+    \centering
+    \caption{Classification results of ECG-DualNet(++) on the PhysioNet 2017 validation set for three different training runs with pre-trained weights (Icentia$11$k dataset) and different seeds.}
+    \input{table/pretraining_results_full}
+    \label{tab:full_pretraining_results}
+\end{table}
+
+\subsection{Challenge Submission} \label{subsec:challenge}
+
+Our final challenge submission includes an ECG-DualNet++ XL. This model is trained on the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017}. However, instead of the random training and validation split used in the reported results, an optimized split is used. Since it is known that a fraction of the final test set is taken from the publicly available samples of the 2017 PhysioNet/CinC Challenge dataset we detected these samples with the provided samples. Samples that are not included in the provided dataset but are included in the 2017 PhysioNet/CinC Challenge dataset are put into the training set. The final split includes $8000$ training samples (including potential test data) and $528$ samples to validate the network's performance during training.
+
+\subsection{Hyperparameters}\label{subsec:hyperparameters}
+
+All important network and augmentation hyperparameters can be seen in the provided config file at: \url{https://github.com/ChristophReich1996/ECG_Classification/blob/main/ecg_classification/config.py}.\\
+Additional hyperparameters can be found in the training script at: \url{https://github.com/ChristophReich1996/ECG_Classification/blob/main/train.py}
+
+\subsection{Contributions}
+CR implemented the PhysioNet and Icentia$11$k dataset and developed/implemented the augmentation pipeline and the ECG-DualNet(++) models (training and validation). CR conducted the experiments, wrote the report and produced Figure \ref{fig:beat} \& \ref{fig:ecg_dual_net}.\\
+VK contributed the ECG visualization (Fig. \ref{fig:ecg_signal_N} - \ref{fig:aug_random_resample}) and implemented a XGBoost baseline (see implementation). Additionally, VK proofread the paper and helped with useful discussions regarding both the implementation and the report.
