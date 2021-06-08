@@ -1,4 +1,4 @@
-# ECG Classification
+# ECG-DualNet: Atrial Fibrillation Classification in Electrocardiography using Deep Learning
 
 This repository includes the code of the ECG-DualNet for ECG classification. This work was done as part of the 
 competition "Wettbewerb künstliche Intelligenz in der Medizin" at TU Darmstadt.
