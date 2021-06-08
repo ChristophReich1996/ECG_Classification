@@ -64,7 +64,7 @@ class ModelWrapper(object):
         # Init best validation metric
         best_validation_metric = 0.0
         # Init rtpt
-        rtpt = RTPT(name_initials="CR", experiment_name="DeepFovea++", max_iterations=epochs)
+        rtpt = RTPT(name_initials="CR", experiment_name="ECG-DualNet(++)", max_iterations=epochs)
         # Start rtpt
         rtpt.start()
         # Main training loop
