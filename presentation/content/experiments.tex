@@ -1,0 +1,61 @@
+\section{Experiments}
+
+\subsection{Datasets}
+\begin{frame}{Experiments}
+\framesubtitle{Datasets}
+    \begin{block}{2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017}}
+        \begin{itemize}
+            \item Single-lead ECG signals with variable length ($2714$ - $18286$ samples)
+            \item $8529$ publicaly available data samples ($7000$ train \& $1528$ val.)
+            \item Labels include four classes (normal, AF, other \& noisy)
+        \end{itemize}
+    \end{block}
+    \pause
+    \begin{block}{Icentia$11\si{\kilo}$ \cite{Tan2019}}
+        \begin{itemize}
+            \item Single-lead ECG signals of $11\si{\kilo}$ patients.
+            \item $550\si{\kilo}$ data samples with a length of $~1\si{\hour}$
+            \item Sparse six class rhythm labels including AF
+            \item Cropped and resampled to match target dataset
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\subsection{ECG-DualNet Results}
+\begin{frame}{Results}
+\framesubtitle{ECG-DualNet Results}
+    \begin{table}[h!]
+        \centering
+        \scriptsize{\caption{Classification results of our proposed approaches and baselines on the 2017 PhysioNet validation set.}}
+        \input{table/results}
+        \label{tab:results}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Results}
+\framesubtitle{ECG-DualNet Results Pre-Training}
+    \begin{table}[!ht]
+        \centering
+        \caption{Classification results of our proposed approaches on the Icentia$11$k validation set. Only a single training for each model run was conducted.}
+        \small{\input{table/results_Icentia11k}}
+        \label{tab:results_Icentia11k}
+    \end{table}
+    \pause
+    \begin{table}[!ht]
+        \centering
+        \caption{Classification results of our proposed approaches on the 2017 PhysioNet validation set and \newline pre-trained on the Icentia$11$k dataset.}
+        \small{\input{table/pretraining_results}}
+        \label{tab:pretraining_results}
+    \end{table}
+\end{frame}
+
+\subsection{Ablation Study}
+\begin{frame}{Results}
+\framesubtitle{Ablation Study}
+    \begin{table}[h!]
+        \centering
+        \caption{Classification results on the 2017 PhysioNet validation for different ablations. ECG-DualNet L configuration utilized.}
+        \input{table/ablation_study}
+        \label{tab:ablations}
+    \end{table}
+\end{frame}

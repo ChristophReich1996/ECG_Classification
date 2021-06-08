@@ -1,0 +1,93 @@
+\section{Introduction}
+
+\subsection{Problem Setting}
+\begin{frame}[c]{Introduction}
+\framesubtitle{Problem Setting}
+    \begin{center}
+        \begin{large}
+            \textbf{Classify single-lead ECG signals with variable length.}
+        \end{large}
+    \end{center}
+    \vspace{0.5cm}
+    \begin{figure}[!ht]
+        \setlength{\figH}{3.75cm}
+        \setlength{\figW}{0.95\textwidth}
+        \centering
+        \input{artwork/15_A}
+        \caption{ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} labeled as AF.}
+        \label{fig:ecg_signal_A}
+    \end{figure}
+\end{frame}
+
+\subsection{Motivation}
+\begin{frame}{Introduction}
+\framesubtitle{Motivation}
+    \begin{itemize}
+        \item Atrial fibrillation (AF) dangerous and often undetected
+        \item AF one of the most common heart arrhythmia's
+        \item AF can lead to strokes, dementia, and heart failure
+        \item Increasing amount of single-lead ECG edge devices available
+        \begin{itemize}
+            \item No expert knowledge typically available
+            \item Need for automated AF
+        \end{itemize}
+    \end{itemize}
+    \begin{textblock*}{3cm}(11.8cm, 3cm)
+        \raggedright
+        \cite{Becker2006}
+        \cite{Herold2019}
+    \end{textblock*}
+    \pause
+    \begin{figure}[!ht] 
+        \centering
+        \input{artwork/beat_ecg}
+        \vspace{-0.15cm}
+        \caption{Regular heart beat left and atrial fibrillation on the right.}
+        \label{fig:beat}
+    \end{figure}
+\end{frame}
+
+\subsection{Related Work}
+\begin{frame}{Introduction}
+\framesubtitle{Related Work}
+    \vspace{-0.5cm}
+    \begin{columns}[T]
+        \column{.48\textwidth}
+            \begin{center}
+                \textbf{Transitional ML approaches}
+            \end{center}
+            \onslide<2->{
+            \begin{itemize}
+                \item Preprocessing \& Feature extraction
+                \begin{itemize}
+                    \item Data augmentation
+                    \item ECG timing features
+                    \item Robust interval features
+                    \item Waveform features
+                \end{itemize}
+                \item Learnable classifier
+                \begin{itemize}
+                    \item Random forest
+                    \item Support vector machines
+                    \item XGBoost
+                \end{itemize}
+                \item \cite{Antink2017, Smisek2017}
+            \end{itemize}}
+        \column{.01\textwidth}
+        \vspace{0.25cm}\rule{.1mm}{.75\textheight}
+        \column{.48\textwidth}
+            \begin{center}
+                \textbf{Deep learning approaches}
+            \end{center}
+            \onslide<3->{
+            \begin{itemize}
+                \item Preprocessing
+                \begin{itemize}
+                    \item Data augmentation
+                    \item Data conversion (Spectrogram)
+                \end{itemize}
+                \item Deep learning classifier
+                \item \cite{Zihlmann2017, Mousavi2019, Mashrur2019, Khriji2020, Nonaka2020}
+            \end{itemize}}
+    \end{columns}
+\end{frame}

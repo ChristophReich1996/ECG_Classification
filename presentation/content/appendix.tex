@@ -1,0 +1,26 @@
+\begin{frame}{Challenge Submission}
+\framesubtitle{Backup}
+    \begin{itemize}
+        \item ECG-DualNet XL utilized
+        \item Pre-training on Icentia$11\si{\kilo}$
+        \item Optimized training ($8000$ samples) and validation ($528$ samples) split used
+    \end{itemize}
+    \begin{table}[!ht]
+        \centering
+        \caption{Classification results of ECG-DualNet XL pre-trained on the Icentia$11$k dataset and fine-tuned on the PhysioNet dataset with optimized submission split. Metric computed on the small validation set.}
+        \input{table/results_challenge}
+        \label{tab:results_challenge}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Deep Double Decent}
+\framesubtitle{Backup}
+    \begin{figure}[!ht]
+        \centering
+        \vspace{-0.2cm}
+        \includegraphics[width=0.6\textwidth]{artwork/deep_double_decent.png}
+        \vspace{-0.2cm}
+        \caption{Illustration of the deep double decent phenomenon in image classification (CIFAR-10 \& 15\% label noise). Image taken from \cite{Nakkiran2020}.}
+        \label{fig:ddd}
+    \end{figure}
+\end{frame}

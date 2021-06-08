@@ -1,0 +1,71 @@
+\section{Method}
+
+\subsection{ECG-DualNet}
+\begin{frame}{Method}
+\framesubtitle{ECG-DualNet(++)}
+    \begin{figure}[!ht]
+        \centering
+        \input{artwork/ecg_dual_net}
+        \caption{ECG-DualNet++ architecture with signal and spectrogram encoder}
+        \label{fig:ecg_dual_net}
+    \end{figure}
+    \begin{textblock*}{3cm}(11.8cm, 3cm)
+        \raggedright
+        \cite{Vaswani2017}
+        \cite{Wang2020}
+        \cite{Dosovitskiy2020}
+        \cite{De2017}
+    \end{textblock*}
+\end{frame}
+
+\subsection{Augmentation Pipeline}
+\begin{frame}{Method}
+\framesubtitle{Augmentation Pipeline}
+    \vspace{-0.251cm}
+    \begin{figure}[!ht]
+        \setlength{\figH}{4.5cm}
+        \setlength{\figW}{0.33\textwidth}
+        \centering
+        \input{artwork/scale}\input{artwork/shift}\input{artwork/band_pass_filter}
+        \caption{Different augmentations applied to ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017}.}
+        \label{fig:ecg_aug_1}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Method}
+\framesubtitle{Augmentation Pipeline}
+    \vspace{-0.24cm}
+    \begin{figure}[!ht]
+        \setlength{\figH}{4.5cm}
+        \setlength{\figW}{0.33\textwidth}
+        \centering
+        \input{artwork/drop}\input{artwork/cutout}\input{artwork/sine}
+        \caption{Different augmentations applied to ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017}.}
+        \label{fig:ecg_aug_2}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Method}
+\framesubtitle{Augmentation Pipeline}
+    \vspace{-0.25cm}
+    \begin{figure}[!ht]
+        \setlength{\figH}{4.5cm}
+        \setlength{\figW}{0.33\textwidth}
+        \centering
+        \input{artwork/resample}\input{artwork/random_resample}
+        \caption{Different augmentations applied to ECG signal of the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017}. Random reasmple aug. inspired by 2D random elastic aug. \cite{Simard2003}.}
+        \label{fig:ecg_aug_3}
+    \end{figure}
+\end{frame}
+
+\subsection{Training \& Validation}
+\begin{frame}{Method}
+\framesubtitle{Training \& Validation}
+    \begin{block}{Training loss (weighted cross entropy loss)}
+        $$\mathcal{L} = -\frac{1}{N}\sum_{j=1}^{N}\sum_{i=1}^{4}\alpha_{i}\,y_{ji}\,\log(\hat{y}_{ji})$$
+    \end{block}
+    \pause
+    \begin{block}{Validation metrics (accuracy \& F1)}
+        $$\operatorname{ACC}=\frac{1}{n}\sum_{j=1}^{n}\delta\left(\arg\max(\mathbf{y}_{j}), \arg\max(\hat{\mathbf{y}}_{j})\right),\quad \operatorname{F1}=\frac{1}{4}\sum_{i=1}^{4}\frac{2\text{TP}_{i}}{2\text{TP}_{i} + \text{FP}_{i} + \text{FN}_{i}}$$
+    \end{block}
+\end{frame}

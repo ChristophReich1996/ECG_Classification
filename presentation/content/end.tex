@@ -1,0 +1,16 @@
+\section{Conclusion \& Discussion}
+\begin{frame}{Conclusion \& Discussion}
+    \textbf{Achievements}
+    \begin{itemize}
+        \item Presented the novel ECG-DualNet for ECG classification
+        \item Proposed an advanced augmentation pipeline
+        \item Performed extensive testing (against various beelines) including pre-training
+    \end{itemize}
+    \pause
+    \textbf{Observations}
+    \begin{itemize}
+        \item Highly overparameterized models (ECG-DualNet++ $130\si{\mega}$) does not overfit in the classical sense $\to$ Deep Double Descent \cite{Nakkiran2020} ?
+        \item Spectrogram encoder is the most crucial part of ECG-DualNet
+        \item Extensive pre-training on the Icentia$11\si{\kilo}$ does not lead to performance benefits on the target 2017 PhysioNet dataset
+    \end{itemize}
+\end{frame}

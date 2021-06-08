@@ -1,0 +1,10 @@
+\begin{tabular}{>{\centering\arraybackslash}p{0.175\columnwidth}>{\centering\arraybackslash}p{0.15\columnwidth}>{\centering\arraybackslash}p{0.2\columnwidth}>{\raggedright\arraybackslash}p{0.1\columnwidth}>{\raggedright\arraybackslash}p{0.1\columnwidth}}
+    \hline
+	Data aug. \& dropout  & Signal encoder & Spectrogram encoder & \textcolor{white}{------------} ACC $\uparrow$ & \textcolor{white}{--------------} F1 $\uparrow$ \\
+	\hline
+	\textcolor{red}{\xmark} & \textcolor{tud3d}{\cmark} & \textcolor{tud3d}{\cmark} & $0.8272$ & $0.7493$ \\
+	\textcolor{tud3d}{\cmark} & \textcolor{red}{\xmark} & \textcolor{tud3d}{\cmark} & $0.8440$ & $0.7855$ \\
+	\textcolor{tud3d}{\cmark} & \textcolor{tud3d}{\cmark} & \textcolor{red}{\xmark} & $0.7264$ & $0.5813$ \\
+	\textcolor{tud3d}{\cmark} & \textcolor{tud3d}{\cmark} & \textcolor{tud3d}{\cmark} & $\mathbf{0.8560}$ & $\mathbf{0.7938}$ \\
+	\hline
+\end{tabular}
