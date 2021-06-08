@@ -127,7 +127,7 @@ if __name__ == '__main__':
     if args.load_network is not None:
         state_dict = torch.load(args.load_network)
         model_state_dict = network.state_dict()
-        state_dict = {k: v for k, v in model_state_dict.items() if k in model_state_dict}
+        state_dict = {key: value for key, value in state_dict.items() if model_state_dict[key].shape == value.shape}
         model_state_dict.update(state_dict)
         network.load_state_dict(model_state_dict)
         print("Network loaded")
