@@ -153,20 +153,16 @@ We experimented also with a full transformer-based architecture \cite{Vaswani201
 
 \subsection{Challenge Submission} \label{subsec:challenge}
 
-Our final challenge submission includes an ECG-DualNet XL. This model was pre-trained on the Icentia$11$k dataset \cite{Tan2019} and fine-tuned on the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017}. However, instead of the random training and validation split used in the reported results, an optimized split is used. Since it is known that a fraction of the final test set is taken from the publicly available samples of the 2017 PhysioNet/CinC Challenge dataset we detected these samples with the provided samples. Samples that are not included in the provided dataset but are included in the 2017 PhysioNet/CinC Challenge dataset are put into the training set. The final split includes $8000$ training samples (including potential test data) and $528$ samples to validate the network's performance during training. The achieved validation results are presented in Table \ref{tab:results_challange}.
+Our final challenge submission includes an ECG-DualNet XL. This model was pre-trained on the Icentia$11$k dataset \cite{Tan2019} and fine-tuned on the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017}. However, instead of the random training and validation split used in the reported results, an optimized split is used. Since it is known that a fraction of the final test set is taken from the publicly available samples of the 2017 PhysioNet/CinC Challenge dataset we detected these samples with the provided samples. Samples that are not included in the provided dataset but are included in the 2017 PhysioNet/CinC Challenge dataset are put into the training set. The final split includes $8000$ training samples (including potential test data) and $528$ samples to validate the network's performance during training. The achieved validation results are presented in Table \ref{tab:results_challenge}.
 
 \begin{table}[!ht]
     \centering
-    \caption{Classification results of ECG-DualNet XL pre-trained on the Icentia$11$k dataset and fine-tuned on the PhysioNet dataset with optimizer split. Metric computed on the small validation set.}
-    \input{table/results_challange}
-    \label{tab:results_challange}
+    \caption{Classification results of ECG-DualNet XL pre-trained on the Icentia$11$k dataset and fine-tuned on the PhysioNet dataset with optimized submission split. Metric computed on the small validation set.}
+    \input{table/results_challenge}
+    \label{tab:results_challenge}
 \end{table}
 
 \subsection{Hyperparameters}\label{subsec:hyperparameters}
 
 All important network and augmentation hyperparameters can be seen in the provided config file at: \url{https://github.com/ChristophReich1996/ECG_Classification/blob/main/ecg_classification/config.py}.\\
 Additional hyperparameters can be found in the training script at: \url{https://github.com/ChristophReich1996/ECG_Classification/blob/main/train.py}
-
-\subsection{Contributions}
-CR implemented the PhysioNet and Icentia$11$k dataset and developed/implemented the augmentation pipeline and the ECG-DualNet(++) models (training and validation). CR conducted the experiments, wrote the report and produced Figure \ref{fig:beat} \& \ref{fig:ecg_dual_net}.\\
-VK contributed the ECG visualization (Fig. \ref{fig:ecg_signal_N} - \ref{fig:aug_random_resample}) and implemented a XGBoost baseline (see implementation). Additionally, VK proofread the paper and helped with useful discussions regarding both the implementation and the report.

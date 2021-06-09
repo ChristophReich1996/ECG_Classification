@@ -4,12 +4,12 @@ We conduct experiments on the 2017 PhysioNet/CinC Challenge dataset \cite{Cliffo
 
 \subsection{2017 PhysioNet/CinC Challenge Dataset} \label{subsec:physionet_dataset}
 
-We utilize 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} for training. The dataset includes $8529$ publicly available\footnote{\url{https://physionet.org/content/challenge-2017}} labeled single lead ECG sequences. Each ECG sequence includes between $2714$ and $18286$ samples, recorded with a sampling frequency of $300$. For each sequence, a ground truth classification label is provided. Four classes are given, namely, normal, indicating a normal cardiac rhythm, AF, indicating atrial fibrillation, other, for different rhythms, and noisy, for a noisy measurement. Each class includes $5050$ (normal), $2456$ (AF), $738$ (other), and $284$ (noisy) samples, respectively. Visualizations of multiple sequences and corresponding labels are provided in the appendix. \\
+We utilize 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} for training. The dataset includes $8529$ publicly available\footnote{\url{https://physionet.org/content/challenge-2017}} labeled single-lead ECG sequences. Each ECG sequence includes between $2714$ and $18286$ samples, recorded with a sampling frequency of $300$. For each sequence, a ground truth classification label is provided. Four classes are given, namely, normal, indicating a normal cardiac rhythm, AF, indicating atrial fibrillation, other, for different rhythms, and noisy, for a noisy measurement. Each class includes $5050$ (normal), $2456$ (AF), $738$ (other), and $284$ (noisy) samples, respectively. Visualizations of multiple sequences and corresponding labels are provided in the appendix. \\
 \indent We split the data once randomly into a training and validation set. The training set includes $7000$ samples and the validation set $1528$ samples. We omit the use of $k$-fold cross-validation due to the computational expensiveness of each training run \cite{Bishop2006, Goodfellow2016}. All sequences are zero-padded, respectively, cropped to a fixed length of $18000$ samples. For a detailed description of the preprocessing see Section \ref{subsec:preprocessing}.
 
 \subsection{Icentia$11$k dataset} \label{subsec:icentia11k_dataset}
 
-The Icentia$11$k dataset \cite{Tan2019}, used for pre-training, consists single lead ECG recordings of $11\si{\kilo}$ patients. The dataset is partly labeled with six different heart rhythms including atrial fibrillation. Each dataset sample is a sequences of approximately $1\si{\hour}$ with a sampling frequency of $250$. We resample the ECG signal to match the sampling frequency of the PhysioNet dataset. Finally, we randomly crop each sequence to a random length of $9000$ to $18000$ samples. For unlabeled crops we utilize a dummy class. For validation we split the dataset patient-wise. The resulting training set includes $10\si{\kilo}$ patients and the validation set $1\si{\kilo}$ patients.
+The Icentia$11$k dataset \cite{Tan2019}, used for pre-training, consists single-lead ECG recordings of $11\si{\kilo}$ patients. The dataset is partly labeled with six different heart rhythms including atrial fibrillation. Each of the $550\si{\kilo}$ dataset sample is a sequences of approximately $1\si{\hour}$ with a sampling frequency of $250$. We resample the ECG signal to match the sampling frequency of the PhysioNet dataset. Finally, we randomly crop each sequence to a random length of $9000$ to $18000$ samples. For unlabeled crops we utilize a dummy class. For validation we split the dataset patient-wise. The resulting training set includes $10\si{\kilo}$ patients and the validation set $1\si{\kilo}$ patients.
 
 \subsection{Results} \label{subsec:results}
 
@@ -36,7 +36,7 @@ Using the model weights trained on the Icentia$11$k dataset (Tab. \ref{tab:resul
 
 \begin{table}[!ht]
     \centering
-    \caption{Classification results of our proposed approaches on the 2017 PhysioNet validation set and pre-trained on the Icentia$11$k dataset.}
+    \caption{Classification results of our proposed approaches on the 2017 PhysioNet validation set and pre-trained on the Icentia$11$k dataset. Differences to values in Tab. \ref{tab:results} in red.}
     \input{table/pretraining_results}
     \label{tab:pretraining_results}
 \end{table}
