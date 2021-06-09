@@ -73,7 +73,7 @@ In the challange setting (pretrained weights used) the following results were ac
 | Model | ACC | F1 | # Parameters | best |
 | --- | --- | --- | ---: | --- |
 | ECG-DualNet XL (CNN + LSTM) | 0.8840; 0.8820; 0.8080 | 0.8549; 0.8449; 0.7360 | 20683122 | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EegBTv_x2_ZGtu4vFLTnotoBnIHLlPdBw4prQ_vxuwBdYw?e=2b4xII) |
-| ECG-DualNet++ XL (AxAtt + Trans.) | 0.8620; 0.8720; 0.8460 | 0.8296; 0.8386; 0.7984 | 8212658 | [weights](experiments/25_05_2021__02_43_45ECGAttNet_XL_physio_net_dataset_challange/models/best_model.pt) |
+| ECG-DualNet++ XL (AxAtt + Trans.) | 0.8720; 0.8800; 0.8680 | 0.8276; 0.8494; 0.8403 | 8212658 | [weights](experiments/09_06_2021__14_23_40ECGAttNet_XL_physio_net_dataset_challange/models/best_model.pt) |
 
 ## Usage
 
