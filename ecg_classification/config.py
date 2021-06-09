@@ -1,8 +1,10 @@
+from typing import Dict, Any
+
 import torch.nn as nn
 from ecg_classification.pade_activation_unit.utils import PAU
 
 # Configuration for ECGCNN S
-ECGCNN_CONFIG_S = {
+ECGCNN_CONFIG_S: Dict[str, Any] = {
     "ecg_features": 256,
     "lstm_features": 128,
     "lstm_layers": 2,
@@ -15,7 +17,7 @@ ECGCNN_CONFIG_S = {
 }
 
 # Configuration for ECGCNN M
-ECGCNN_CONFIG_M = {
+ECGCNN_CONFIG_M: Dict[str, Any] = {
     "ecg_features": 256,
     "lstm_features": 256,
     "lstm_layers": 2,
@@ -28,7 +30,7 @@ ECGCNN_CONFIG_M = {
 }
 
 # Configuration for ECGCNN L
-ECGCNN_CONFIG_L = {
+ECGCNN_CONFIG_L: Dict[str, Any] = {
     "ecg_features": 256,
     "lstm_features": 256,
     "lstm_layers": 3,
@@ -41,7 +43,7 @@ ECGCNN_CONFIG_L = {
 }
 
 # Configuration for ECGCNN XL
-ECGCNN_CONFIG_XL = {
+ECGCNN_CONFIG_XL: Dict[str, Any] = {
     "ecg_features": 256,
     "lstm_features": 512,
     "lstm_layers": 3,
@@ -54,7 +56,7 @@ ECGCNN_CONFIG_XL = {
 }
 
 # Configuration for ECGAttNet S
-ECGAttNet_CONFIG_S = {
+ECGAttNet_CONFIG_S: Dict[str, Any] = {
     "ecg_features": 256,
     "transformer_heads": 8,
     "transformer_ff_features": 128,
@@ -70,7 +72,7 @@ ECGAttNet_CONFIG_S = {
 }
 
 # Configuration for ECGAttNet M
-ECGAttNet_CONFIG_M = {
+ECGAttNet_CONFIG_M: Dict[str, Any] = {
     "ecg_features": 256,
     "transformer_heads": 8,
     "transformer_ff_features": 256,
@@ -86,7 +88,7 @@ ECGAttNet_CONFIG_M = {
 }
 
 # Configuration for ECGAttNet L
-ECGAttNet_CONFIG_L = {
+ECGAttNet_CONFIG_L: Dict[str, Any] = {
     "ecg_features": 256,
     "transformer_heads": 8,
     "transformer_ff_features": 256,
@@ -102,7 +104,7 @@ ECGAttNet_CONFIG_L = {
 }
 
 # Configuration for ECGAttNet XL
-ECGAttNet_CONFIG_XL = {
+ECGAttNet_CONFIG_XL: Dict[str, Any] = {
     "ecg_features": 256,
     "transformer_heads": 8,
     "transformer_ff_features": 512,
@@ -118,7 +120,7 @@ ECGAttNet_CONFIG_XL = {
 }
 
 # Configuration for ECGAttNet XXL
-ECGAttNet_CONFIG_XXL = {
+ECGAttNet_CONFIG_XXL: Dict[str, Any] = {
     "ecg_features": 256,
     "transformer_heads": 8,
     "transformer_ff_features": 512,
@@ -134,7 +136,7 @@ ECGAttNet_CONFIG_XXL = {
 }
 
 # Configuration for ECGAttNet XXL
-ECGAttNet_CONFIG_130M = {
+ECGAttNet_CONFIG_130M: Dict[str, Any] = {
     "ecg_features": 256,
     "transformer_heads": 32,
     "transformer_ff_features": 2048,
@@ -150,7 +152,7 @@ ECGAttNet_CONFIG_130M = {
 }
 
 # Configuration of augmentation pipeline
-AUGMENTATION_PIPELINE_CONFIG = {
+AUGMENTATION_PIPELINE_CONFIG: Dict[str, Any] = {
     "p_scale": 0.2,
     "p_drop": 0.2,
     "p_cutout": 0.2,
