@@ -75,7 +75,7 @@ class F1(nn.Module):
         # Init list to store the class f1 scores
         class_f1: List[torch.Tensor] = []
         # Iterate over all classes
-        for c in (self.classes if self.classes is not None else prediction.shape[-1]):
+        for c in (self.classes if self.classes is not None else range(prediction.shape[-1])):
             prediction_ = prediction[..., c]
             label_ = label[..., c]
             # Calc tp, fp, fn
