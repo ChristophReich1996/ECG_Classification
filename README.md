@@ -5,7 +5,7 @@
 This repository includes the code of the ECG-DualNet for ECG classification. This work was done as part of the 
 competition "Wettbewerb künstliche Intelligenz in der Medizin" at TU Darmstadt ([KIS*MED](https://github.com/KISMED-TUDa), [Prof. Hoog Antink](https://scholar.google.de/citations?user=bRoRHGgAAAAJ&hl=de)).
 
-A report of the project is available [here](report/report.pdf). Slides of the final presentation are available [here](presentation/presentation.pdf).
+A report of the project is available [here](report/report.pdf). Slides of the final presentation are available [here](presentation/presentation.pdf). LaTeX code of both the report and the slides are also available.
 
 <img src="/github/architecture.png"  alt="architecture" width = 600px height = 320px >
 
