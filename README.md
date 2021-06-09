@@ -151,6 +151,10 @@ The cleaned data of the challenge (also coming from [2]) as well as the publical
 
 The Icentia11k dataset [3] used for pretraining can be downloaded [here](https://academictorrents.com/details/af04abfe9a3c96b30e5dd029eb185e19a7055272).
 
+## Latex Files (Report and Presentation)
+
+For compiling the report please use pdfLaTeX. To compile the presentation slides LuaLaTeX is requred.
+
 ## References
 
 ```bibtex
