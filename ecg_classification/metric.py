@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 
 import torch
 import torch.nn as nn
@@ -44,9 +44,10 @@ class F1(nn.Module):
     This class implements the F1 score as a nn.Module
     """
 
-    def __init__(self, classes: Tuple[int, ...] = (0, 1, 2, 3)) -> None:
+    def __init__(self, classes: Optional[Tuple[int, ...]] = None) -> None:
         """
         Constructor method
+        :classes (Optional[Tuple[int, ...]]) Classes to be considered
         """
         # Call super constructor
         super(F1, self).__init__()
@@ -74,7 +75,7 @@ class F1(nn.Module):
         # Init list to store the class f1 scores
         class_f1: List[torch.Tensor] = []
         # Iterate over all classes
-        for c in self.classes:
+        for c in (self.classes if self.classes is not None else prediction.shape[-1]):
             prediction_ = prediction[..., c]
             label_ = label[..., c]
             # Calc tp, fp, fn
