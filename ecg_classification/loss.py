@@ -9,7 +9,7 @@ class SoftmaxCrossEntropyLoss(nn.Module):
     This class implements the softmax cross entropy loss.
     """
 
-    def __init__(self, weight: Tuple[float, float, float, float] = (1., 1., 1., 1.)) -> None:
+    def __init__(self, weight: Tuple[float, ...] = (1., 1., 1., 1.)) -> None:
         """
         Constructor methods
         :param weight: (Tuple[float, float, float, float]) Class weights to be applied
