@@ -15,7 +15,7 @@ if __name__ == '__main__':
         pau = PAU()
         pau.cuda()
         pau.weight_numerator = torch.nn.Parameter(state_dict[pau_key[0]])
-        pau.weight_denominator = torch.nn.Parameter(state_dict[pau_key[0]])
+        pau.weight_denominator = torch.nn.Parameter(state_dict[pau_key[1]])
         # Plot PAU
         with torch.no_grad():
             x = torch.linspace(start=-15, end=15, steps=1000, device="cuda")
