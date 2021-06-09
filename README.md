@@ -28,7 +28,7 @@ execution on the CPU. The functionality of this repository can not be guaranteed
 
 If only CUDA 11.0 is available the code can also be executed with PyTorch 1.7.1 and Torchaudio 0.7.2 [see](https://pytorch.org/get-started/previous-versions/).
 
-### Used Implementation
+### Used Packages and Implementations
 
 We implement ECG-AttNet with [PyTorch](https://pytorch.org/) 1.8.1 and 
 [Torchaudio](https://pytorch.org/audio/stable/index.html) 0.8.1. All required packages can be seen 
