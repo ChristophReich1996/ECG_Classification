@@ -90,18 +90,3 @@ class F1(nn.Module):
             # Save F1 score
             class_f1.append(f1)
         return torch.tensor(class_f1).mean()
-
-
-if __name__ == '__main__':
-    acc = Accuracy()
-    f1 = F1()
-    input = torch.tensor([[0.1, 0.7, 0.1, 0.1],
-                          [0.1, 0.1, 0.7, 0.1],
-                          [0.1, 0.1, 0.7, 0.1],
-                          [0.1, 0.7, 0.1, 0.1]])
-    label = torch.tensor([[0.0, 1.0, 0.0, 0.0],
-                          [0.0, 0.0, 1.0, 0.0],
-                          [0.0, 0.0, 0.0, 1.0],
-                          [1.0, 0.0, 0.0, 0.0]])
-    print(acc(input, label))
-    print(f1(input, label))
