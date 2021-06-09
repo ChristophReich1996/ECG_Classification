@@ -16,7 +16,6 @@ class Accuracy(nn.Module):
         # Call super constructor
         super(Accuracy, self).__init__()
 
-
     def __repr__(self) -> str:
         """
         Returns the name of the class
@@ -45,7 +44,7 @@ class F1(nn.Module):
     This class implements the F1 score as a nn.Module
     """
 
-    def __init__(self, classes:Tuple[int, ...] = (0, 1, 2, 3)) -> None:
+    def __init__(self, classes: Tuple[int, ...] = (0, 1, 2, 3)) -> None:
         """
         Constructor method
         """
@@ -73,7 +72,7 @@ class F1(nn.Module):
         # Apply max to label
         label = (label == label.max(dim=-1, keepdim=True)[0]).float()
         # Init list to store the class f1 scores
-        class_f1:List[torch.Tensor] = []
+        class_f1: List[torch.Tensor] = []
         # Iterate over all classes
         for c in self.classes:
             prediction_ = prediction[..., c]
