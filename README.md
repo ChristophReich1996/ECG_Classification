@@ -32,7 +32,7 @@ If only CUDA 11.0 is available the code can also be executed with PyTorch 1.7.1 
 
 We implement ECG-AttNet with [PyTorch](https://pytorch.org/) 1.8.1 and 
 [Torchaudio](https://pytorch.org/audio/stable/index.html) 0.8.1. All required packages can be seen 
-in the `requirements.txt` file. For the Pade Activation Unit we adopted the 
+in the [`requirements.txt`](requirements.txt) file. For the Pade Activation Unit we adopted the 
 [implementation (cuda extension) from the authors](https://github.com/ml-research/pau) [1].
 
 ## Results
@@ -143,7 +143,7 @@ To run custom training the `train.py` script can be used. This script takes the 
 | `--network_config` | "ECGCNN_M" | Type of network configuration to be utilized. |
 | `--load_network` | None | If set given network (state dict) is loaded. |
 
-All network hyperparameters can be found and adjusted in the [config.py](/ecg_classification/config.py) file.
+All network hyperparameters can be found and adjusted in the [`config.py`](/ecg_classification/config.py) file.
 
 ## Data
 
