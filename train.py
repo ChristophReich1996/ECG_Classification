@@ -34,6 +34,10 @@ parser.add_argument("--icentia11k", default=False, action="store_true",
                     help="Binary flag. If set icentia11k dataset is utilized.")
 parser.add_argument("--challange", default=False, action="store_true",
                     help="Binary flag. If set challange split is utilized.")
+parser.add_argument("--two_classes", default=False, action="store_true",
+                    help="Binary flag. If set two classes are utilized. "
+                         "Can only used with PhysioNet dataset and challange flag.")
+
 # Get arguments
 args = parser.parse_args()
 
@@ -106,6 +110,13 @@ if __name__ == '__main__':
     if args.no_data_aug:
         config["dropout"] = 0.
 
+    # Check flags and set classes
+    if args.two_classes:
+        assert (not args.icentia11k) and args.challange and args.physio_net, \
+            "Two class flag can only be used if incentia11k flag is not set and challange as well as " \
+            "pyhsio_net flags are set"
+        config["classes"] = 2
+
     # Change number of classes if icentia11k dataset is used
     if args.icentia11k:
         config["classes"] = 7
@@ -161,8 +172,12 @@ if __name__ == '__main__':
         if args.physio_net:
             if args.challange:
                 print("Challange split is utilized")
-                training_split = TRAINING_SPLIT_CHALLANGE
-                validation_split = VALIDATION_SPLIT_CHALLANGE
+                if args.two_classes:
+                    training_split = TRAINING_SPLIT_CHALLANGE_2_CLASSES
+                    validation_split = VALIDATION_SPLIT_CHALLANGE_2_CLASSES
+                else:
+                    training_split = TRAINING_SPLIT_CHALLANGE
+                    validation_split = VALIDATION_SPLIT_CHALLANGE
             else:
                 training_split = TRAINING_SPLIT_PHYSIONET
                 validation_split = VALIDATION_SPLIT_PHYSIONET
@@ -183,12 +198,18 @@ if __name__ == '__main__':
             batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
             drop_last=False, shuffle=False)
 
+    # Make loss weights
+    if args.icentia11k:
+        weights = (1., 1., 1., 1., 1., 1., 1.)
+    elif args.two_classes:
+        weights = (1., 1.)
+    else:
+        weights = (0.4, 0.7, 0.9, 0.9)
+
     # Init model wrapper
     model_wrapper = ModelWrapper(network=network,
                                  optimizer=optimizer,
-                                 loss_function=SoftmaxCrossEntropyLoss(
-                                     weight=(0.4, 0.7, 0.9, 0.9)
-                                     if not args.icentia11k else (1., 1., 1., 1., 1., 1., 1.)),
+                                 loss_function=SoftmaxCrossEntropyLoss(weight=weights),
                                  training_dataset=training_dataset,
                                  validation_dataset=validation_dataset,
                                  data_logger=data_logger,
