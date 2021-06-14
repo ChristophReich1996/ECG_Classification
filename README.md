@@ -124,7 +124,8 @@ or
 python -W ignore train.py --cuda_devices "0" --epochs 100 --batch_size 24 --physio_net --dataset_path "data/training2017/" --network_config "ECGCNN_XL" --load_network "experiments/21_05_2021__12_15_06ECGCNN_XL_icentia11k_dataset/models/20.pt"
 ```
 
-The challange submission can be reproduced by setting the additional flag `--challange`.
+The challange submission can be reproduced by setting the additional flag `--challange`. For the two class challange 
+submission add the flag `--two_classes`.
 
 Pleas note that the dataset or model paths as well as the cuda devices might change for different systems!
 
