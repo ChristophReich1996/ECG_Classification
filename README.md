@@ -142,6 +142,12 @@ To run custom training the `train.py` script can be used. This script takes the 
 | `--dataset_path` | False | Path to dataset. |
 | `--network_config` | "ECGCNN_M" | Type of network configuration to be utilized. |
 | `--load_network` | None | If set given network (state dict) is loaded. |
+| `--no_signal_encoder` | False | Binary flag. If set no signal encoder is utilized. |
+| `--no_spectrogram_encoder` | False | Binary flag. If set no spectrogram encoder is utilized. |
+| `--icentia11k` | False | Binary flag. If set icentia11k dataset is utilized. |
+| `--challange` | False | Binary flag. If set challange split is utilized. |
+| `--two_class` | False | Binary flag. If set two classes are utilized. Can only used with PhysioNet dataset and challange flag. |
+
 
 All network hyperparameters can be found and adjusted in the [`config.py`](/ecg_classification/config.py) file.
 
