@@ -5,7 +5,7 @@
 This repository includes the code of the ECG-DualNet for ECG classification. This work was done as part of the 
 competition "Wettbewerb künstliche Intelligenz in der Medizin" at TU Darmstadt ([KIS*MED](https://github.com/KISMED-TUDa), [Prof. Hoog Antink](https://scholar.google.de/citations?user=bRoRHGgAAAAJ&hl=de)).
 
-A report of the project is available [here](report/report.pdf). Slides of the final presentation are available [here](presentation/presentation.pdf).
+A report of the project is available [here](report/report.pdf). Slides of the final presentation are available [here](presentation/presentation.pdf). LaTeX code of both the report and the slides are also available.
 
 <img src="/github/architecture.png"  alt="architecture" width = 600px height = 320px >
 
@@ -28,11 +28,11 @@ execution on the CPU. The functionality of this repository can not be guaranteed
 
 If only CUDA 11.0 is available the code can also be executed with PyTorch 1.7.1 and Torchaudio 0.7.2 [see](https://pytorch.org/get-started/previous-versions/).
 
-### Used Implementation
+### Used Packages and Implementations
 
 We implement ECG-AttNet with [PyTorch](https://pytorch.org/) 1.8.1 and 
 [Torchaudio](https://pytorch.org/audio/stable/index.html) 0.8.1. All required packages can be seen 
-in the `requirements.txt` file. For the Pade Activation Unit we adopted the 
+in the [`requirements.txt`](requirements.txt) file. For the Pade Activation Unit we adopted the 
 [implementation (cuda extension) from the authors](https://github.com/ml-research/pau) [1].
 
 ## Results
@@ -143,13 +143,17 @@ To run custom training the `train.py` script can be used. This script takes the 
 | `--network_config` | "ECGCNN_M" | Type of network configuration to be utilized. |
 | `--load_network` | None | If set given network (state dict) is loaded. |
 
-All network hyperparameters can be found and adjusted in the [config.py](/ecg_classification/config.py) file.
+All network hyperparameters can be found and adjusted in the [`config.py`](/ecg_classification/config.py) file.
 
 ## Data
 
 The cleaned data of the challenge (also coming from [2]) as well as the publically available PhysioNet [2] samples can be downloaded [here](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/Ebl-lX1RfsFLjLWNfdmOaFMBczbye6m_vOYjbhhvFHd7Lg?e=XxcvzV).
 
 The Icentia11k dataset [3] used for pretraining can be downloaded [here](https://academictorrents.com/details/af04abfe9a3c96b30e5dd029eb185e19a7055272).
+
+## Latex Files (Report and Presentation)
+
+For compiling the report please use pdfLaTeX. To compile the presentation slides LuaLaTeX is requred.
 
 ## References
 
