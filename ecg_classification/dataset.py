@@ -55,11 +55,15 @@ class PhysioNetDataset(Dataset):
         # Make labels
         self.ecg_labels: List[torch.Tensor] = []
         if two_classes:
-            for ecg_label in ecg_labels:
+            ecg_leads_: List[torch.Tensor] = []
+            for index, ecg_label in enumerate(ecg_labels):
                 if ecg_label == "N":
                     self.ecg_labels.append(torch.tensor(0, dtype=torch.long))
+                    ecg_leads_.append(self.ecg_leads[index])
                 elif ecg_label == "A":
                     self.ecg_labels.append(torch.tensor(1, dtype=torch.long))
+                    ecg_leads_.append(self.ecg_leads[index])
+            self.ecg_leads = ecg_leads_
         else:
             for ecg_label in ecg_labels:
                 if ecg_label == "N":
