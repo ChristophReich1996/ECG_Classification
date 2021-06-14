@@ -20,7 +20,7 @@ class PhysioNetDataset(Dataset):
                  augmentation_pipeline: Optional[nn.Module] = None, spectrogram_length: int = 563,
                  ecg_sequence_length: int = 18000, ecg_window_size: int = 256, ecg_step: int = 256 - 32,
                  normalize: bool = True, fs: int = 300, spectrogram_n_fft: int = 64, spectrogram_win_length: int = 64,
-                 spectrogram_power: int = 1, spectrogram_normalized: bool = True) -> None:
+                 spectrogram_power: int = 1, spectrogram_normalized: bool = True, two_classes: bool = False) -> None:
         """
         Constructor method
         :param ecg_leads: (List[np.ndarray]) ECG data as list of numpy arrays
@@ -37,33 +37,45 @@ class PhysioNetDataset(Dataset):
         :param spectrogram_win_length: (int) Spectrogram window length
         :param spectrogram_power: (int) Power utilized in spectrogram
         :param spectrogram_normalized: (int) If true spectrogram is normalized
+        :param two_classes: (bool) If true only two classes are utilized
         """
         # Call super constructor
         super(PhysioNetDataset, self).__init__()
         # Save parameters
-        self.ecg_leads = [torch.from_numpy(data_sample).float() for data_sample in ecg_leads]
-        self.ecg_labels = []
-        for ecg_label in ecg_labels:
-            if ecg_label == "N":
-                self.ecg_labels.append(torch.tensor(0, dtype=torch.long))
-            elif ecg_label == "O":
-                self.ecg_labels.append(torch.tensor(1, dtype=torch.long))
-            elif ecg_label == "A":
-                self.ecg_labels.append(torch.tensor(2, dtype=torch.long))
-            elif ecg_label == "~":
-                self.ecg_labels.append(torch.tensor(3, dtype=torch.long))
-            else:
-                raise RuntimeError("Invalid label value detected!")
-        self.augmentation_pipeline = augmentation_pipeline if augmentation_pipeline is not None else nn.Identity()
-        self.spectrogram_length = spectrogram_length
-        self.ecg_sequence_length = ecg_sequence_length
-        self.ecg_window_size = ecg_window_size
-        self.ecg_step = ecg_step
-        self.normalize = normalize
-        self.fs = fs
-        self.spectrogram_module = Spectrogram(n_fft=spectrogram_n_fft, win_length=spectrogram_win_length,
-                                              hop_length=spectrogram_win_length // 2, power=spectrogram_power,
-                                              normalized=spectrogram_normalized)
+        self.ecg_leads: List[torch.Tensor] = [torch.from_numpy(data_sample).float() for data_sample in ecg_leads]
+        self.augmentation_pipeline: nn.Module = augmentation_pipeline \
+            if augmentation_pipeline is not None else nn.Identity()
+        self.spectrogram_length: int = spectrogram_length
+        self.ecg_sequence_length: int = ecg_sequence_length
+        self.ecg_window_size: int = ecg_window_size
+        self.ecg_step: int = ecg_step
+        self.normalize: bool = normalize
+        self.fs: int = fs
+        self.classes: int = 4 if not two_classes else 2
+        # Make labels
+        self.ecg_labels: List[torch.Tensor] = []
+        if two_classes:
+            for ecg_label in ecg_labels:
+                if ecg_label == "N":
+                    self.ecg_labels.append(torch.tensor(0, dtype=torch.long))
+                elif ecg_label == "A":
+                    self.ecg_labels.append(torch.tensor(1, dtype=torch.long))
+        else:
+            for ecg_label in ecg_labels:
+                if ecg_label == "N":
+                    self.ecg_labels.append(torch.tensor(0, dtype=torch.long))
+                elif ecg_label == "O":
+                    self.ecg_labels.append(torch.tensor(1, dtype=torch.long))
+                elif ecg_label == "A":
+                    self.ecg_labels.append(torch.tensor(2, dtype=torch.long))
+                elif ecg_label == "~":
+                    self.ecg_labels.append(torch.tensor(3, dtype=torch.long))
+                else:
+                    raise RuntimeError("Invalid label value detected!")
+        # Make spectrogram module
+        self.spectrogram_module: nn.Module = Spectrogram(n_fft=spectrogram_n_fft, win_length=spectrogram_win_length,
+                                                         hop_length=spectrogram_win_length // 2,
+                                                         power=spectrogram_power, normalized=spectrogram_normalized)
 
     def __len__(self) -> int:
         """
@@ -97,7 +109,7 @@ class PhysioNetDataset(Dataset):
         # Unfold ecg lead
         ecg_lead = ecg_lead.unfold(dimension=-1, size=self.ecg_window_size, step=self.ecg_step)
         # Label to one hot encoding
-        ecg_label = F.one_hot(ecg_label, num_classes=4)
+        ecg_label = F.one_hot(ecg_label, num_classes=self.classes)
         return ecg_lead.float(), spectrogram.unsqueeze(dim=0).float(), ecg_label
 
 
