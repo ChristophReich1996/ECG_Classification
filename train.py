@@ -64,6 +64,8 @@ if __name__ == '__main__':
         dataset_info = "_default_dataset"
     if args.challange:
         dataset_info += "_challange"
+    if args.two_classes:
+        dataset_info += "_two_classes"
     # Init network
     if args.network_config == "ECGCNN_S":
         config = ECGCNN_CONFIG_S
@@ -188,13 +190,15 @@ if __name__ == '__main__':
             PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in training_split],
                              ecg_labels=[ecg_labels[index] for index in training_split], fs=fs,
                              augmentation_pipeline=None if args.no_data_aug else AugmentationPipeline(
-                                 AUGMENTATION_PIPELINE_CONFIG)),
+                                 AUGMENTATION_PIPELINE_CONFIG),
+                             two_classes=args.two_classes),
             batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
             drop_last=False, shuffle=True)
         validation_dataset = DataLoader(
             PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in validation_split],
                              ecg_labels=[ecg_labels[index] for index in validation_split], fs=fs,
-                             augmentation_pipeline=None),
+                             augmentation_pipeline=None,
+                             two_classes=args.two_classes),
             batch_size=args.batch_size, num_workers=min(args.batch_size, 20), pin_memory=True,
             drop_last=False, shuffle=False)
 
