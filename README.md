@@ -37,8 +37,8 @@ in the [`requirements.txt`](requirements.txt) file. For the Pade Activation Unit
 
 ## Results
 
-We achieved the following validation results for our custom training/validation split on the 2017 PhysioNet Challenge 
-dataset [2]. Three different training runs are reported. Weights of the best performing model are provided.
+The following validation results for the custom training/validation split on the 2017 PhysioNet Challenge 
+dataset [2] were achieved. Three different training runs are reported. Weights of the best performing model are provided.
 
 | Model | ACC | F1 | # Parameters | best |
 | --- | --- | --- | ---: | --- |
@@ -98,7 +98,7 @@ python -W ignore train.py --cuda_devices "0, 1, 2, 3" --epochs 100 --batch_size 
 
 Four GPUs with 16GB are recommended. Reducing the batch size is a possible workaround if limited GPU memory is available.
 
-To reproduce our presented ablation studies run:
+To reproduce the presented ablation studies run:
 
 ```shell script
 sh run_ablations.sh
