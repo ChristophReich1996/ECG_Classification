@@ -169,7 +169,7 @@ All network hyperparameters can be found and adjusted in the [`config.py`](/ecg_
 The following files for the challange submission are taken form the [18-ha-2010-pj](https://github.com/KISMED-TUDa/18-ha-2010-pj) 
 repo by [Maurice Rohr](https://github.com/MauriceRohr) and [Prof. Hoog Antink](https://github.com/hogius). 
 [`wettbewerb.py`](wettbewerb.py), [`predict_pretrained.py`](predict_pretrained.py), [`predict_trained.py`](predict_trained.py),
-and [`predict.py`](predict.py) (only parts).
+[`score.py`](score.py), and [`predict.py`](predict.py) (only parts).
 
 ## Data
 
