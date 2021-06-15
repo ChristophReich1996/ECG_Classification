@@ -87,6 +87,8 @@ In the **two class challange setting** (pretrained weights used) the following r
 
 ## Usage
 
+### Training and Ablations
+
 To reproduce the presented results simply run (a single GPU is needed):
 
 ```shell script
@@ -161,6 +163,8 @@ To run custom training the `train.py` script can be used. This script takes the 
 
 
 All network hyperparameters can be found and adjusted in the [`config.py`](/ecg_classification/config.py) file.
+
+### Challange Submission
 
 ## Data
 
