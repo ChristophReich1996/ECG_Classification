@@ -166,6 +166,11 @@ All network hyperparameters can be found and adjusted in the [`config.py`](/ecg_
 
 ### Challange Submission
 
+The following files for the challange submission are taken form the [18-ha-2010-pj](https://github.com/KISMED-TUDa/18-ha-2010-pj) 
+repo by [Maurice Rohr](https://github.com/MauriceRohr) and [Prof. Hoog Antink](https://github.com/hogius). 
+[`wettbewerb.py`](wettbewerb.py), [`predict_pretrained.py`](predict_pretrained.py), [`predict_trained.py`](predict_trained.py),
+and [`predict.py`](predict.py) (only parts).
+
 ## Data
 
 The cleaned data of the challenge (also coming from [2]) as well as the publically available PhysioNet [2] samples can be downloaded [here](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/Ebl-lX1RfsFLjLWNfdmOaFMBczbye6m_vOYjbhhvFHd7Lg?e=XxcvzV).
