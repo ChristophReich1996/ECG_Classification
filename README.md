@@ -37,8 +37,10 @@ in the [`requirements.txt`](requirements.txt) file. For the Pade Activation Unit
 
 ## Results
 
-The following validation results for the custom training/validation split on the 2017 PhysioNet Challenge 
-dataset [2] were achieved. Three different training runs are reported. Weights of the best performing model are provided.
+Three different training runs are always reported. Weights of the best-performing model are provided.
+
+The following validation results for the custom training/validation split on the **2017 PhysioNet Challenge 
+dataset** [2] (without pre-training) were achieved.
 
 | Model | ACC | F1 | # Parameters | best |
 | --- | --- | --- | ---: | --- |
@@ -54,26 +56,34 @@ dataset [2] were achieved. Three different training runs are reported. Weights o
 
 Note that for the weights of ECG-DualNet XL an external link is provided.
 
-For training on the Icentia11k dataset [3] we achieved the following results:
+For training on the **Icentia11k dataset** [3] we achieved the following results:
 
 | Model | ACC | F1 | # Parameters | best | 20 epochs |
 | --- | --- | --- | ---: | --- | --- |
 | ECG-DualNet XL (CNN + LSTM) | 0.8989 | 0.5135 | 20683122 | [weights](experiments/20_05_2021__18_32_19ECGAttNet_XL_icentia11k_dataset/models/best_model.pt) | [weights](experiments/20_05_2021__18_32_19ECGAttNet_XL_icentia11k_dataset/models/20.pt) |
 | ECG-DualNet++ XL (AxAtt + Trans.) | 0.8899 | 0.5017 | 8212658 | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EULh87xNGmBAueOrFQCkbxYB9xHukZjmyk4wujNvuw58lA?e=Dbdw86) | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EVaS1KbQ6fRDo-IJYjOL1GQB5oRkx4IZB5IUWCOWWsoomA?e=3Nr9RD) |
 
-If fine tuning the pretrained networks on the PhysioNet dataset [2] the following results were achieved:
+If fine tuning the **pretrained** networks on the PhysioNet dataset [2] the following results were achieved:
 
 | Model | ACC | F1 | # Parameters | best |
 | --- | --- | --- | ---: | --- |
 | ECG-DualNet XL (CNN + LSTM) | 0.8455; 0.7664; 0.8468 | 0.7911; 0.5880; 0.8014 | 20683122 | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/ESXeKjTwb79Ihf_YeEdyANEBHGdROxSpL7Jfgp6P1k2KLQ?e=AmXKoC) |
 | ECG-DualNet++ XL (AxAtt + Trans.) | 0.8475; 0.8481; 0.8469 | 0.7828; 0.7817; 0.7899 | 8212658 | [weights](experiments/08_06_2021__17_14_58ECGAttNet_XL_physio_net_dataset_pretrained/models/best_model.pt) |
 
-In the challange setting (pretrained weights used) the following results were achieved:
+In the **challange setting** (pretrained weights used) the following results were achieved:
 
 | Model | ACC | F1 | # Parameters | best |
 | --- | --- | --- | ---: | --- |
 | ECG-DualNet XL (CNN + LSTM) | 0.8840; 0.8820; 0.8080 | 0.8549; 0.8449; 0.7360 | 20683122 | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EegBTv_x2_ZGtu4vFLTnotoBnIHLlPdBw4prQ_vxuwBdYw?e=2b4xII) |
 | ECG-DualNet++ XL (AxAtt + Trans.) | 0.8720; 0.8800; 0.8680 | 0.8276; 0.8494; 0.8403 | 8212658 | [weights](experiments/09_06_2021__14_23_40ECGAttNet_XL_physio_net_dataset_challange/models/best_model.pt) |
+
+In the **two class challange setting** (pretrained weights used) the following results were achieved:
+
+| Model | ACC | F1 | # Parameters | best |
+| --- | --- | --- | ---: | --- |
+| ECG-DualNet XL (CNN + LSTM) | 0.8840; 0.8820; 0.8080 | 0.8549; 0.8449; 0.7360 | 20683122 | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EegBTv_x2_ZGtu4vFLTnotoBnIHLlPdBw4prQ_vxuwBdYw?e=2b4xII) |
+| ECG-DualNet++ XL (AxAtt + Trans.) | 0.8720; 0.8800; 0.8680 | 0.8276; 0.8494; 0.8403 | 8212658 | [weights](experiments/09_06_2021__14_23_40ECGAttNet_XL_physio_net_dataset_challange/models/best_model.pt) |
+
 
 ## Usage
 
