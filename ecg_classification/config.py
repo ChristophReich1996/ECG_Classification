@@ -176,6 +176,31 @@ AUGMENTATION_PIPELINE_CONFIG: Dict[str, Any] = {
     "frequencies": (0.2, 45.)
 }
 
+# Configuration of augmentation pipeline
+AUGMENTATION_PIPELINE_CONFIG_2D: Dict[str, Any] = {
+    "p_scale": 0.4,
+    "p_drop": 0.4,
+    "p_cutout": 0.4,
+    "p_shift": 0.4,
+    "p_resample": 0.4,
+    "p_random_resample": 0.4,
+    "p_sine": 0.4,
+    "p_band_pass_filter": 0.4,
+    "scale_range": (0.85, 1.15),
+    "drop_rate": 0.03,
+    "interval_length": 0.05,
+    "max_shift": 4000,
+    "resample_factors": (0.8, 1.2),
+    "max_offset": 0.075,
+    "resampling_points": 12,
+    "max_sine_magnitude": 0.3,
+    "sine_frequency_range": (.2, 1.),
+    "kernel": (1, 6, 15, 20, 15, 6, 1),
+    "ecg_sequence_length": 18000,
+    "fs": 300,
+    "frequencies": (0.2, 45.)
+}
+
 TRAINING_SPLIT = [
     2838, 5631, 4502, 5644, 1900, 5171, 4800, 3668, 1152, 2625, 5277, 233, 390, 4110, 4304, 3988, 4670, 79, 317, 87,
     835, 4045, 2704, 1912, 803, 2851, 5281, 5369, 761, 1228, 1946, 805, 2590, 3125, 1625, 2936, 1109, 4044, 147, 726,
