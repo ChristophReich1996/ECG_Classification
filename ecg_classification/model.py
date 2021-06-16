@@ -289,7 +289,7 @@ class Conv2dResidualBlock(nn.Module):
         self.main_mapping_norm_1 = ConditionalBatchNormalization(num_features=out_channels,
                                                                  latent_vector_features=latent_vector_features)
         self.main_mapping_act_1 = activation()
-        self.main_mapping_dropout_1 = nn.Dropout(p=dropout)
+        self.main_mapping_dropout_1 = nn.Dropout2d(p=dropout)
         self.main_mapping_conv_2 = convolution(in_channels=out_channels, out_channels=out_channels,
                                                kernel_size=kernel_size, stride=stride,
                                                padding=padding, bias=bias)
@@ -301,7 +301,7 @@ class Conv2dResidualBlock(nn.Module):
                                             bias=False) if in_channels != out_channels else nn.Identity()
         # Init final activation
         self.final_activation = activation()
-        self.dropout = nn.Dropout(p=dropout)
+        self.dropout = nn.Dropout2d(p=dropout)
         # Init downsampling layer
         self.pooling = pooling(kernel_size=(2, 2), stride=(2, 2))
 
@@ -543,7 +543,7 @@ class AxialAttention2dBlock(nn.Module):
             AxialAttention2d(in_channels=out_channels, out_channels=out_channels, dim=1, span=span[1], groups=groups)
         )
         # Init dropout layer
-        self.dropout = nn.Dropout(p=dropout, inplace=True)
+        self.dropout = nn.Dropout2d(p=dropout, inplace=True)
         # Init output mapping
         self.output_mapping_conv = nn.Conv2d(in_channels=out_channels, out_channels=out_channels,
                                              kernel_size=(1, 1), padding=(0, 0), stride=(1, 1), bias=False)
