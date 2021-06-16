@@ -3,6 +3,7 @@ from typing import List, Tuple, Union
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
+import torch_optimizer
 import numpy as np
 import os
 from tqdm import tqdm
@@ -10,6 +11,7 @@ from tqdm import tqdm
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 from ecg_classification import *
+from wettbewerb import load_references
 
 
 def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
@@ -29,7 +31,20 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
     network = ECGCNN(config=config)
     # Train model if utilized
     if not use_pretrained:
-        pass
+        # Load weights pre-trained on the Icentia11k dataset
+        try:
+            state_dict = torch.load("experiments/21_05_2021__12_15_06ECGCNN_XL_icentia11k_dataset/models/best_model.pt")
+        except FileNotFoundError as exception:
+            print("State dict not found. Download the state dict of ECG-DualNet XL (Icentia11k). "
+                  "Link in README. Put the state dict into the relative directory "
+                  "experiments/21_05_2021__12_15_06ECGCNN_XL_icentia11k_dataset/models/")
+            exit(1904)
+        model_state_dict = network.state_dict()
+        state_dict = {key: value for key, value in state_dict.items() if model_state_dict[key].shape == value.shape}
+        model_state_dict.update(state_dict)
+        network.load_state_dict(model_state_dict)
+        # Perform training
+        network = _train(network=network, two_classes=two_classes)
     # Load model
     else:
         if two_classes:
@@ -40,7 +55,7 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
             except FileNotFoundError as exception:
                 print("State dict not found. Download the state dict of ECG-DualNet XL (two class, challange). "
                       "Link in README. Put the state dict into the relative directory "
-                      "15_06_2021__13_28_55ECGCNN_XL_physio_net_dataset_challange_two_classes/models/")
+                      "experiments/15_06_2021__13_28_55ECGCNN_XL_physio_net_dataset_challange_two_classes/models/")
                 exit(1904)
         else:
             try:
@@ -61,21 +76,68 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
     return _predict(network=network, dataset=dataset, ecg_names=ecg_names, two_classes=two_classes)
 
 
-def _train(network: Union[nn.Module, nn.DataParallel]) -> Union[nn.Module, nn.DataParallel]:
+def _train(network: nn.Module, two_classes: bool) -> nn.Module:
     """
     Private function which trains the given model
-    :param network: (Union[nn.Module, nn.DataParallel]) Model to be trained
-    :return: (Union[nn.Module, nn.DataParallel]) Trained model
+    :param network: (nn.Module) Model to be trained
+    :param two_classes: (bool) If true only two classes are utilized
+    :return: (nn.Module) Trained model
     """
-    pass
+    # Init data logger
+    data_logger = Logger(experiment_path_extension="ECGCNN_XL_predict_training")
+    # Init optimizer
+    optimizer = torch_optimizer.RAdam(params=network.parameters(), lr=1e-03)
+    # Init learning rate schedule
+    learning_rate_schedule = torch.optim.lr_scheduler.MultiStepLR(
+        optimizer=optimizer, milestones=[1 * 100 // 4, 2 * 100 // 4, 3 * 100 // 4], gamma=0.1)
+    # Init datasets
+    if two_classes:
+        training_split = TRAINING_SPLIT_CHALLANGE_2_CLASSES
+        validation_split = VALIDATION_SPLIT_CHALLANGE_2_CLASSES
+    else:
+        training_split = TRAINING_SPLIT_CHALLANGE
+        validation_split = VALIDATION_SPLIT_CHALLANGE
+    # Load data
+    try:
+        ecg_leads, ecg_labels, fs, ecg_names = load_references("data/training2017/")
+    except RuntimeError as exception:
+        print("Download the PhysioNet training data or change path. Link is in the repo. Full PhysioNet is used!")
+        exit(1904)
+    training_dataset = DataLoader(
+        PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in training_split],
+                         ecg_labels=[ecg_labels[index] for index in training_split], fs=fs,
+                         augmentation_pipeline=AugmentationPipeline(AUGMENTATION_PIPELINE_CONFIG),
+                         two_classes=two_classes),
+        batch_size=24, num_workers=20, pin_memory=True, drop_last=False, shuffle=True)
+    validation_dataset = DataLoader(
+        PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in validation_split],
+                         ecg_labels=[ecg_labels[index] for index in validation_split], fs=fs,
+                         augmentation_pipeline=None,
+                         two_classes=two_classes),
+        batch_size=24, num_workers=20, pin_memory=True, drop_last=False, shuffle=False)
+    # Init model wrapper
+    model_wrapper = ModelWrapper(network=network,
+                                 optimizer=optimizer,
+                                 loss_function=SoftmaxCrossEntropyLoss(
+                                     weight=(1., 1) if two_classes else (0.4, 0.7, 0.9, 0.9)),
+                                 training_dataset=training_dataset,
+                                 validation_dataset=validation_dataset,
+                                 data_logger=data_logger,
+                                 learning_rate_schedule=learning_rate_schedule,
+                                 device="cuda")
+    # Perform training
+    model_wrapper.train(epochs=1)
+    # Load best model
+    network.load_state_dict(torch.load(model_wrapper.data_logger.path_models + "/best_model.pt"))
+    return network
 
 
 @torch.no_grad()
-def _predict(network: Union[nn.Module, nn.DataParallel], dataset: DataLoader, ecg_names: List[str],
+def _predict(network: nn.Module, dataset: DataLoader, ecg_names: List[str],
              two_classes: bool) -> List[Tuple[str, str]]:
     """
     Private function to make predictions
-    :param network: (Union[nn.Module, nn.DataParallel]) Trained model
+    :param network: (nn.Module) Trained model
     :param dataset: (DataLoader) Dataset to be predicted
     :param ecg_names: (List[str]) Name of each sample
     :param two_classes: (bool) If true only two classes are utilized
