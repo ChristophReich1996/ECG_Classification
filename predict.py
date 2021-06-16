@@ -28,6 +28,7 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
     # Init model
     config = ECGCNN_CONFIG_XL
     config["classes"] = 2 if two_classes else config["classes"]
+    config["dropout"] = 0.3 if two_classes else config["classes"]
     network = ECGCNN(config=config)
     # Train model if utilized
     if not use_pretrained:
@@ -106,7 +107,8 @@ def _train(network: nn.Module, two_classes: bool) -> nn.Module:
     training_dataset = DataLoader(
         PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in training_split],
                          ecg_labels=[ecg_labels[index] for index in training_split], fs=fs,
-                         augmentation_pipeline=AugmentationPipeline(AUGMENTATION_PIPELINE_CONFIG),
+                         augmentation_pipeline=AugmentationPipeline(
+                             AUGMENTATION_PIPELINE_CONFIG if not two_classes else AUGMENTATION_PIPELINE_CONFIG_2D),
                          two_classes=two_classes),
         batch_size=24, num_workers=20, pin_memory=True, drop_last=False, shuffle=True)
     validation_dataset = DataLoader(
