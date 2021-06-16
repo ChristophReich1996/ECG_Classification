@@ -30,7 +30,7 @@ If only CUDA 11.0 is available the code can also be executed with PyTorch 1.7.1 
 
 ### Used Packages and Implementations
 
-ECG-AttNet is implemented with [PyTorch](https://pytorch.org/) 1.8.1 and 
+ECG-DualNet is implemented with [PyTorch](https://pytorch.org/) 1.8.1 and 
 [Torchaudio](https://pytorch.org/audio/stable/index.html) 0.8.1. All required packages can be seen 
 in the [`requirements.txt`](requirements.txt) file. For the Pade Activation Unit the 
 [implementation (cuda extension) from the authors](https://github.com/ml-research/pau) were adopted [1].
