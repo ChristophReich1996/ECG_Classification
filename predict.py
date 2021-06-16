@@ -1,24 +1,23 @@
-# -*- coding: utf-8 -*-
-"""
-This script tests the trained model
-Authors: Christoph Hoog Antink, Maurice Rohr and Christoph Reich
-"""
 from typing import List, Tuple, Union
 
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 import numpy as np
+import os
+from tqdm import tqdm
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 from ecg_classification import *
 
 
-def predict_labels(ecg_leads: List[np.ndarray], fs: float, ecg_names: List[str],
+def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
                    use_pretrained: bool = False, two_classes: bool = True) -> List[Tuple[str, str]]:
     """
     Function to produce predictions
     :param ecg_leads: (List[np.ndarray]) ECG leads as a list of numpy arrays
-    :param fs: (float) Sampling frequency
+    :param fs: (int) Sampling frequency
     :param ecg_names: (List[str]) List of strings with name of each ecg lead
     :param use_pretrained: (bool) If true pre-trained (trained!) model is used
     :param two_classes: (bool) If true model for two classes is utilized else four class model is used
@@ -53,7 +52,7 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: float, ecg_names: List[str],
                       "experiments/25_05_2021__02_02_11ECGCNN_XL_physio_net_dataset_challange/models/")
                 exit(1904)
         # Apply state dict
-        network.state_dict(state_dict)
+        network.load_state_dict(state_dict)
     # Init dataset for prediction
     dataset = PhysioNetDataset(ecg_leads=ecg_leads, ecg_labels=["A"] * len(ecg_leads), fs=fs,
                                augmentation_pipeline=None, two_classes=two_classes)
@@ -88,8 +87,12 @@ def _predict(network: Union[nn.Module, nn.DataParallel], dataset: DataLoader, ec
     network.cuda()
     # Network into eval mode
     network.eval()
+    # Init progress bar
+    progress_bar = tqdm(total=len(dataset))
     # Prediction loop
-    for name, data in zip(dataset, ecg_names):
+    for name, data in zip(ecg_names, dataset):
+        # Update progress bar
+        progress_bar.update(n=1)
         # Unpack data
         ecg_lead, spectrogram, _ = data
         # Data to cuda
@@ -101,6 +104,8 @@ def _predict(network: Union[nn.Module, nn.DataParallel], dataset: DataLoader, ec
         prediction = prediction.argmax(dim=-1)
         # Construct prediction
         predictions.append((name, _get_prediction_name(prediction=prediction, two_classes=two_classes)))
+    # Close progress bar
+    progress_bar.close()
     return predictions
 
 
