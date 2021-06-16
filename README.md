@@ -169,11 +169,15 @@ All network hyperparameters can be found and adjusted in the [`config.py`](/ecg_
 The following files for the challange submission are taken form the [18-ha-2010-pj](https://github.com/KISMED-TUDa/18-ha-2010-pj) 
 repo by [Maurice Rohr](https://github.com/MauriceRohr) and [Prof. Hoog Antink](https://github.com/hogius). 
 [`wettbewerb.py`](wettbewerb.py), [`predict_pretrained.py`](predict_pretrained.py), [`predict_trained.py`](predict_trained.py),
-[`score.py`](score.py), and [`predict.py`](predict.py) (only parts).
+and [`score.py`](score.py).
+
+Please not that the weights linked in the results have to be downloaded and put in the correct directories. For detailed
+information pleas have a look at the [`predict.py`](predict.py) file. Additionally, the publicly available PhysioNet [2] 
+samples have to be downloaded for training.
 
 ## Data
 
-The cleaned data of the challenge (also coming from [2]) as well as the publically available PhysioNet [2] samples can be downloaded [here](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/Ebl-lX1RfsFLjLWNfdmOaFMBczbye6m_vOYjbhhvFHd7Lg?e=XxcvzV).
+The cleaned data of the challenge (also coming from [2]) as well as the publicly available PhysioNet [2] samples can be downloaded [here](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/Ebl-lX1RfsFLjLWNfdmOaFMBczbye6m_vOYjbhhvFHd7Lg?e=XxcvzV).
 
 The Icentia11k dataset [3] used for pretraining can be downloaded [here](https://academictorrents.com/details/af04abfe9a3c96b30e5dd029eb185e19a7055272).
 
