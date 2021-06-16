@@ -118,6 +118,7 @@ if __name__ == '__main__':
             "Two class flag can only be used if incentia11k flag is not set and challange as well as " \
             "pyhsio_net flags are set"
         config["classes"] = 2
+        config["dropout"] = 0.3
 
     # Change number of classes if icentia11k dataset is used
     if args.icentia11k:
