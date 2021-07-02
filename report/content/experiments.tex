@@ -1,29 +1,30 @@
 \section{Experiments} \label{sec:experiments}
 
-We conduct experiments on the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} (Sec. \ref{subsec:physionet_dataset}). We performed three training runs (if not stated different) for each model with different random seeds, where the best run, based on the validation accuracy, was reported. Additional results can be found in the appendix.
+We conduct experiments on the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} (Sec. \ref{subsec:physionet_dataset}). We performed three training runs (if not stated differently) for each model with different random seeds, where the best run, based on the validation accuracy, was reported. Additional results can be found in the appendix.
 
 \subsection{2017 PhysioNet/CinC Challenge Dataset} \label{subsec:physionet_dataset}
 
-We utilize 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} for training. The dataset includes $8529$ publicly available\footnote{\url{https://physionet.org/content/challenge-2017}} labeled single-lead ECG sequences. Each ECG sequence includes between $2714$ and $18286$ samples, recorded with a sampling frequency of $300$. For each sequence, a ground truth classification label is provided. Four classes are given, namely, normal, indicating a normal cardiac rhythm, AF, indicating atrial fibrillation, other, for different rhythms, and noisy, for a noisy measurement. Each class includes $5050$ (normal), $2456$ (AF), $738$ (other), and $284$ (noisy) samples, respectively. Visualizations of multiple sequences and corresponding labels are provided in the appendix. \\
+We utilize the 2017 PhysioNet/CinC Challenge dataset \cite{Clifford2017} for training. The dataset includes $8529$ publicly available labeled single-lead ECG sequences. Each ECG sequence includes between $2714$ and $18286$ samples, recorded with a sampling frequency of $300$. For each sequence, a ground truth classification label is provided. Four classes are given, namely, normal, indicating a normal cardiac rhythm, AF, indicating atrial fibrillation, other, for different rhythms, and noisy, for a noisy measurement. Each class includes $5050$ (normal), $2456$ (AF), $738$ (other), and $284$ (noisy) samples, respectively. Visualizations of multiple sequences and corresponding labels are provided in the appendix. \\
 \indent We split the data once randomly into a training and validation set. The training set includes $7000$ samples and the validation set $1528$ samples. We omit the use of $k$-fold cross-validation due to the computational expensiveness of each training run \cite{Bishop2006, Goodfellow2016}. All sequences are zero-padded, respectively, cropped to a fixed length of $18000$ samples. For a detailed description of the preprocessing see Section \ref{subsec:preprocessing}.
 
 \subsection{Icentia$11$k dataset} \label{subsec:icentia11k_dataset}
 
-The Icentia$11$k dataset \cite{Tan2019}, used for pre-training, consists single-lead ECG recordings of $11\si{\kilo}$ patients. The dataset is partly labeled with six different heart rhythms including atrial fibrillation. Each of the $550\si{\kilo}$ dataset sample is a sequences of approximately $1\si{\hour}$ with a sampling frequency of $250$. We resample the ECG signal to match the sampling frequency of the PhysioNet dataset. Finally, we randomly crop each sequence to a random length of $9000$ to $18000$ samples. For unlabeled crops we utilize a dummy class. For validation we split the dataset patient-wise. The resulting training set includes $10\si{\kilo}$ patients and the validation set $1\si{\kilo}$ patients.
+The Icentia$11$k dataset \cite{Tan2019}, used for pre-training, consists of single-lead ECG recordings of $11\si{\kilo}$ patients. The dataset is partly labeled with six different heart rhythms including atrial fibrillation. Each of the $550\si{\kilo}$ dataset sample is a sequences of approximately $1\si{\hour}$ with a sampling frequency of $250$. We resample the ECG signal to match the sampling frequency of the PhysioNet dataset. Finally, we randomly crop each sequence to a random length of $9000$ to $18000$ samples. For unlabeled crops, we utilize a dummy class. For validation, we split the dataset patient-wise. The resulting training set includes $10\si{\kilo}$ patients and the validation set $1\si{\kilo}$ patients.
 
 \subsection{Results} \label{subsec:results}
 
-Our archived classification results are presented in Table \ref{tab:results}, in which we present both the accuracy (Eq. \ref{eq:acc}) and the F1 score (Eq. \ref{eq:f1}). Table \ref{tab:results} also includes classification results of Zihlmann \etal \cite{Zihlmann2017}. The models trained by Zihlmann et al. are, however, trained on the full publicly available 2017 PhysioNet/CinC Challenge dataset and tested on the private test dataset \cite{Zihlmann2017}. Whereas our models are trained on a custom split of the publically available samples (Sec. \ref{subsec:physionet_dataset}). Additionally, the reported F1 scores by Zihlmann \etal are computed over three classes (excluding the noise class) and thus are not directly comparable to our F1 scores.
+Our archived classification results are presented in Table \ref{tab:results}, in which we present both the accuracy (Eq. \ref{eq:acc}) and the F1 score (Eq. \ref{eq:f1}). Table \ref{tab:results} also includes classification results of Zihlmann \etal \cite{Zihlmann2017}. The models trained by Zihlmann et al. are, however, trained on the publicly available 2017 PhysioNet/CinC Challenge dataset and tested on the private test dataset \cite{Zihlmann2017}. Our models are trained on a custom split of the publically available samples (Sec. \ref{subsec:physionet_dataset}). Additionally, the reported F1 scores by \cite{Zihlmann2017} are computed over three classes (excluding the noise class) and thus are not directly comparable to our F1 scores.
 
-\begin{table}[h!]
+\begin{table}[!ht]
     \centering
     \caption{Classification results of our proposed approaches and baselines on the 2017 PhysioNet validation set.}
     \input{table/results}
     \label{tab:results}
+    \vspace{-0.5cm}
 \end{table}
 
 Although training was performed with fewer data samples, all ECG-DualNet architectures outperformed the baselines from the literature in classification accuracy. We observe that larger network configurations tend to perform stronger compared to smaller configurations. Especially, ECG-DualNet++ profits from a larger network capacity.\\
-Training on the Icentia$11$k dataset \cite{Tan2019} yield the results presented in Table \ref{tab:results_Icentia11k}. Only two models were trained on the Icentia$11$k dataset due to the immense computational requirements.
+Training on the Icentia$11$k dataset \cite{Tan2019} yield the results presented in Table \ref{tab:results_Icentia11k}. Only two models have trained on the Icentia$11$k dataset due to the immense computational requirements.
 
 \begin{table}[!ht]
     \centering
@@ -32,7 +33,7 @@ Training on the Icentia$11$k dataset \cite{Tan2019} yield the results presented 
     \label{tab:results_Icentia11k}
 \end{table}
 
-Using the model weights trained on the Icentia$11$k dataset (Tab. \ref{tab:results_Icentia11k}) for training on the PhysioNet dataset lead to the results presented in Table \ref{tab:full_pretraining_results}. Compared to the results, using no pre-trained weights (Tab. \ref{tab:full_results}), the results, with pre-trained weights, lead to similar or slightly worse results.
+Using the model weights trained on the Icentia$11$k dataset (Tab. \ref{tab:results_Icentia11k}) for training on the PhysioNet dataset leads to the results presented in Table \ref{tab:full_pretraining_results}. Compared to the results, using no pre-trained weights (Tab. \ref{tab:full_results}), the results, with pre-trained weights, lead to similar or slightly worse results.
 
 \begin{table}[!ht]
     \centering
@@ -47,7 +48,7 @@ Additional experimental results of each training run are presented in the append
 
 We conducted multiple ablation training runs to investigate the effectiveness of each of the proposed components. In the presented results in table \ref{tab:ablations}, we omit one core component of our approach in each training run. We only perform ablations with one network configuration, namely ECG-DualNet M. This is due to the large computational requirements for each training run.
 
-\begin{table}[h!]
+\begin{table}[!ht]
     \centering
     \caption{Classification results on the 2017 PhysioNet validation for different ablations. ECG-DualNet L configuration utilized.}
     \input{table/ablation_study}
@@ -55,4 +56,4 @@ We conducted multiple ablation training runs to investigate the effectiveness of
 \end{table}
 
 When utilizing no data augmentation (Sec. \ref{subsec:data_augmentation}) and dropout the training loss is minimized to approximately zero. This indicates signs of overfitting, even though the achieved accuracy is $0.8272$.\\
-\indent From the results in table 1, it can be observed that each main component is required to reach the best classification performance. The largest impact on the classification accuracy has the spectrogram encoder. The use of data augmentation and a signal encoder has a lesser impact on the performance. 
+\indent From the results in table 1, it can be observed that each main component is required to reach the best classification performance. The spectrogram encoder has the largest impact on the classification accuracy. The use of data augmentation and a signal encoder has a lesser impact on the performance. 

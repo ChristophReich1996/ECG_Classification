@@ -157,9 +157,18 @@ Our final challenge submission includes an ECG-DualNet XL. This model was pre-tr
 
 \begin{table}[!ht]
     \centering
-    \caption{Classification results of ECG-DualNet XL pre-trained on the Icentia$11$k dataset and fine-tuned on the PhysioNet dataset with optimized submission split. Metric computed on the small validation set.}
+    \caption{Classification results ($4$ class) of ECG-DualNet XL pre-trained on the Icentia$11$k dataset and fine-tuned on the PhysioNet dataset with optimized submission split. Metric computed on the small validation set.}
     \input{table/results_challenge}
     \label{tab:results_challenge}
+\end{table}
+
+We also consider the two class case where the network only has to distinguish between a normal rhythm and AF. In this case the training set consists of $5488$ samples and the validation set of $300$ samples. The following results were achieved (Tabl. \ref{tab:results_challenge_two_class}).
+
+\begin{table}[!ht]
+    \centering
+    \caption{Classification results ($2$ class) of ECG-DualNet XL pre-trained on the Icentia$11$k dataset and fine-tuned on the PhysioNet dataset with optimized submission split. Metric computed on the small validation set.}
+    \input{table/results_challenge_two_class}
+    \label{tab:results_challenge_two_class}
 \end{table}
 
 \subsection{Hyperparameters}\label{subsec:hyperparameters}

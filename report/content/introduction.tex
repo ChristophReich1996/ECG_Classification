@@ -1,19 +1,14 @@
 \section{Introduction} \label{sec:introduction}
 
-Electrocardiography (ECG) is the most important tool for the diagnosis and the monitoring of cardiac arrhythmia \cite{Becker2006, Anderson2009, Alghatrif2012}. The first recorded human heart beat dates back to the late 19th century \cite{Alghatrif2012}. Today 12-lead ECGs are the common standard \cite{Alghatrif2012}. The analysis of ECG recordings, especially the detection of cardiac arrhythmia, requires expert knowledge \cite{Becker2006}. This expert knowledge is sometimes not available. Since a fast and accurate diagnosis of cardiac arrhythmia can highly affect the chance of survival of a patient positively, an increasing interest for the automated detection of cardiac arrhythmia occurs \cite{Becker2006, Antink2017, Zihlmann2017, Clifford2017}. \\
+Electrocardiography (ECG) is the most important tool for the diagnosis and the monitoring of cardiac arrhythmia \cite{Becker2006, Anderson2009, Alghatrif2012}. The first recorded human heartbeat dates back to the late 19th century \cite{Alghatrif2012}. Today 12-lead ECGs are the common standard \cite{Alghatrif2012}. The analysis of ECG recordings, especially the detection of cardiac arrhythmia \cite{Becker2006}. However, in recent years edge devices like smartwatches became popular. These devices most often include a single-led ECG sensor. Analyzing such signals require expert knowledge, which is typically not available in an edge device settings. Since a fast and accurate diagnosis of cardiac arrhythmia in single-led ECG signals can positively affect a patient's chance of survival, an increasing interest in the automated detection of cardiac arrhythmia occurs \cite{Becker2006, Antink2017, Zihlmann2017, Clifford2017}. \\
 \indent The most common human cardiac arrhythmia is atrial fibrillation (AF) (Fig. \ref{fig:beat}) \cite{Herold2019}. AF mostly affects patients at an advanced age and can lead to an increased risk for dementia, stroke, and even heart failure. High blood pressure and obesity are common factors for an increased risk for AF. During AF undirected electoral impulses (Fig. \ref{fig:beat}) occur in the atrium of the heart. This leads to a fast movement of the heart atrium resulting in an impaired blood flow. Additionally, blood clots can occur which potentially lead to thrombosis. \cite{Becker2006, Herold2019}\\
 \begin{figure}[!ht] 
     \centering
     \input{artwork/beat_ecg}
+    \vspace{-0.6cm}
     \caption{Regular heart beat with QRS complex, P wave, and T wave on the left and atrial fibrillation on the right. AF can be detected by the noisy ECG at the P and T wave regions. Please note that this is only a theoretical illustration. Real ECGs of AF can be seen in the appendix.}
     \label{fig:beat}
 \end{figure}
-\begin{figure*}[!ht]
-    \centering
-    \input{artwork/ecg_dual_net}
-    \caption{ECG-DualNet++ architecture with spectrogram and ECG signal as inputs. The ECG signal sequence gets encoded by a Transformer encoder to a single latent vector. The spectrogram is encoded by multiple 2D blocks. The first two blocks are standard ResNet like blocks and the following three blocks are Axial-Attention blocks. All blocks of the spectrogram encoder utilize the latent vector by conditional batch normalization. Transformer encoder \cite{Vaswani2017} architecture shown in the top right.}
-    \label{fig:ecg_dual_net}
-\end{figure*}
-\indent In this study, we propose a novel deep learning approach for classifying AF in single-lead ECG recordings with variable lengths. Our novel deep learning approach ECG-DualNet utilized both input data for the time and frequency domain, enabling the network to learn features in both domains. The proposed ECG-DualNet surpasses the classification accuracy of recent convolutional neural network (CNN) approaches which only utilizes input data from the frequency domain \cite{Zihlmann2017}.
+\indent In this study, we propose a novel deep learning approach for classifying AF in single-lead ECG recordings with variable lengths. Our novel deep learning approach ECG-DualNet utilized both input data for the time and frequency domain, enabling the network to learn features in both domains. The proposed ECG-DualNet surpasses the classification accuracy of recent convolutional neural network (CNN) approaches which only utilize input data from the frequency domain \cite{Zihlmann2017}.
 
 
