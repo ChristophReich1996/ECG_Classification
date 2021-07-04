@@ -119,7 +119,7 @@ if __name__ == '__main__':
             "pyhsio_net flags are set"
         config["classes"] = 2
         config["dropout"] = 0.3
-        augmentation_pipeline_config = AUGMENTATION_PIPELINE_CONFIG_2D
+        augmentation_pipeline_config = AUGMENTATION_PIPELINE_CONFIG_2C
     else:
         augmentation_pipeline_config = AUGMENTATION_PIPELINE_CONFIG
 

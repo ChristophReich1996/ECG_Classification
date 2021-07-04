@@ -108,7 +108,7 @@ def _train(network: nn.Module, two_classes: bool) -> nn.Module:
         PhysioNetDataset(ecg_leads=[ecg_leads[index] for index in training_split],
                          ecg_labels=[ecg_labels[index] for index in training_split], fs=fs,
                          augmentation_pipeline=AugmentationPipeline(
-                             AUGMENTATION_PIPELINE_CONFIG if not two_classes else AUGMENTATION_PIPELINE_CONFIG_2D),
+                             AUGMENTATION_PIPELINE_CONFIG if not two_classes else AUGMENTATION_PIPELINE_CONFIG_2C),
                          two_classes=two_classes),
         batch_size=24, num_workers=20, pin_memory=True, drop_last=False, shuffle=True)
     validation_dataset = DataLoader(

@@ -177,7 +177,7 @@ AUGMENTATION_PIPELINE_CONFIG: Dict[str, Any] = {
 }
 
 # Configuration of augmentation pipeline
-AUGMENTATION_PIPELINE_CONFIG_2D: Dict[str, Any] = {
+AUGMENTATION_PIPELINE_CONFIG_2C: Dict[str, Any] = {
     "p_scale": 0.4,
     "p_drop": 0.4,
     "p_cutout": 0.4,
