@@ -11,7 +11,7 @@ RUN mkdir /physionet
 COPY ./ /physionet
 WORKDIR /physionet
 # Install Python requirements
-RUN pip install --no-deps -r requirements_docker.txt
+RUN pip install --no-deps -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.html
 # Install PAU
 WORKDIR /physionet/ecg_classification/pade_activation_unit/cuda
 RUN python setup.py install
