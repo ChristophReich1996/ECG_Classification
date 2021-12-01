@@ -9,3 +9,4 @@ torchaudio==0.8.1
 rtpt>=0.0.4
 torch-optimizer==0.1.0
 airspeed>=0.5.17
+ninja
