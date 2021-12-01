@@ -248,7 +248,8 @@ setup(
             'pau_cuda.cpp',
             'pau_cuda_kernels.cu',
         ],
-                      extra_compile_args={}
+                      extra_compile_args={'cxx': [],
+                                          'nvcc': ['-gencode=arch=compute_60,code="sm_60,compute_60"', '-lineinfo']}
                       ),
         # CUDAExtension('pau_cuda_unrestricted', [
         #    'pau_cuda_unrestricted.cpp',
