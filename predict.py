@@ -15,7 +15,8 @@ from wettbewerb import load_references
 
 
 def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
-                   use_pretrained: bool = False, two_classes: bool = True) -> List[Tuple[str, str]]:
+                   use_pretrained: bool = False, two_classes: bool = True,
+                   return_probability: bool = True) -> Union[List[Tuple[str, str]], List[Tuple[str, str, float]]]:
     """
     Function to produce predictions
     :param ecg_leads: (List[np.ndarray]) ECG leads as a list of numpy arrays
@@ -23,7 +24,9 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
     :param ecg_names: (List[str]) List of strings with name of each ecg lead
     :param use_pretrained: (bool) If true pre-trained (trained!) model is used
     :param two_classes: (bool) If true model for two classes is utilized else four class model is used
-    :return: (List[Tuple[str, str]]) List of tuples including name and prediction
+    :param return_probability: (bool) If true P(AF) is also returned as part of the result tuple (only for binary case)
+    :return: (Union[List[Tuple[str, str]], List[Tuple[str, str, float]]]) List of tuples including name, prediction and
+    probability P(AF) if utilized
     """
     # Init model
     config = ECGCNN_CONFIG_XL
@@ -74,7 +77,8 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
                                augmentation_pipeline=None, two_classes=two_classes)
     dataset = DataLoader(dataset=dataset, batch_size=1, num_workers=0, pin_memory=False, drop_last=False, shuffle=False)
     # Make prediction
-    return _predict(network=network, dataset=dataset, ecg_names=ecg_names, two_classes=two_classes)
+    return _predict(network=network, dataset=dataset, ecg_names=ecg_names, two_classes=two_classes,
+                    return_probability=return_probability)
 
 
 def _train(network: nn.Module, two_classes: bool) -> nn.Module:
@@ -136,17 +140,19 @@ def _train(network: nn.Module, two_classes: bool) -> nn.Module:
 
 @torch.no_grad()
 def _predict(network: nn.Module, dataset: DataLoader, ecg_names: List[str],
-             two_classes: bool) -> List[Tuple[str, str]]:
+             two_classes: bool, return_probability: bool) -> Union[List[Tuple[str, str]], List[Tuple[str, str, float]]]:
     """
     Private function to make predictions
     :param network: (nn.Module) Trained model
     :param dataset: (DataLoader) Dataset to be predicted
     :param ecg_names: (List[str]) Name of each sample
     :param two_classes: (bool) If true only two classes are utilized
-    :return: (List[Tuple[str, str]]) List of tuples including name and prediction
+    :param return_probability: (bool) If true P(AF) is also returned as part of the result tuple (only for binary case)
+    :return: (Union[List[Tuple[str, str]], List[Tuple[str, str, float]]]) List of tuples including name, prediction and
+    probability P(AF) if utilized
     """
     # Init list to store predictions
-    predictions: List[Tuple[str, str]] = []
+    predictions: Union[List[Tuple[str, str]], List[Tuple[str, str, float]]] = []
     # Network to cuda
     network.cuda()
     # Network into eval mode
@@ -165,9 +171,13 @@ def _predict(network: nn.Module, dataset: DataLoader, ecg_names: List[str],
         # Make prediction
         prediction = network(ecg_lead, spectrogram)
         # Threshold prediction
-        prediction = prediction.argmax(dim=-1)
+        prediction_argmax = prediction.argmax(dim=-1)
         # Construct prediction
-        predictions.append((name, _get_prediction_name(prediction=prediction, two_classes=two_classes)))
+        if return_probability:
+            predictions.append((name, _get_prediction_name(prediction=prediction_argmax, two_classes=two_classes),
+                                prediction[..., -1].item()))
+        else:
+            predictions.append((name, _get_prediction_name(prediction=prediction_argmax, two_classes=two_classes)))
     # Close progress bar
     progress_bar.close()
     return predictions
