@@ -51,7 +51,7 @@ To execute the container run (with all available GPUs):
 docker run -it --gpus all --rm --name user_name ecg_classification
 ```
 
-The provided [Dockerfile](Dockerfile) is based on [the Nvidia NGC container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch).
+The provided [Dockerfile](Dockerfile) is based on the [Nvidia NGC container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch).
 
 ## Results
 
