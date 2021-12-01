@@ -1,0 +1,11 @@
+scipy>=1.4.1
+matplotlib>=3.3.0
+numpy>=1.18.5
+py-ecg-detectors>=1.0.2
+pandas>=1.1.0
+tqdm>=4.60.0
+torchaudio==0.8.0
+rtpt>=0.0.4
+torch-optimizer==0.1.0
+airspeed>=0.5.17
+ninja
