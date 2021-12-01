@@ -16,7 +16,7 @@ All dependencies can be installed by running the following commands:
 ```shell script
 git clone https://github.com/ChristophReich1996/ECG_Classification
 cd ECG_Classification
-pip install -r requirements.txt
+pip install --no-deps -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.html
 cd ecg_classification/pade_activation_unit/cuda
 python setup.py install
 cd ../../../
@@ -34,6 +34,24 @@ ECG-DualNet is implemented with [PyTorch](https://pytorch.org/) 1.8.1 and
 [Torchaudio](https://pytorch.org/audio/stable/index.html) 0.8.1. All required packages can be seen 
 in the [`requirements.txt`](requirements.txt) file. For the Pade Activation Unit the 
 [implementation (cuda extension) from the authors](https://github.com/ml-research/pau) were adopted [1].
+
+### Docker
+
+This repository also offers a [Dockerfile](Dockerfile) to install all dependencies.
+
+To build the Docker image run:
+
+```shell script
+docker build --tag ecg_classification .
+```
+
+To execute the container run (with all available GPUs):
+
+```shell script
+docker run -it --gpus all --rm --name user_name ecg_classification
+```
+
+The provided [Dockerfile](Dockerfile) is based on [the Nvidia NGC container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch).
 
 ## Results
 
