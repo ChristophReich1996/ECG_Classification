@@ -16,7 +16,8 @@ from wettbewerb import load_references
 
 def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
                    use_pretrained: bool = False, two_classes: bool = True,
-                   return_probability: bool = True) -> Union[List[Tuple[str, str]], List[Tuple[str, str, float]]]:
+                   return_probability: bool = True, device: Union[str, torch.device] = "cpu") -> Union[
+    List[Tuple[str, str]], List[Tuple[str, str, float]]]:
     """
     Function to produce predictions
     :param ecg_leads: (List[np.ndarray]) ECG leads as a list of numpy arrays
@@ -25,6 +26,7 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
     :param use_pretrained: (bool) If true pre-trained (trained!) model is used
     :param two_classes: (bool) If true model for two classes is utilized else four class model is used
     :param return_probability: (bool) If true P(AF) is also returned as part of the result tuple (only for binary case)
+    :param device: (Union[str, torch.device]) Device to be utilized
     :return: (Union[List[Tuple[str, str]], List[Tuple[str, str, float]]]) List of tuples including name, prediction and
     probability P(AF) if utilized
     """
@@ -37,7 +39,8 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
     if not use_pretrained:
         # Load weights pre-trained on the Icentia11k dataset
         try:
-            state_dict = torch.load("experiments/21_05_2021__12_15_06ECGCNN_XL_icentia11k_dataset/models/best_model.pt")
+            state_dict = torch.load("experiments/21_05_2021__12_15_06ECGCNN_XL_icentia11k_dataset/models/best_model.pt",
+                                    map_location=device)
         except FileNotFoundError as exception:
             print("State dict not found. Download the state dict of ECG-DualNet XL (Icentia11k). "
                   "Link in README. Put the state dict into the relative directory "
@@ -55,7 +58,7 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
             try:
                 state_dict = torch.load("experiments/"
                                         "05_07_2021__02_28_46ECGCNN_XL_physio_net_dataset_challange_two_classes/"
-                                        "models/best_model.pt")
+                                        "models/best_model.pt", map_location=device)
             except FileNotFoundError as exception:
                 print("State dict not found. Download the state dict of ECG-DualNet XL (two class, challange). "
                       "Link in README. Put the state dict into the relative directory "
@@ -64,7 +67,7 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
         else:
             try:
                 state_dict = torch.load("experiments/25_05_2021__02_02_11ECGCNN_XL_physio_net_dataset_challange/"
-                                        "models/best_model.pt")
+                                        "models/best_model.pt", map_location=device)
             except FileNotFoundError as exception:
                 print("State dict not found. Download the state dict of ECG-DualNet XL (four class, challange). "
                       "Link in README. Put the state dict into the relative directory "
@@ -78,7 +81,7 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
     dataset = DataLoader(dataset=dataset, batch_size=1, num_workers=0, pin_memory=False, drop_last=False, shuffle=False)
     # Make prediction
     return _predict(network=network, dataset=dataset, ecg_names=ecg_names, two_classes=two_classes,
-                    return_probability=return_probability)
+                    return_probability=return_probability, device=device)
 
 
 def _train(network: nn.Module, two_classes: bool) -> nn.Module:
@@ -140,7 +143,8 @@ def _train(network: nn.Module, two_classes: bool) -> nn.Module:
 
 @torch.no_grad()
 def _predict(network: nn.Module, dataset: DataLoader, ecg_names: List[str],
-             two_classes: bool, return_probability: bool) -> Union[List[Tuple[str, str]], List[Tuple[str, str, float]]]:
+             two_classes: bool, return_probability: bool,
+             device: Union[str, torch.device] = "cpu") -> Union[List[Tuple[str, str]], List[Tuple[str, str, float]]]:
     """
     Private function to make predictions
     :param network: (nn.Module) Trained model
@@ -148,13 +152,14 @@ def _predict(network: nn.Module, dataset: DataLoader, ecg_names: List[str],
     :param ecg_names: (List[str]) Name of each sample
     :param two_classes: (bool) If true only two classes are utilized
     :param return_probability: (bool) If true P(AF) is also returned as part of the result tuple (only for binary case)
+    :param device: (Union[str, torch.device]) Device to be utilized
     :return: (Union[List[Tuple[str, str]], List[Tuple[str, str, float]]]) List of tuples including name, prediction and
     probability P(AF) if utilized
     """
     # Init list to store predictions
     predictions: Union[List[Tuple[str, str]], List[Tuple[str, str, float]]] = []
-    # Network to cuda
-    network.cuda()
+    # Network to device
+    network.to(device)
     # Network into eval mode
     network.eval()
     # Init progress bar
@@ -166,8 +171,8 @@ def _predict(network: nn.Module, dataset: DataLoader, ecg_names: List[str],
         # Unpack data
         ecg_lead, spectrogram, _ = data
         # Data to cuda
-        ecg_lead = ecg_lead.cuda()
-        spectrogram = spectrogram.cuda()
+        ecg_lead = ecg_lead.to(device)
+        spectrogram = spectrogram.to(device)
         # Make prediction
         prediction = network(ecg_lead, spectrogram)
         # Threshold prediction
