@@ -23,8 +23,9 @@ cd ../../../
 ```
 
 The implementation was tested [Gentoo Linux](https://www.gentoo.org/) 5.10.7, Python 3.8.5, and CUDA 11.1. **To perform 
-training and validation a CUDA device is needed!** This is due to the PAU implementation, which does not support 
-execution on the CPU. The functionality of this repository can not be guaranteed for other system configurations.
+training and validation a CUDA device is recommended!** This is due to the PAU implementation, which provides a efficient CUDA implementation. 
+Training and inference on the CPU is supported but not recommended.
+The functionality of this repository can not be guaranteed for other system configurations.
 
 If only CUDA 11.0 is available the code can also be executed with PyTorch 1.7.1 and Torchaudio 0.7.2 [see](https://pytorch.org/get-started/previous-versions/).
 
@@ -51,7 +52,9 @@ To execute the container run (with all available GPUs):
 docker run -it --gpus all --rm --name user_name ecg_classification
 ```
 
-The provided [Dockerfile](Dockerfile) is based on the [Nvidia NGC container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch).
+This Dockerfile does not use the PAU CUDA extension, which leads to a higher memory usage and an increased runtime.
+
+A [Dockerfile](Dockerfile) based on the [Nvidia NGC container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch), supporting the PAU CUDA extension, is also available.
 
 ## Results
 
