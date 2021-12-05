@@ -23,7 +23,7 @@ cd ../../../
 ```
 
 The implementation was tested [Gentoo Linux](https://www.gentoo.org/) 5.10.7, Python 3.8.5, and CUDA 11.1. **To perform 
-training and validation a CUDA device is recommended!** This is due to the PAU implementation, which provides a efficient CUDA implementation. 
+training and validation a CUDA device is recommended!** This is due to the PAU implementation, which provides an efficient CUDA implementation. 
 Training and inference on the CPU is supported but not recommended.
 The functionality of this repository can not be guaranteed for other system configurations.
 
