@@ -1,7 +1,12 @@
 from typing import Dict, Any
 
 import torch.nn as nn
-from ecg_classification.pade_activation_unit.utils import PAU
+
+try:
+    from ecg_classification.pade_activation_unit.utils import PAU
+except ModuleNotFoundError as error:
+    from ecg_classification.pade_activation_unit.pytorch_impl import PADEACTIVATION_Function_based
+    PAU = PADEACTIVATION_Function_based
 
 # Configuration for ECGCNN S
 ECGCNN_CONFIG_S: Dict[str, Any] = {
