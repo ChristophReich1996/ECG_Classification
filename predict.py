@@ -15,7 +15,7 @@ from wettbewerb import load_references
 
 
 def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
-                   use_pretrained: bool = False, two_classes: bool = True,
+                   use_pretrained: bool = False, is_binary_classifier: bool = True,
                    return_probability: bool = True, device: Union[str, torch.device] = "cpu") -> Union[
     List[Tuple[str, str]], List[Tuple[str, str, float]]]:
     """
@@ -24,7 +24,7 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
     :param fs: (int) Sampling frequency
     :param ecg_names: (List[str]) List of strings with name of each ecg lead
     :param use_pretrained: (bool) If true pre-trained (trained!) model is used
-    :param two_classes: (bool) If true model for two classes is utilized else four class model is used
+    :param is_binary_classifier: (bool) If true model for two classes is utilized else four class model is used
     :param return_probability: (bool) If true P(AF) is also returned as part of the result tuple (only for binary case)
     :param device: (Union[str, torch.device]) Device to be utilized
     :return: (Union[List[Tuple[str, str]], List[Tuple[str, str, float]]]) List of tuples including name, prediction and
@@ -32,8 +32,8 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
     """
     # Init model
     config = ECGCNN_CONFIG_XL
-    config["classes"] = 2 if two_classes else config["classes"]
-    config["dropout"] = 0.3 if two_classes else config["classes"]
+    config["classes"] = 2 if is_binary_classifier else config["classes"]
+    config["dropout"] = 0.3 if is_binary_classifier else config["classes"]
     network = ECGCNN(config=config)
     # Train model if utilized
     if not use_pretrained:
@@ -51,10 +51,10 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
         model_state_dict.update(state_dict)
         network.load_state_dict(model_state_dict)
         # Perform training
-        network = _train(network=network, two_classes=two_classes)
+        network = _train(network=network, two_classes=is_binary_classifier)
     # Load model
     else:
-        if two_classes:
+        if is_binary_classifier:
             try:
                 state_dict = torch.load("experiments/"
                                         "05_07_2021__02_28_46ECGCNN_XL_physio_net_dataset_challange_two_classes/"
@@ -77,10 +77,10 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
         network.load_state_dict(state_dict)
     # Init dataset for prediction
     dataset = PhysioNetDataset(ecg_leads=ecg_leads, ecg_labels=["A"] * len(ecg_leads), fs=fs,
-                               augmentation_pipeline=None, two_classes=two_classes)
+                               augmentation_pipeline=None, two_classes=is_binary_classifier)
     dataset = DataLoader(dataset=dataset, batch_size=1, num_workers=0, pin_memory=False, drop_last=False, shuffle=False)
     # Make prediction
-    return _predict(network=network, dataset=dataset, ecg_names=ecg_names, two_classes=two_classes,
+    return _predict(network=network, dataset=dataset, ecg_names=ecg_names, two_classes=is_binary_classifier,
                     return_probability=return_probability, device=device)
 
 
