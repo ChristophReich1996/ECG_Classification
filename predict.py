@@ -135,7 +135,7 @@ def _train(network: nn.Module, two_classes: bool) -> nn.Module:
                                  learning_rate_schedule=learning_rate_schedule,
                                  device="cuda")
     # Perform training
-    model_wrapper.train(epochs=1)
+    model_wrapper.train(epochs=100)
     # Load best model
     network.load_state_dict(torch.load(model_wrapper.data_logger.path_models + "/best_model.pt"))
     return network
