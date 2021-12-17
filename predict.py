@@ -57,12 +57,12 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
         if is_binary_classifier:
             try:
                 state_dict = torch.load("experiments/"
-                                        "05_07_2021__02_28_46ECGCNN_XL_physio_net_dataset_challange_two_classes/"
+                                        "17_12_2021__03_39_19ECGCNN_XL_physio_net_dataset_challange_two_classes/"
                                         "models/best_model.pt", map_location=device)
             except FileNotFoundError as exception:
                 print("State dict not found. Download the state dict of ECG-DualNet XL (two class, challange). "
                       "Link in README. Put the state dict into the relative directory "
-                      "experiments/05_07_2021__02_28_46ECGCNN_XL_physio_net_dataset_challange_two_classes/models/")
+                      "experiments/17_12_2021__03_39_19ECGCNN_XL_physio_net_dataset_challange_two_classes/models/")
                 exit(1904)
         else:
             try:
