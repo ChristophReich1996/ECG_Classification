@@ -162,7 +162,7 @@ Our final challenge submission includes an ECG-DualNet XL. This model was pre-tr
     \label{tab:results_challenge}
 \end{table}
 
-We also consider the two class case where the network only has to distinguish between a normal rhythm and AF. In this case the training set consists of $5488$ samples and the validation set of $300$ samples. The following results were achieved (Tabl. \ref{tab:results_challenge_two_class}).
+We also consider the two class case where the network only has to distinguish between a normal rhythm and AF. We set samples labeled as other rhythm and noisy to normal rhythm. The same split as in the four-class case is used. The following results were achieved (Tabl. \ref{tab:results_challenge_two_class}).
 
 \begin{table}[!ht]
     \centering

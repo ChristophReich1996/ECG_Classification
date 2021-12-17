@@ -45,7 +45,7 @@ $\text{TP}_{i}$ represents the true positive predictions of a class over the who
 
 \subsection{Preprocessing} \label{subsec:preprocessing}
 
-We utilize a simple preprocessing composed of four steps. In the first steps, the ECG signal gets standardization to a mean of zero and unit variance. In the second step, various augmentations (Sec. \ref{subsec:data_augmentation}) are applied to the ECG signal. In the following step, a log spectrogram of the ECG signal. The log spectrogram is computed with a window length of 64, a hop size of 32, and 64 bins. Recent work showed, using the logarithmic spectrogram improves the classification accuracy of CNN's \cite{Zihlmann2017}. Finally, both the ECG signal and the spectrogram are zero-padded to a fixed length.
+We utilize a simple preprocessing composed of four steps. In the first steps, the ECG signal gets standardization to a mean of zero and unit variance. In the second step, various augmentations (Sec. \ref{subsec:data_augmentation}) are applied to the ECG signal. In the following step, a log spectrogram of the ECG signal is produced. The log spectrogram is computed with a window length of 64, a hop size of 32, and 64 bins. Recent work showed, using the logarithmic spectrogram improves the classification accuracy of CNN's \cite{Zihlmann2017}. Finally, both the ECG signal and the spectrogram are zero-padded to a fixed length.
 
 \subsection{Data Augmentation} \label{subsec:data_augmentation}
 

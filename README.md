@@ -102,8 +102,8 @@ In the **two class challange setting** (pretrained weights used) the following r
 
 | Model | ACC | F1 | # Parameters | best |
 | --- | --- | --- | ---: | --- |
-| ECG-DualNet XL (CNN + LSTM) | 0.9833; 0.9867; 0.9867 | 0.9601; 0.9684; 0.9684 | 20683122 | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EdYLS2dGRlFPhgO1QMcWL8UBR6Z3LzJyhjJOSIObh6YiKg?e=ZBUZM6) |
-| ECG-DualNet++ XL (AxAtt + Trans.) | 0.9867; 0.9933; 0.9900 | 0.9677; 0.9846; 0.9760 | 8212658 | [weights](experiments/15_06_2021__13_45_10ECGAttNet_XL_physio_net_dataset_challange_two_classes/models/best_model.pt) |
+| ECG-DualNet XL (CNN + LSTM) | 0.9800 | 0.9288 | 20683122 | [weights](https://studtudarmstadtde-my.sharepoint.com/:f:/g/personal/christoph_reich_stud_tu-darmstadt_de/EtRrzS121f9Cjpm2cbLnm-MBS1QagkDhCF7Bb9Gpi92YMw?e=v1SINS) |
+| ECG-DualNet++ XL (AxAtt + Trans.) | 0.9760 | 0.9146 | 8212658 | [weights](experiments/17_12_2021__01_08_08ECGAttNet_XL_physio_net_dataset_challange_two_classes/models/best_model.pt) |
 
 
 ## Usage
