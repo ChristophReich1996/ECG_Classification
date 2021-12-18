@@ -41,7 +41,7 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
         try:
             state_dict = torch.load("experiments/21_05_2021__12_15_06ECGCNN_XL_icentia11k_dataset/models/best_model.pt",
                                     map_location=device)
-        except FileNotFoundError as exception:
+        except FileNotFoundError as _:
             print("State dict not found. Download the state dict of ECG-DualNet XL (Icentia11k). "
                   "Link in README. Put the state dict into the relative directory "
                   "experiments/21_05_2021__12_15_06ECGCNN_XL_icentia11k_dataset/models/")
