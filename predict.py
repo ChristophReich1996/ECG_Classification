@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Dict
 
 import torch
 import torch.nn as nn
@@ -17,7 +17,7 @@ from wettbewerb import load_references
 def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
                    use_pretrained: bool = False, is_binary_classifier: bool = True,
                    return_probability: bool = True, device: Union[str, torch.device] = "cpu") -> Union[
-    List[Tuple[str, str]], List[Tuple[str, str, float]]]:
+    List[Tuple[str, str]], List[Tuple[str, str, float]], List[Tuple[str, Dict[str, float]]]]:
     """
     Function to produce predictions
     :param ecg_leads: (List[np.ndarray]) ECG leads as a list of numpy arrays
@@ -59,7 +59,7 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
                 state_dict = torch.load("experiments/"
                                         "17_12_2021__03_39_19ECGCNN_XL_physio_net_dataset_challange_two_classes/"
                                         "models/best_model.pt", map_location=device)
-            except FileNotFoundError as exception:
+            except FileNotFoundError as _:
                 print("State dict not found. Download the state dict of ECG-DualNet XL (two class, challange). "
                       "Link in README. Put the state dict into the relative directory "
                       "experiments/17_12_2021__03_39_19ECGCNN_XL_physio_net_dataset_challange_two_classes/models/")
@@ -68,7 +68,7 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
             try:
                 state_dict = torch.load("experiments/25_05_2021__02_02_11ECGCNN_XL_physio_net_dataset_challange/"
                                         "models/best_model.pt", map_location=device)
-            except FileNotFoundError as exception:
+            except FileNotFoundError as _:
                 print("State dict not found. Download the state dict of ECG-DualNet XL (four class, challange). "
                       "Link in README. Put the state dict into the relative directory "
                       "experiments/25_05_2021__02_02_11ECGCNN_XL_physio_net_dataset_challange/models/")
@@ -144,7 +144,8 @@ def _train(network: nn.Module, two_classes: bool) -> nn.Module:
 @torch.no_grad()
 def _predict(network: nn.Module, dataset: DataLoader, ecg_names: List[str],
              two_classes: bool, return_probability: bool,
-             device: Union[str, torch.device] = "cpu") -> Union[List[Tuple[str, str]], List[Tuple[str, str, float]]]:
+             device: Union[str, torch.device] = "cpu") -> Union[List[Tuple[str, str]], List[Tuple[str, str, float]],
+                                                                List[Tuple[str, Dict[str, float]]]]:
     """
     Private function to make predictions
     :param network: (nn.Module) Trained model
@@ -157,7 +158,7 @@ def _predict(network: nn.Module, dataset: DataLoader, ecg_names: List[str],
     probability P(AF) if utilized
     """
     # Init list to store predictions
-    predictions: Union[List[Tuple[str, str]], List[Tuple[str, str, float]]] = []
+    predictions: Union[List[Tuple[str, str]], List[Tuple[str, str, float]], List[Tuple[str, Dict[str, float]]]] = []
     # Network to device
     network.to(device)
     # Network into eval mode
@@ -174,13 +175,16 @@ def _predict(network: nn.Module, dataset: DataLoader, ecg_names: List[str],
         ecg_lead = ecg_lead.to(device)
         spectrogram = spectrogram.to(device)
         # Make prediction
-        prediction = network(ecg_lead, spectrogram)
+        prediction: torch.Tensor = network(ecg_lead, spectrogram)
         # Threshold prediction
         prediction_argmax = prediction.argmax(dim=-1)
         # Construct prediction
         if return_probability:
-            predictions.append((name, _get_prediction_name(prediction=prediction_argmax, two_classes=two_classes),
-                                prediction[..., -1].item()))
+            if two_classes:
+                predictions.append((name, _get_prediction_name(prediction=prediction_argmax, two_classes=two_classes),
+                                    prediction[..., -1].item()))
+            else:
+                predictions.append((name, dict(zip(["N", "O", "A", "~"], prediction.reshape(-1).tolist()))))
         else:
             predictions.append((name, _get_prediction_name(prediction=prediction_argmax, two_classes=two_classes)))
     # Close progress bar
