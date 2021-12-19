@@ -17,7 +17,7 @@ from wettbewerb import load_references
 def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
                    use_pretrained: bool = False, is_binary_classifier: bool = True,
                    return_probability: bool = True, device: Union[str, torch.device] = "cpu") -> Union[
-    List[Tuple[str, str]], List[Tuple[str, str, float]], List[Tuple[str, Dict[str, float]]]]:
+    List[Tuple[str, str]], List[Tuple[str, str, float]], List[Tuple[str, str, Dict[str, float]]]]:
     """
     Function to produce predictions
     :param ecg_leads: (List[np.ndarray]) ECG leads as a list of numpy arrays
@@ -145,7 +145,7 @@ def _train(network: nn.Module, two_classes: bool) -> nn.Module:
 def _predict(network: nn.Module, dataset: DataLoader, ecg_names: List[str],
              two_classes: bool, return_probability: bool,
              device: Union[str, torch.device] = "cpu") -> Union[List[Tuple[str, str]], List[Tuple[str, str, float]],
-                                                                List[Tuple[str, Dict[str, float]]]]:
+                                                                List[Tuple[str, str, Dict[str, float]]]]:
     """
     Private function to make predictions
     :param network: (nn.Module) Trained model
@@ -184,7 +184,7 @@ def _predict(network: nn.Module, dataset: DataLoader, ecg_names: List[str],
                 predictions.append((name, _get_prediction_name(prediction=prediction_argmax, two_classes=two_classes),
                                     prediction[..., -1].item()))
             else:
-                predictions.append((name, dict(zip(["N", "O", "A", "~"], prediction.reshape(-1).tolist()))))
+                predictions.append((name, _get_prediction_name(prediction=prediction_argmax, two_classes=two_classes), dict(zip(["N", "O", "A", "~"], prediction.reshape(-1).tolist()))))
         else:
             predictions.append((name, _get_prediction_name(prediction=prediction_argmax, two_classes=two_classes)))
     # Close progress bar
