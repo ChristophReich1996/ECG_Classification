@@ -7,6 +7,6 @@ RUN mkdir /physionet
 COPY ./ /physionet
 WORKDIR /physionet
 # Install Python requirements
-RUN pip install --no-deps -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.html
+RUN pip install -r requirements.txt 
 # Reset working directory
 WORKDIR /physionet
