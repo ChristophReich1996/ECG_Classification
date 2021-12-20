@@ -3,7 +3,6 @@ matplotlib>=3.3.0
 numpy>=1.18.5
 py-ecg-detectors>=1.0.2
 pandas>=1.1.0
-torch==1.8.1+cu111
 tqdm>=4.60.0
 torchaudio==0.8.1
 rtpt>=0.0.4
@@ -12,3 +11,4 @@ airspeed>=0.5.17
 ninja
 pytorch-ranger
 setproctitle
+sklearn
