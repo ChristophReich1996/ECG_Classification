@@ -62,9 +62,11 @@ def load_references(folder: str = '../training', load_labels: bool = True) -> Tu
     return ecg_leads, ecg_labels, fs, ecg_names
 
 
+
+
 ### Achtung! Diese Funktion nicht veraendern.
 
-def save_predictions(predictions: List[Tuple[str, str, float]], folder: str = None) -> None:
+def save_predictions(predictions: List[Tuple[str, str, float]], folder: str=None) -> None:
     """
     Funktion speichert the gegebenen predictions in eine CSV-Datei mit dem name PREDICTIONS.csv
     Parameters
@@ -89,7 +91,7 @@ def save_predictions(predictions: List[Tuple[str, str, float]], folder: str = No
     assert isinstance(predictions[0][2], float) or isinstance(predictions[0][2], dict), \
         "3. Element der Tupel in der Liste muss vom Typ float sein, aber {} gegeben".format(type(predictions[0][2]))
 
-    if folder == None:
+    if folder==None:
         file = "PREDICTIONS.csv"
     else:
         file = os.path.join(folder, "PREDICTIONS.csv")
