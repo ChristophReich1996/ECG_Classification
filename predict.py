@@ -33,7 +33,6 @@ def predict_labels(ecg_leads: List[np.ndarray], fs: int, ecg_names: List[str],
     # Init model
     config = ECGCNN_CONFIG_XL
     config["classes"] = 2 if is_binary_classifier else config["classes"]
-    config["dropout"] = 0.3 if is_binary_classifier else config["classes"]
     network = ECGCNN(config=config)
     # Train model if utilized
     if not use_pretrained:
