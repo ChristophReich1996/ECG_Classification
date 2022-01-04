@@ -230,8 +230,8 @@ def score_official_physionet(label_dir='../test/',output_dir='./'):
             pred_indx = pred_indx[0]
             pred_class = df_pred[1][pred_indx]
             pred_certainty = np.zeros((4))
-            for i in range(4):
-                pred_certainty[i] = df_pred[i+2][pred_indx]
+            for k in range(4):
+                pred_certainty[k] = df_pred[k+2][pred_indx]
         y_true_multi[i,classes[gt_class]]=1
         y_score_multi[i,:] = pred_certainty
   
