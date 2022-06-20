@@ -10,6 +10,18 @@ A report of the project is available [here](report/report.pdf). Slides of the fi
 
 <img src="/github/architecture.png"  alt="architecture" width = 600px height = 320px >
 
+**If you find this research useful in your work, please cite our paper:**
+
+```bibtex
+@article{Rohr2022,
+        title={{Exploring Novel Algorithms for Atrial Fibrillation Detection by Driving Graduate Level Education in Medical Machine Learning}},
+        author={Rohr, Maurice and Reich, Christoph and H{\"o}hl, Andreas and Lilienthal, Timm and Dege, Tizian and Plesinger, Filip and Bulkova, Veronika and Clifford, Gari D and Reyna, Matthew A and Antink, Christoph Hoog},
+        journal={{Physiological Measurement}},
+        year={2022},
+        publisher={IOP Publishing}
+}
+```
+
 ## Installation
 
 All dependencies can be installed by running the following commands:
