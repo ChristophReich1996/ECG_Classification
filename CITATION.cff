@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "Code of the paper: Exploring Novel Algorithms for Atrial Fibrillation Detection by Driving Graduate Level Education in Medical Machine Learning"
+authors:
+  - family-names: Reich
+    given-names: Christoph
+  - family-names: Rohr
+    given-names: Maurice 
+  - family-names: Höhl
+    given-names: Andreas
+  - family-names: Lilienthal
+    given-names: Timm
+  - family-names: Dege
+    given-names: Tizian
+  - family-names: Plesinger
+    given-names: Filip
+  - family-names: Bulkova 
+    given-names: Veronika
+  - family-names: Clifford
+    given-names: Gari D
+  - family-names: Reyna
+    given-names: Matthew A
+  - family-names: Hoog Antink
+    given-names: Christoph
+title: "Exploring Novel Algorithms for Atrial Fibrillation Detection by Driving Graduate Level Education in Medical Machine Learning"
+version: 1.0.0
+date-released: 2022-06-20
