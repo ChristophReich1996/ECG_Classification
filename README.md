@@ -2,8 +2,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/ChristophReich1996/ToeffiPy/blob/master/LICENSE)
 [![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-385/)
 
-This repository includes the code of the ECG-DualNet for ECG classification. This work was done as part of the 
-competition "Wettbewerb künstliche Intelligenz in der Medizin" at TU Darmstadt ([KIS*MED](https://github.com/KISMED-TUDa), [Prof. Hoog Antink](https://scholar.google.de/citations?user=bRoRHGgAAAAJ&hl=de)).
+This repository includes the code of the ECG-DualNet for ECG classification proposed in the paper [Exploring Novel Algorithms for Atrial Fibrillation Detection by Driving Graduate Level Education in Medical Machine Learning](https://iopscience.iop.org/article/10.1088/1361-6579/ac7840/meta) (Physiological Measurement).
+
+This work was done original as part of the competition "Wettbewerb künstliche Intelligenz in der Medizin" at TU Darmstadt ([KIS*MED](https://github.com/KISMED-TUDa), [Prof. Hoog Antink](https://scholar.google.de/citations?user=bRoRHGgAAAAJ&hl=de)).
 
 A report of the project is available [here](report/report.pdf). Slides of the final presentation are available [here](presentation/presentation.pdf). LaTeX code of both the report and the slides are also available.
 
