@@ -43,9 +43,35 @@ class ECGCNN(nn.Module):
             nn.Linear(in_features=spectrogram_encoder_channels[-1][-1], out_features=latent_vector_features, bias=True),
             activation())
         self.linear_layer_2 = nn.Linear(in_features=latent_vector_features, out_features=classes, bias=True)
+        # Save some parameters
+        self.latent_vector_features: int = latent_vector_features
+        self.classes: int = classes
+        self.activation: Type[nn.Module] = activation
         # Init variables for ablations
-        self.no_spectrogram_encoder: bool = False
+        self._no_spectrogram_encoder: bool = False
         self.no_signal_encoder: bool = False
+
+    @property
+    def no_spectrogram_encoder(self) -> bool:
+        """
+        Getter method for no_spectrogram_encoder attribute
+        :return: (bool) no_spectrogram_encoder attribute
+        """
+        return self._no_spectrogram_encoder
+
+    @no_spectrogram_encoder.setter
+    def no_spectrogram_encoder(self, value: bool) -> None:
+        """
+        Setter method for no_spectrogram_encoder attribute
+        :param value: (bool) New value
+        """
+        self._no_spectrogram_encoder = value
+        # Make last linear layer an MLP if no spectrogram encoder is used
+        self.linear_layer_2 = nn.Sequential(
+            nn.Linear(in_features=self.latent_vector_features, out_features=self.latent_vector_features // 2),
+            self.activation(),
+            nn.Linear(in_features=self.latent_vector_features // 2, out_features=self.classes),
+        )
 
     def forward(self, ecg_lead: torch.Tensor, spectrogram: torch.Tensor) -> torch.Tensor:
         """
@@ -56,7 +82,7 @@ class ECGCNN(nn.Module):
         """
         if self.no_spectrogram_encoder:
             # Encode ECG lead
-            latent_vector = self.ecg_encoder(ecg_lead)[0][:, -1].flatten(start_dim=1)
+            latent_vector = self.ecg_encoder(ecg_lead)[0].mean(dim=1)
             output = self.linear_layer_2(latent_vector)
         elif self.no_signal_encoder:
             # Forward pass spectrogram encoder
@@ -69,7 +95,7 @@ class ECGCNN(nn.Module):
             output = self.linear_layer_2(output)
         else:
             # Encode ECG lead
-            latent_vector = self.ecg_encoder(ecg_lead)[0][:, -1].flatten(start_dim=1)
+            latent_vector = self.ecg_encoder(ecg_lead)[0].mean(dim=1)
             # Forward pass spectrogram encoder
             for block in self.spectrogram_encoder:
                 spectrogram = block(spectrogram, latent_vector)
