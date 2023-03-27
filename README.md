@@ -144,6 +144,12 @@ python -W ignore train.py --cuda_devices "0, 1, 2, 3" --epochs 100 --batch_size 
 
 Four GPUs with 16GB are recommended. Reducing the batch size is a possible workaround if limited GPU memory is available.
 
+To train ECG-DualNet++ with 130M parameters on two A6000 GPUs run:
+
+```shell script
+python -W ignore train.py --cuda_devices "0, 1" --epochs 100 --batch_size 32 --physio_net --dataset_path "data/training2017/" --network_config "ECGAttNet_130M" --data_parallel
+```
+
 To reproduce the presented ablation studies run:
 
 ```shell script
