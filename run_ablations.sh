@@ -1,3 +1,3 @@
-python -W ignore train.py --cuda_devices "0" --no_signal_encoder --epochs 100 --physio_net --batch_size 24 --network_config "ECGCNN_M" --dataset_path "data/training2017/"
-python -W ignore train.py --cuda_devices "0" --no_spectrogram_encoder --epochs 100 --physio_net --batch_size 24 --network_config "ECGCNN_M" --dataset_path "data/training2017/"
-python -W ignore train.py --cuda_devices "0" --no_data_aug --epochs 100 --physio_net --batch_size 24 --network_config "ECGCNN_M" --dataset_path "data/training2017/"
+python -W ignore train.py --cuda_devices "0, 1" --no_signal_encoder --epochs 100 --physio_net --batch_size 24 --network_config "ECGCNN_L" --dataset_path "data/training2017/"
+python -W ignore train.py --cuda_devices "0, 1" --no_spectrogram_encoder --epochs 100 --physio_net --batch_size 24 --network_config "ECGCNN_L" --dataset_path "data/training2017/"
+python -W ignore train.py --cuda_devices "0, 1" --no_data_aug --epochs 100 --physio_net --batch_size 24 --network_config "ECGCNN_L" --dataset_path "data/training2017/"
