@@ -125,6 +125,7 @@ class ECGAttNet(nn.Module):
         # Get parameters
         ecg_features: int = config["ecg_features"]
         transformer_heads: int = config["transformer_heads"]
+        transformer_features: int = config["transformer_features"]
         transformer_ff_features: int = config["transformer_ff_features"]
         transformer_activation: str = config["transformer_activation"]
         transformer_layers: int = config["transformer_layers"]
@@ -136,17 +137,18 @@ class ECGAttNet(nn.Module):
         activation: Type[nn.Module] = config["activation"]
         dropout: float = config["dropout"]
         # Init ecg encoder
+        self.linear_embedding = nn.Linear(in_features=ecg_features, out_features=transformer_features)
         self.ecg_encoder = nn.TransformerEncoder(
-            encoder_layer=nn.TransformerEncoderLayer(d_model=ecg_features, nhead=transformer_heads,
+            encoder_layer=nn.TransformerEncoderLayer(d_model=transformer_features, nhead=transformer_heads,
                                                      dim_feedforward=transformer_ff_features, dropout=dropout,
                                                      activation=transformer_activation),
             num_layers=transformer_layers,
-            norm=nn.LayerNorm(normalized_shape=ecg_features)
+            norm=nn.LayerNorm(normalized_shape=transformer_features)
         )
         # Init positional embedding
-        self.positional_embedding = nn.Parameter(0.1 * torch.randn(transformer_sequence_length, 1, ecg_features),
+        self.positional_embedding = nn.Parameter(0.1 * torch.randn(transformer_sequence_length, 1, transformer_features),
                                                  requires_grad=True)
-        self.class_token = nn.Parameter(0.1 * torch.randn(1, 1, ecg_features), requires_grad=True)
+        self.class_token = nn.Parameter(0.1 * torch.randn(1, 1, transformer_features), requires_grad=True)
         # Init spectrogram encoder
         self.spectrogram_encoder = nn.ModuleList()
         for index, (spectrogram_encoder_channel, spectrogram_encoder_span) in \
@@ -186,6 +188,9 @@ class ECGAttNet(nn.Module):
         :param spectrogram: (torch.Tensor) Spectrogram tensor
         :return: (torch.Tensor) Output prediction
         """
+        # Linear embedding
+        ecg_lead = self.linear_embedding(ecg_lead)
+        # Concat class token and add positional embeddings
         ecg_lead = torch.cat(
             (ecg_lead.permute(1, 0, 2) + self.positional_embedding,
              self.class_token.repeat_interleave(ecg_lead.shape[0], dim=1)), dim=0)

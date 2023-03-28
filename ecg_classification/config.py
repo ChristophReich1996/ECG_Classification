@@ -66,6 +66,7 @@ ECGCNN_CONFIG_XL: Dict[str, Any] = {
 # Configuration for ECGAttNet S
 ECGAttNet_CONFIG_S: Dict[str, Any] = {
     "ecg_features": 256,
+    "transformer_features": 256,
     "transformer_heads": 8,
     "transformer_ff_features": 128,
     "transformer_activation": "gelu",
@@ -82,6 +83,7 @@ ECGAttNet_CONFIG_S: Dict[str, Any] = {
 # Configuration for ECGAttNet M
 ECGAttNet_CONFIG_M: Dict[str, Any] = {
     "ecg_features": 256,
+    "transformer_features": 256,
     "transformer_heads": 8,
     "transformer_ff_features": 256,
     "transformer_activation": "gelu",
@@ -98,6 +100,7 @@ ECGAttNet_CONFIG_M: Dict[str, Any] = {
 # Configuration for ECGAttNet L
 ECGAttNet_CONFIG_L: Dict[str, Any] = {
     "ecg_features": 256,
+    "transformer_features": 256,
     "transformer_heads": 8,
     "transformer_ff_features": 256 + 64,
     "transformer_activation": "gelu",
@@ -114,6 +117,7 @@ ECGAttNet_CONFIG_L: Dict[str, Any] = {
 # Configuration for ECGAttNet XL
 ECGAttNet_CONFIG_XL: Dict[str, Any] = {
     "ecg_features": 256,
+    "transformer_features": 256,
     "transformer_heads": 8,
     "transformer_ff_features": 1024,
     "transformer_activation": "gelu",
@@ -130,6 +134,7 @@ ECGAttNet_CONFIG_XL: Dict[str, Any] = {
 # Configuration for ECGAttNet XXL
 ECGAttNet_CONFIG_XXL: Dict[str, Any] = {
     "ecg_features": 256,
+    "transformer_features": 512,
     "transformer_heads": 8,
     "transformer_ff_features": 1024,
     "transformer_activation": "gelu",
@@ -137,7 +142,7 @@ ECGAttNet_CONFIG_XXL: Dict[str, Any] = {
     "transformer_sequence_length": 80,
     "spectrogram_encoder_channels": ((1, 128), (128, 512), (512, 1024), (1024, 1024), (1024, 512)),
     "spectrogram_encoder_spans": (None, None, (140, 8), (70, 4), (35, 2)),
-    "latent_vector_features": 256,
+    "latent_vector_features": 512,
     "classes": 4,
     "dropout": 0.05,
     "activation": PAU,
@@ -146,14 +151,15 @@ ECGAttNet_CONFIG_XXL: Dict[str, Any] = {
 # Configuration for ECGAttNet XXL
 ECGAttNet_CONFIG_130M: Dict[str, Any] = {
     "ecg_features": 256,
-    "transformer_heads": 32,
+    "transformer_features": 512,
+    "transformer_heads": 16,
     "transformer_ff_features": 2048,
     "transformer_activation": "gelu",
-    "transformer_layers": 12,
+    "transformer_layers": 10,
     "transformer_sequence_length": 80,
     "spectrogram_encoder_channels": ((1, 512), (512, 2048), (2048, 2048), (2048, 2048), (2048, 512)),
     "spectrogram_encoder_spans": (None, None, (140, 8), (70, 4), (35, 2)),
-    "latent_vector_features": 256,
+    "latent_vector_features": 512,
     "classes": 4,
     "dropout": 0.05,
     "activation": PAU,
