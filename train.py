@@ -159,8 +159,11 @@ if __name__ == '__main__':
     optimizer = torch_optimizer.RAdam(params=network.parameters(), lr=args.lr)
 
     # Init learning rate schedule
-    learning_rate_schedule = torch.optim.lr_scheduler.MultiStepLR(
-        optimizer=optimizer, milestones=[1 * args.epochs // 4, 2 * args.epochs // 4, 3 * args.epochs // 4], gamma=0.1)
+    learning_rate_schedule = torch.optim.lr_scheduler.CosineAnnealingLR(
+        optimizer=optimizer,
+        T_max=args.epochs,
+        eta_min=1e-08
+    )
 
     # Init datasets
     if args.icentia11k:

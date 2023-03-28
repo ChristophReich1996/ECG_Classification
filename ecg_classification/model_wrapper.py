@@ -23,7 +23,7 @@ class ModelWrapper(object):
                  training_dataset: DataLoader,
                  validation_dataset: DataLoader,
                  data_logger: Logger,
-                 learning_rate_schedule: Optional[torch.optim.lr_scheduler.MultiStepLR] = None,
+                 learning_rate_schedule: Optional[torch.optim.lr_scheduler.CosineAnnealingLR] = None,
                  device: str = "cuda") -> None:
         """
         Constructor method
