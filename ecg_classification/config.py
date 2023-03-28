@@ -15,7 +15,7 @@ except ModuleNotFoundError as error:
 ECGCNN_CONFIG_S: Dict[str, Any] = {
     "ecg_features": 256,
     "lstm_features": 128,
-    "lstm_layers": 2,
+    "lstm_layers": 4,
     "spectrogram_encoder_channels": ((1, 16), (16, 32), (32, 64), (64, 128), (128, 256)),
     "latent_vector_features": 128,
     "classes": 4,
@@ -28,7 +28,7 @@ ECGCNN_CONFIG_S: Dict[str, Any] = {
 ECGCNN_CONFIG_M: Dict[str, Any] = {
     "ecg_features": 256,
     "lstm_features": 256,
-    "lstm_layers": 2,
+    "lstm_layers": 4,
     "spectrogram_encoder_channels": ((1, 32), (32, 64), (64, 128), (128, 256), (256, 256)),
     "latent_vector_features": 256,
     "classes": 4,
@@ -40,10 +40,10 @@ ECGCNN_CONFIG_M: Dict[str, Any] = {
 # Configuration for ECGCNN L
 ECGCNN_CONFIG_L: Dict[str, Any] = {
     "ecg_features": 256,
-    "lstm_features": 256,
-    "lstm_layers": 3,
+    "lstm_features": 256 + 128,
+    "lstm_layers": 5,
     "spectrogram_encoder_channels": ((1, 64), (64, 128), (128, 256), (256, 256), (256, 256)),
-    "latent_vector_features": 256,
+    "latent_vector_features": 256 + 128,
     "classes": 4,
     "dropout": 0.05,
     "activation": PAU,
@@ -54,7 +54,7 @@ ECGCNN_CONFIG_L: Dict[str, Any] = {
 ECGCNN_CONFIG_XL: Dict[str, Any] = {
     "ecg_features": 256,
     "lstm_features": 512,
-    "lstm_layers": 3,
+    "lstm_layers": 5,
     "spectrogram_encoder_channels": ((1, 128), (128, 256), (256, 512), (512, 512), (512, 256)),
     "latent_vector_features": 512,
     "classes": 4,
@@ -99,7 +99,7 @@ ECGAttNet_CONFIG_M: Dict[str, Any] = {
 ECGAttNet_CONFIG_L: Dict[str, Any] = {
     "ecg_features": 256,
     "transformer_heads": 8,
-    "transformer_ff_features": 256,
+    "transformer_ff_features": 256 + 64,
     "transformer_activation": "gelu",
     "transformer_layers": 3,
     "transformer_sequence_length": 80,
@@ -115,11 +115,11 @@ ECGAttNet_CONFIG_L: Dict[str, Any] = {
 ECGAttNet_CONFIG_XL: Dict[str, Any] = {
     "ecg_features": 256,
     "transformer_heads": 8,
-    "transformer_ff_features": 512,
+    "transformer_ff_features": 1024,
     "transformer_activation": "gelu",
-    "transformer_layers": 3,
+    "transformer_layers": 6,
     "transformer_sequence_length": 80,
-    "spectrogram_encoder_channels": ((1, 128), (128, 256), (256, 512), (512, 512), (512, 256)),
+    "spectrogram_encoder_channels": ((1, 128 + 32 + 8), (128 + 32 + 8, 256), (256, 512), (512, 512), (512, 256)),
     "spectrogram_encoder_spans": (None, None, (140, 8), (70, 4), (35, 2)),
     "latent_vector_features": 256,
     "classes": 4,
@@ -131,9 +131,9 @@ ECGAttNet_CONFIG_XL: Dict[str, Any] = {
 ECGAttNet_CONFIG_XXL: Dict[str, Any] = {
     "ecg_features": 256,
     "transformer_heads": 8,
-    "transformer_ff_features": 512,
+    "transformer_ff_features": 1024,
     "transformer_activation": "gelu",
-    "transformer_layers": 5,
+    "transformer_layers": 6,
     "transformer_sequence_length": 80,
     "spectrogram_encoder_channels": ((1, 128), (128, 512), (512, 1024), (1024, 1024), (1024, 512)),
     "spectrogram_encoder_spans": (None, None, (140, 8), (70, 4), (35, 2)),
