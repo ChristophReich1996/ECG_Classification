@@ -82,7 +82,7 @@ class ECGCNN(nn.Module):
         """
         if self.no_spectrogram_encoder:
             # Encode ECG lead
-            latent_vector = self.ecg_encoder(ecg_lead)[0].mean(dim=1)
+            latent_vector = self.ecg_encoder(ecg_lead)[0].max(dim=1)
             output = self.linear_layer_2(latent_vector)
         elif self.no_signal_encoder:
             # Forward pass spectrogram encoder
@@ -95,7 +95,7 @@ class ECGCNN(nn.Module):
             output = self.linear_layer_2(output)
         else:
             # Encode ECG lead
-            latent_vector = self.ecg_encoder(ecg_lead)[0].mean(dim=1)
+            latent_vector = self.ecg_encoder(ecg_lead)[0].max(dim=1)
             # Forward pass spectrogram encoder
             for block in self.spectrogram_encoder:
                 spectrogram = block(spectrogram, latent_vector)
@@ -146,6 +146,7 @@ class ECGAttNet(nn.Module):
         # Init positional embedding
         self.positional_embedding = nn.Parameter(0.1 * torch.randn(transformer_sequence_length, 1, ecg_features),
                                                  requires_grad=True)
+        self.class_token = nn.Parameter(0.1 * torch.randn(1, 1, ecg_features), requires_grad=True)
         # Init spectrogram encoder
         self.spectrogram_encoder = nn.ModuleList()
         for index, (spectrogram_encoder_channel, spectrogram_encoder_span) in \
@@ -185,10 +186,12 @@ class ECGAttNet(nn.Module):
         :param spectrogram: (torch.Tensor) Spectrogram tensor
         :return: (torch.Tensor) Output prediction
         """
+        ecg_lead = torch.cat(
+            (ecg_lead.permute(1, 0, 2) + self.positional_embedding,
+             self.class_token.repeat_interleave(ecg_lead.shape[0], dim=1)), dim=0)
         if self.no_spectrogram_encoder:
             # Encode ECG lead
-            latent_vector = self.ecg_encoder(
-                ecg_lead.permute(1, 0, 2) + self.positional_embedding).permute(1, 0, 2).mean(dim=1)
+            latent_vector = self.ecg_encoder(ecg_lead).permute(1, 0, 2)[:, -1]
             output = self.linear_layer_2(latent_vector)
         elif self.no_signal_encoder:
             # Forward pass spectrogram encoder
@@ -201,8 +204,7 @@ class ECGAttNet(nn.Module):
             output = self.linear_layer_2(output)
         else:
             # Encode ECG lead
-            latent_vector = self.ecg_encoder(
-                ecg_lead.permute(1, 0, 2) + self.positional_embedding).permute(1, 0, 2).mean(dim=1)
+            latent_vector = self.ecg_encoder(ecg_lead).permute(1, 0, 2)[:, -1]
             # Forward pass spectrogram encoder
             for block in self.spectrogram_encoder:
                 spectrogram = block(spectrogram, latent_vector)
