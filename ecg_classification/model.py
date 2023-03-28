@@ -82,7 +82,7 @@ class ECGCNN(nn.Module):
         """
         if self.no_spectrogram_encoder:
             # Encode ECG lead
-            latent_vector = self.ecg_encoder(ecg_lead)[0].max(dim=1)
+            latent_vector = self.ecg_encoder(ecg_lead)[0].amax(dim=1)
             output = self.linear_layer_2(latent_vector)
         elif self.no_signal_encoder:
             # Forward pass spectrogram encoder
@@ -95,7 +95,7 @@ class ECGCNN(nn.Module):
             output = self.linear_layer_2(output)
         else:
             # Encode ECG lead
-            latent_vector = self.ecg_encoder(ecg_lead)[0].max(dim=1)
+            latent_vector = self.ecg_encoder(ecg_lead)[0].amax(dim=1)
             # Forward pass spectrogram encoder
             for block in self.spectrogram_encoder:
                 spectrogram = block(spectrogram, latent_vector)
