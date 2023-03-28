@@ -66,6 +66,12 @@ if __name__ == '__main__':
         dataset_info += "_challange"
     if args.two_classes:
         dataset_info += "_two_classes"
+    if args.no_signal_encoder:
+        dataset_info += "_no_signal_encoder"
+    if args.no_spectrogram_encoder:
+        dataset_info += "_no_spectrogram_encoder"
+    if args.no_data_aug:
+        dataset_info += "_no_data_aug"
     # Init network
     if args.network_config == "ECGCNN_S":
         config = ECGCNN_CONFIG_S
