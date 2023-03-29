@@ -43,35 +43,9 @@ class ECGCNN(nn.Module):
             nn.Linear(in_features=spectrogram_encoder_channels[-1][-1], out_features=latent_vector_features, bias=True),
             activation())
         self.linear_layer_2 = nn.Linear(in_features=latent_vector_features, out_features=classes, bias=True)
-        # Save some parameters
-        self.latent_vector_features: int = latent_vector_features
-        self.classes: int = classes
-        self.activation: Type[nn.Module] = activation
         # Init variables for ablations
-        self._no_spectrogram_encoder: bool = False
+        self.no_spectrogram_encoder: bool = False
         self.no_signal_encoder: bool = False
-
-    @property
-    def no_spectrogram_encoder(self) -> bool:
-        """
-        Getter method for no_spectrogram_encoder attribute
-        :return: (bool) no_spectrogram_encoder attribute
-        """
-        return self._no_spectrogram_encoder
-
-    @no_spectrogram_encoder.setter
-    def no_spectrogram_encoder(self, value: bool) -> None:
-        """
-        Setter method for no_spectrogram_encoder attribute
-        :param value: (bool) New value
-        """
-        self._no_spectrogram_encoder = value
-        # Make last linear layer an MLP if no spectrogram encoder is used
-        self.linear_layer_2 = nn.Sequential(
-            nn.Linear(in_features=self.latent_vector_features, out_features=self.latent_vector_features // 2),
-            self.activation(),
-            nn.Linear(in_features=self.latent_vector_features // 2, out_features=self.classes),
-        )
 
     def forward(self, ecg_lead: torch.Tensor, spectrogram: torch.Tensor) -> torch.Tensor:
         """
@@ -82,7 +56,7 @@ class ECGCNN(nn.Module):
         """
         if self.no_spectrogram_encoder:
             # Encode ECG lead
-            latent_vector = self.ecg_encoder(ecg_lead)[0].amax(dim=1)
+            latent_vector = self.ecg_encoder(ecg_lead)[0][:, -1].flatten(start_dim=1)
             output = self.linear_layer_2(latent_vector)
         elif self.no_signal_encoder:
             # Forward pass spectrogram encoder
@@ -95,7 +69,7 @@ class ECGCNN(nn.Module):
             output = self.linear_layer_2(output)
         else:
             # Encode ECG lead
-            latent_vector = self.ecg_encoder(ecg_lead)[0].amax(dim=1)
+            latent_vector = self.ecg_encoder(ecg_lead)[0][:, -1].flatten(start_dim=1)
             # Forward pass spectrogram encoder
             for block in self.spectrogram_encoder:
                 spectrogram = block(spectrogram, latent_vector)
@@ -137,7 +111,8 @@ class ECGAttNet(nn.Module):
         activation: Type[nn.Module] = config["activation"]
         dropout: float = config["dropout"]
         # Init ecg encoder
-        self.linear_embedding = nn.Linear(in_features=ecg_features, out_features=transformer_features)
+        self.linear_mapping = nn.Identity() if ecg_features == transformer_features else nn.Linear(ecg_features,
+                                                                                                   transformer_features)
         self.ecg_encoder = nn.TransformerEncoder(
             encoder_layer=nn.TransformerEncoderLayer(d_model=transformer_features, nhead=transformer_heads,
                                                      dim_feedforward=transformer_ff_features, dropout=dropout,
@@ -146,9 +121,9 @@ class ECGAttNet(nn.Module):
             norm=nn.LayerNorm(normalized_shape=transformer_features)
         )
         # Init positional embedding
-        self.positional_embedding = nn.Parameter(0.1 * torch.randn(transformer_sequence_length, 1, transformer_features),
-                                                 requires_grad=True)
-        self.class_token = nn.Parameter(0.1 * torch.randn(1, 1, transformer_features), requires_grad=True)
+        self.positional_embedding = nn.Parameter(
+            0.1 * torch.randn(transformer_sequence_length, 1, transformer_features),
+            requires_grad=True)
         # Init spectrogram encoder
         self.spectrogram_encoder = nn.ModuleList()
         for index, (spectrogram_encoder_channel, spectrogram_encoder_span) in \
@@ -188,15 +163,11 @@ class ECGAttNet(nn.Module):
         :param spectrogram: (torch.Tensor) Spectrogram tensor
         :return: (torch.Tensor) Output prediction
         """
-        # Linear embedding
-        ecg_lead = self.linear_embedding(ecg_lead)
-        # Concat class token and add positional embeddings
-        ecg_lead = torch.cat(
-            (ecg_lead.permute(1, 0, 2) + self.positional_embedding,
-             self.class_token.repeat_interleave(ecg_lead.shape[0], dim=1)), dim=0)
+        ecg_lead = self.linear_mapping(ecg_lead)
         if self.no_spectrogram_encoder:
             # Encode ECG lead
-            latent_vector = self.ecg_encoder(ecg_lead).permute(1, 0, 2)[:, -1]
+            latent_vector = self.ecg_encoder(
+                ecg_lead.permute(1, 0, 2) + self.positional_embedding).permute(1, 0, 2).mean(dim=1)
             output = self.linear_layer_2(latent_vector)
         elif self.no_signal_encoder:
             # Forward pass spectrogram encoder
@@ -209,7 +180,8 @@ class ECGAttNet(nn.Module):
             output = self.linear_layer_2(output)
         else:
             # Encode ECG lead
-            latent_vector = self.ecg_encoder(ecg_lead).permute(1, 0, 2)[:, -1]
+            latent_vector = self.ecg_encoder(
+                ecg_lead.permute(1, 0, 2) + self.positional_embedding).permute(1, 0, 2).mean(dim=1)
             # Forward pass spectrogram encoder
             for block in self.spectrogram_encoder:
                 spectrogram = block(spectrogram, latent_vector)
