@@ -97,7 +97,7 @@ For training on the **Icentia11k dataset** [3] we achieved the following results
 | ECG-DualNet XL (CNN + LSTM) | 0.8989 | 0.5135 | 20683122 | [weights](experiments/20_05_2021__18_32_19ECGAttNet_XL_icentia11k_dataset/models/best_model.pt) | [weights](experiments/20_05_2021__18_32_19ECGAttNet_XL_icentia11k_dataset/models/20.pt) |
 | ECG-DualNet++ XL (AxAtt + Trans.) | 0.8899 | 0.5017 | 8212658 | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EULh87xNGmBAueOrFQCkbxYB9xHukZjmyk4wujNvuw58lA?e=Dbdw86) | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EVaS1KbQ6fRDo-IJYjOL1GQB5oRkx4IZB5IUWCOWWsoomA?e=3Nr9RD) |
 
-If fine tuning the **pretrained** networks on the PhysioNet dataset [2] the following results were achieved:
+If fine-tuning the **pretrained** networks on the PhysioNet dataset [2] the following results were achieved:
 
 | Model | ACC | F1 | # Parameters | best |
 | --- | --- | --- | ---: | --- |
