@@ -67,7 +67,6 @@ ECGCNN_CONFIG_XL: Dict[str, Any] = {
 ECGAttNet_CONFIG_S: Dict[str, Any] = {
     "ecg_features": 256,
     "transformer_heads": 8,
-    "transformer_features": 256,
     "transformer_ff_features": 128,
     "transformer_activation": "gelu",
     "transformer_layers": 2,
@@ -84,7 +83,6 @@ ECGAttNet_CONFIG_S: Dict[str, Any] = {
 ECGAttNet_CONFIG_M: Dict[str, Any] = {
     "ecg_features": 256,
     "transformer_heads": 8,
-    "transformer_features": 256,
     "transformer_ff_features": 256,
     "transformer_activation": "gelu",
     "transformer_layers": 2,
@@ -101,7 +99,6 @@ ECGAttNet_CONFIG_M: Dict[str, Any] = {
 ECGAttNet_CONFIG_L: Dict[str, Any] = {
     "ecg_features": 256,
     "transformer_heads": 8,
-    "transformer_features": 256,
     "transformer_ff_features": 256,
     "transformer_activation": "gelu",
     "transformer_layers": 3,
@@ -118,7 +115,6 @@ ECGAttNet_CONFIG_L: Dict[str, Any] = {
 ECGAttNet_CONFIG_XL: Dict[str, Any] = {
     "ecg_features": 256,
     "transformer_heads": 8,
-    "transformer_features": 256,
     "transformer_ff_features": 512,
     "transformer_activation": "gelu",
     "transformer_layers": 3,
@@ -135,7 +131,6 @@ ECGAttNet_CONFIG_XL: Dict[str, Any] = {
 ECGAttNet_CONFIG_XXL: Dict[str, Any] = {
     "ecg_features": 256,
     "transformer_heads": 8,
-    "transformer_features": 256,
     "transformer_ff_features": 512,
     "transformer_activation": "gelu",
     "transformer_layers": 5,
@@ -149,17 +144,16 @@ ECGAttNet_CONFIG_XXL: Dict[str, Any] = {
 }
 
 # Configuration for ECGAttNet XXL
-ECGAttNet_CONFIG_200M: Dict[str, Any] = {
+ECGAttNet_CONFIG_130M: Dict[str, Any] = {
     "ecg_features": 256,
-    "transformer_heads": 8,
-    "transformer_features": 768,
+    "transformer_heads": 32,
     "transformer_ff_features": 2048,
     "transformer_activation": "gelu",
     "transformer_layers": 12,
     "transformer_sequence_length": 80,
     "spectrogram_encoder_channels": ((1, 512), (512, 2048), (2048, 2048), (2048, 2048), (2048, 512)),
     "spectrogram_encoder_spans": (None, None, (140, 8), (70, 4), (35, 2)),
-    "latent_vector_features": 768,
+    "latent_vector_features": 256,
     "classes": 4,
     "dropout": 0.05,
     "activation": PAU,

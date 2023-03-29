@@ -22,7 +22,7 @@ parser.add_argument("--dataset_path", default="data/training/", type=str,
                     help="Path to dataset.")
 parser.add_argument("--network_config", default="ECGCNN_M", type=str,
                     choices=["ECGCNN_S", "ECGCNN_M", "ECGCNN_L", "ECGCNN_XL", "ECGAttNet_S", "ECGAttNet_M",
-                             "ECGAttNet_L", "ECGAttNet_XL", "ECGAttNet_XXL", "ECGAttNet_200M"],
+                             "ECGAttNet_L", "ECGAttNet_XL", "ECGAttNet_XXL", "ECGAttNet_130M"],
                     help="Type of network configuration to be utilized.")
 parser.add_argument("--load_network", default=None, type=str,
                     help="If set given network (state dict) is loaded.")
@@ -66,12 +66,6 @@ if __name__ == '__main__':
         dataset_info += "_challange"
     if args.two_classes:
         dataset_info += "_two_classes"
-    if args.no_signal_encoder:
-        dataset_info += "_no_signal_encoder"
-    if args.no_spectrogram_encoder:
-        dataset_info += "_no_spectrogram_encoder"
-    if args.no_data_aug:
-        dataset_info += "_no_data_aug"
     # Init network
     if args.network_config == "ECGCNN_S":
         config = ECGCNN_CONFIG_S
@@ -110,9 +104,9 @@ if __name__ == '__main__':
         data_logger = Logger(experiment_path_extension="ECGAttNet_XXL" + dataset_info)
         print("ECGAttNet_XXL utilized")
     else:
-        config = ECGAttNet_CONFIG_200M
-        data_logger = Logger(experiment_path_extension="ECGAttNet_200M" + dataset_info)
-        print("ECGAttNet_200M utilized")
+        config = ECGAttNet_CONFIG_130M
+        data_logger = Logger(experiment_path_extension="ECGAttNet_130M" + dataset_info)
+        print("ECGAttNet_130M utilized")
 
     # Not dropout of no data augmentation
     if args.no_data_aug:
@@ -165,11 +159,8 @@ if __name__ == '__main__':
     optimizer = torch_optimizer.RAdam(params=network.parameters(), lr=args.lr)
 
     # Init learning rate schedule
-    learning_rate_schedule = torch.optim.lr_scheduler.CosineAnnealingLR(
-        optimizer=optimizer,
-        T_max=args.epochs,
-        eta_min=1e-08
-    )
+    learning_rate_schedule = torch.optim.lr_scheduler.MultiStepLR(
+        optimizer=optimizer, milestones=[1 * args.epochs // 4, 2 * args.epochs // 4, 3 * args.epochs // 4], gamma=0.1)
 
     # Init datasets
     if args.icentia11k:
