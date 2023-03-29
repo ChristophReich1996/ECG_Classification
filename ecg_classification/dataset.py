@@ -253,7 +253,17 @@ class Icentia11kDataset(Dataset):
                         af += torch.logical_and(rtype >= index_low, rtype <= index_high).sum().item()
                     else:
                         afl += torch.logical_and(rtype >= index_low, rtype <= index_high).sum().item()
-            classes.append(torch.tensor((noise, normal, af, afl)).argmax().item())
+            # If AFL is present label is set to AFL, if AF is present and not AFL then labels is set to AF
+            if afl > 0:
+                classes.append(3)
+            elif af > 0:
+                classes.append(2)
+            # If there is more noise in the data labels is set to noise and no AFL or AF is present
+            elif noise > 0:
+                classes.append(0)
+            # If no noise, AFL or AF normal class is used
+            else:
+                classes.append(1)
         classes = torch.tensor(classes, dtype=torch.long)
         # Classes to one hot
         one_hot_classes = F.one_hot(classes, num_classes=4)
