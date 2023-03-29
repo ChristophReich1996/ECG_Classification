@@ -125,7 +125,7 @@ if __name__ == '__main__':
 
     # Change number of classes if icentia11k dataset is used
     if args.icentia11k:
-        config["classes"] = 7
+        config["classes"] = 4
 
     if "CNN" in args.network_config:
         network = ECGCNN(config=config)

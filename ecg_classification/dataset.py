@@ -235,20 +235,28 @@ class Icentia11kDataset(Dataset):
         for index, label in enumerate(labels):
             # Get rhythm
             label = label["rtype"]
-            # Init max class
-            max_class = (0, -1)
+            # Make class tensor
+            noise = 0
+            normal = 0
+            af = 0
+            afl = 0
+            index_low = crop_indexes_low[index].item()
+            index_high = (crop_indexes_low[index].item() + crop_indexes_length[index].item())
             for class_index, rtype in enumerate(label):
-                if rtype.shape[0] != 0:
-                    beats_labels_low = rtype <= crop_indexes_low[index].item()
-                    beats_labels_high = rtype >= (crop_indexes_low[index].item() + crop_indexes_length[index].item())
-                    beats_labels = (beats_labels_low == beats_labels_high).sum()
-                    if max_class[0] < beats_labels.sum():
-                        max_class = (beats_labels, class_index)
-            # Save class
-            classes.append(max_class[-1] + 1)
+                rtype = torch.from_numpy(rtype)
+                if rtype.shape != (0,):
+                    if class_index in (0, 1, 2):
+                        noise += torch.logical_and(rtype >= index_low, rtype <= index_high).sum().item()
+                    elif class_index == 3:
+                        normal += torch.logical_and(rtype >= index_low, rtype <= index_high).sum().item()
+                    elif class_index == 4:
+                        af += torch.logical_and(rtype >= index_low, rtype <= index_high).sum().item()
+                    else:
+                        afl += torch.logical_and(rtype >= index_low, rtype <= index_high).sum().item()
+            classes.append(torch.tensor((noise, normal, af, afl)).argmax().item())
         classes = torch.tensor(classes, dtype=torch.long)
         # Classes to one hot
-        one_hot_classes = F.one_hot(classes, num_classes=7)
+        one_hot_classes = F.one_hot(classes, num_classes=4)
         return inputs, spectrograms.unsqueeze(dim=1), one_hot_classes
 
 
