@@ -88,7 +88,7 @@ dataset** [2] (without pre-training) were achieved.
 | ECG-DualNet++ XL (AxAtt + Trans.) | 0.8593; 0.8351; 0.8501 | 0.8051; 0.7799; 0.7851 | 8212658 | [weights](experiments/13_05_2021__09_42_13ECGAttNet_XL_physio_net_dataset/models/best_model.pt) |
 | ECG-DualNet++ 130M (AxAtt + Trans.) | 0.8475; 0.8534; 0.8462 | 0.7878; 0.7963; 0.7740 | 127833010 | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EfQSSiciRjBOvUORGYyMEMEBqjD5yjolLFoZIMjywyiKXw?e=z2p7vh) |
 
-Note that for the weights of ECG-DualNet XL an external link is provided.
+Note that for the weights of ECG-DualNet XL and ECG-DualNet++ 130M an external link is provided.
 
 For training on the **Icentia11k dataset** [3] we achieved the following results:
 
