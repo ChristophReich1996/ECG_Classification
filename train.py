@@ -148,6 +148,9 @@ if __name__ == '__main__':
         model_state_dict.update(state_dict)
         network.load_state_dict(model_state_dict)
         print("Network loaded")
+        network.linear_layer_2.bias.data.fill_(0.0)
+        torch.nn.init.kaiming_normal_(network.linear_layer_2.weight.data)
+
 
     # Print network parameters
     print("# parameters:", sum([p.numel() for p in network.parameters()]))
