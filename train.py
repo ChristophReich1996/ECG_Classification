@@ -208,7 +208,7 @@ if __name__ == '__main__':
 
     # Make loss weights
     if args.icentia11k:
-        weights = (1., 1., 1., 1.)
+        weights = (0.1, 0.1, 1., 4.)
     elif args.two_classes:
         weights = (1., 1.)
     else:
