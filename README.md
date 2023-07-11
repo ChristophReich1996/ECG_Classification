@@ -4,13 +4,15 @@
 
 This repository includes the code of the ECG-DualNet for ECG classification proposed in the paper [Exploring Novel Algorithms for Atrial Fibrillation Detection by Driving Graduate Level Education in Medical Machine Learning](https://iopscience.iop.org/article/10.1088/1361-6579/ac7840/meta) (Physiological Measurement).
 
+This repository includes the code of the follow-up work [On the Atrial Fibrillation Detection Performance of ECG-DualNet](https://www.medrxiv.org/content/10.1101/2023.06.01.23290822v1.full.pdf) (EMBC 2023, short paper).
+
 This work was done original as part of the competition "Wettbewerb künstliche Intelligenz in der Medizin" at TU Darmstadt ([KIS*MED](https://github.com/KISMED-TUDa), [Prof. Hoog Antink](https://scholar.google.de/citations?user=bRoRHGgAAAAJ&hl=de)).
 
-A report of the project is available [here](report/report.pdf). Slides of the final presentation are available [here](presentation/presentation.pdf). LaTeX code of both the report and the slides are also available.
+A report on the project is available [here](report/report.pdf). Slides of the final presentation are available [here](presentation/presentation.pdf). LaTeX code of both the report and the slides is also available.
 
 <img src="/github/architecture.png"  alt="architecture" width = 600px height = 320px >
 
-**If you find this research useful in your work, please cite our paper:**
+**If you find this research useful in your work, please cite our papers:**
 
 ```bibtex
 @article{Rohr2022,
@@ -19,6 +21,15 @@ A report of the project is available [here](report/report.pdf). Slides of the fi
         journal={{Physiological Measurement}},
         year={2022},
         publisher={IOP Publishing}
+}
+```
+
+```bibtex
+@article{Reich2023,
+	title={{On the Atrial Fibrillation Detection Performance of ECG-DualNet}},
+	author={Reich, Christoph and Rohr, Maurice and Kircher, Tim and Hoog Antink, Christoph},
+	journal={{45th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC), 1-Page Paper, medRxiv}},
+	year={2023}
 }
 ```
 
@@ -46,7 +57,7 @@ If only CUDA 11.0 is available the code can also be executed with PyTorch 1.7.1 
 
 ECG-DualNet is implemented with [PyTorch](https://pytorch.org/) 1.8.1 and 
 [Torchaudio](https://pytorch.org/audio/stable/index.html) 0.8.1. All required packages can be seen 
-in the [`requirements.txt`](requirements.txt) file. For the Pade Activation Unit the 
+in the [`requirements.txt`](requirements.txt) file. For the Pade Activation Unit, the 
 [implementation (cuda extension) from the authors](https://github.com/ml-research/pau) were adopted [1].
 
 ### Docker
@@ -65,7 +76,7 @@ To execute the container run (with all available GPUs):
 docker run -it --gpus all --rm --name user_name ecg_classification
 ```
 
-This Dockerfile does not use the PAU CUDA extension, which leads to a higher memory usage and an increased runtime.
+This Dockerfile does not use the PAU CUDA extension, which leads to higher memory usage and an increased runtime.
 
 A [Dockerfile](Dockerfile) based on the [Nvidia NGC container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch), supporting the PAU CUDA extension, is also available.
 
