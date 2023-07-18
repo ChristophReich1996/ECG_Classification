@@ -115,14 +115,14 @@ If fine-tuning the **pretrained** networks on the PhysioNet dataset [2] the foll
 | ECG-DualNet XL (CNN + LSTM) | 0.8455; 0.7664; 0.8468 | 0.7911; 0.5880; 0.8014 | 20683122 | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/ESXeKjTwb79Ihf_YeEdyANEBHGdROxSpL7Jfgp6P1k2KLQ?e=AmXKoC) |
 | ECG-DualNet++ XL (AxAtt + Trans.) | 0.8475; 0.8481; 0.8469 | 0.7828; 0.7817; 0.7899 | 8212658 | [weights](experiments/08_06_2021__17_14_58ECGAttNet_XL_physio_net_dataset_pretrained/models/best_model.pt) |
 
-In the **challange setting** (pretrained weights used) the following results were achieved:
+In the **challenge setting** (pretrained weights used) the following results were achieved:
 
 | Model | ACC | F1 | # Parameters | best |
 | --- | --- | --- | ---: | --- |
 | ECG-DualNet XL (CNN + LSTM) | 0.8840; 0.8820; 0.8080 | 0.8549; 0.8449; 0.7360 | 20683122 | [weights](https://studtudarmstadtde-my.sharepoint.com/:u:/g/personal/christoph_reich_stud_tu-darmstadt_de/EegBTv_x2_ZGtu4vFLTnotoBnIHLlPdBw4prQ_vxuwBdYw?e=2b4xII) |
 | ECG-DualNet++ XL (AxAtt + Trans.) | 0.8720; 0.8800; 0.8680 | 0.8276; 0.8494; 0.8403 | 8212658 | [weights](experiments/09_06_2021__14_23_40ECGAttNet_XL_physio_net_dataset_challange/models/best_model.pt) |
 
-In the **two class challange setting** (pretrained weights used) the following results were achieved:
+In the **two class challenge setting** (pretrained weights used) the following results were achieved:
 
 | Model | ACC | F1 | # Parameters | best |
 | --- | --- | --- | ---: | --- |
@@ -187,7 +187,7 @@ or
 python -W ignore train.py --cuda_devices "0" --epochs 100 --batch_size 24 --physio_net --dataset_path "data/training2017/" --network_config "ECGCNN_XL" --load_network "experiments/21_05_2021__12_15_06ECGCNN_XL_icentia11k_dataset/models/20.pt"
 ```
 
-The challange submission can be reproduced by setting the additional flag `--challange`. For the two class challange 
+The challenge submission can be reproduced by setting the additional flag `--challange`. For the two class challenge 
 submission add the flag `--two_classes`.
 
 Pleas note that the dataset or model paths as well as the cuda devices might change for different systems!
@@ -215,9 +215,9 @@ To run custom training the `train.py` script can be used. This script takes the 
 
 All network hyperparameters can be found and adjusted in the [`config.py`](/ecg_classification/config.py) file.
 
-### Challange Submission
+### Challenge Submission
 
-The following files for the challange submission are taken form the [18-ha-2010-pj](https://github.com/KISMED-TUDa/18-ha-2010-pj) 
+The following files for the challenge submission are taken form the [18-ha-2010-pj](https://github.com/KISMED-TUDa/18-ha-2010-pj) 
 repo by [Maurice Rohr](https://github.com/MauriceRohr) and [Prof. Hoog Antink](https://github.com/hogius). 
 [`wettbewerb.py`](wettbewerb.py), [`predict_pretrained.py`](predict_pretrained.py), [`predict_trained.py`](predict_trained.py),
 and [`score.py`](score.py).
